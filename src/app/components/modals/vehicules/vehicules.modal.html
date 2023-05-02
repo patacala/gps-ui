@@ -1,0 +1,44 @@
+<section>
+    <header class="flex justify-between">
+        <section class="flex flex-col">
+            <b>Creación de Vehículo</b>
+            <p>Digita los siguiente campos</p>
+        </section>
+        <mat-divider [vertical]="true" style="height: 3em;"></mat-divider>
+        <section class="flex gap-4 items-center pb-4">
+            <mat-icon [ngClass]="{'text-gps-blue': !showInformation}">chevron_right</mat-icon>
+            <label (click)="showInformation = false" class="cursor-pointer">Informacion</label>
+            <mat-icon [ngClass]="{'text-gps-blue': showInformation}">chevron_right</mat-icon>
+            <label (click)="showInformation = true" class="cursor-pointer">Asignación de GPS</label>
+        </section>
+        <mat-icon class="text-gps-blue cursor-pointer" (click)="closeModal()">cancel</mat-icon>
+    </header>
+    <mat-divider></mat-divider>
+    <ng-container *ngIf="!showInformation then information else assignGPS"></ng-container>
+    <mat-divider></mat-divider>
+    <footer class="flex justify-end items-center gap-6 mt-8">
+        <app-button text="Cancelar" type="white" width="100%" class="w-52" (click)="closeModal()"></app-button>
+        <app-button *ngIf="!data" text="Crear" type="blue" width="100%" class="w-52" (click)="vehiculeCreate()">
+        </app-button>
+        <app-button *ngIf="data" text="Editar" type="blue" width="100%" class="w-52" (click)="vehiculeEdit()">
+        </app-button>
+    </footer>
+</section>
+
+<ng-template #information>
+    <section class="flex flex-col my-6 gap-10" [formGroup]="vehiculeGroup">
+        <section class="flex gap-6">
+            <app-input label="Placa" class="w-80" formControlName="idNumber"></app-input>
+            <app-input label="Descripción" class="w-80" formControlName="type"></app-input>
+        </section>
+        <section class="flex items-end gap-3" *ngIf="vehiculeGroup.get('deviceId')?.value">
+            <app-input label="GPS" class="w-80" [disabled]="true" formControlName="deviceId"></app-input>
+            <mat-icon class="text-gps-red cursor-pointer mb-2" (click)="unlinkDevice()">
+                close
+            </mat-icon>
+        </section>
+    </section>
+</ng-template>
+<ng-template #assignGPS>
+    <app-assign-table [columns]="tableContent" [resorce]="devices$ | async" (checked)="selectID($event)"></app-assign-table>
+</ng-template>

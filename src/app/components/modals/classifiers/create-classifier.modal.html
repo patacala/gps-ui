@@ -1,0 +1,19 @@
+<section>
+    <header>
+        <h2>{{!data ? "Crear " : "Editar "}} Clasificador</h2>
+    </header>
+    <section class="my-4 flex flex-col">
+        <label>
+            <app-input label="Nombre clasificador" class="w-80" [formControl]="name"></app-input>
+        </label>
+        <label class="mt-4" *ngIf="data">
+            <p>Estado</p>
+            <mat-slide-toggle [formControl]="status" color="primary"></mat-slide-toggle>
+        </label>
+    </section>
+    <footer class="flex gap-2">
+        <app-button text="Cancelar" type="white" width="100%" class="w-52" (click)="closeModal()"></app-button>
+        <app-button *ngIf="!data" text="Crear Clasificador" type="blue" width="100%" class="w-52" (click)="createClassifier()"></app-button>
+        <app-button *ngIf="data" text="Editar Clasificador" type="blue" width="100%" class="w-52" (click)="updatedClassifier()"></app-button>
+    </footer>
+</section>

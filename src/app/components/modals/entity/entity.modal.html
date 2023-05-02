@@ -1,0 +1,42 @@
+<section>
+    <header class="flex justify-between">
+        <section class="flex flex-col">
+            <b>{{isEdit ? 'Edición' : 'Creación'}} de Entidad</b>
+            <p>Digita los siguiente campos</p>
+        </section>
+        <mat-icon class="text-gps-blue cursor-pointer" (click)="closeModal()">cancel</mat-icon>
+    </header>
+    <mat-divider></mat-divider>
+    <section class="flex flex-col my-6 gap-4" [formGroup]="entityForm">
+        <section class="flex items-center gap-4 mb-4">
+            <div class="bg-gps-gray rounded-full flex items-center justify-center p-1 w-20 h-20" >
+                <mat-icon class="text-gps-blue" *ngIf="!urlImg">
+                    image
+                </mat-icon>
+                <img [src]="urlImg" alt="Picture Entity" *ngIf="urlImg">
+            </div>
+            <app-button text="Agregar foto" type="blue" icon="attach_file" class="w-2/4" (click)="profile.click()"></app-button>
+            <input class="hidden" accept="image/*" #profile type="file" (change)="uploadPhoto($event)" name="foto">
+        </section>
+        <section class="flex gap-6">
+            <app-input label="Nombre completo" class="w-80" formControlName="description"></app-input>
+            <div class="flex items-center gap-2">
+                <app-select label="Tipo de documento" class="w-64" formControlName="documentType" [options]="['CEDULA', 'NIT', 'PASAPORTE', 'CEDULA DE EXTRANJERÍA']"></app-select>
+                <app-input formControlName="documentNumber" placeholder="Digite el numero" class="mt-4"></app-input>
+            </div>
+        </section>
+        <section class="flex gap-6">
+            <app-input label="Email" class="w-60" formControlName="email"></app-input>
+            <app-input label="Telefono" class="w-80" formControlName="phone"></app-input>
+        </section>
+        <!-- <section>
+            <app-textarea formControlName="description" label="Descripción"></app-textarea>
+        </section> -->
+    </section>
+    <mat-divider></mat-divider>
+    <footer class="flex justify-end items-center gap-6 mt-8">
+        <app-button text="Cancelar" type="white" width="100%" class="w-52" (click)="closeModal()"></app-button>
+        <app-button text="{{isEdit ? 'Editar' : 'Crear' }} Entidad" type="blue" width="100%" class="w-52" (click)="interceptAction()">
+        </app-button>
+    </footer>
+</section>

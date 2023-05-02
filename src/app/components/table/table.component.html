@@ -1,0 +1,105 @@
+<section>
+    <section class="flex gap-4">
+        <div class="mat-elevation-z8 w-full">
+            <section class="flex bg-white items-center justify-between p-4">
+                <div class="flex flex-col">
+                    <b>{{tableText}}</b>
+                    <p>Listado</p>
+                </div>
+                <div class="flex gap-4 w-3/5 items-center justify-between">
+                    <input type="text" placeholder="Busca por vehículo, placa o empresa" (keyup)="applyFilter($event)"
+                        class="w-3/5 p-1 border-1 placeholder-pl-4 border-gps-blue rounded-lg">
+                    <app-button [hasPermission]="permissions" *ngIf="buttonText" [text]="buttonText" [icon]="iconButton"
+                        data-action="create" type="blue" width="100%" class="w-56" (click)="buttonClick.emit()">
+                    </app-button>
+                </div>
+            </section>
+            <div class="bg-white overflow-scroll px-4" style="height: 55vh;">
+                <table mat-table [dataSource]="dataSource" class="w-full" matSort
+                    *ngIf="dataSource?.filteredData?.length">
+                    <ng-container *ngFor="let column of displayedColumns">
+                        <ng-container [matColumnDef]="column.key">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                                <mat-checkbox *ngIf="!column.name"></mat-checkbox>
+                                <span *ngIf="column.name">{{column.name}}</span>
+                            </th>
+                            <td mat-cell *matCellDef="let element">
+                                <mat-checkbox *ngIf="!column.name" color="primary"></mat-checkbox>
+                                <span *ngIf="!['Estado'].includes(column.name)">
+                                    {{element | tableValue: column.key}}
+                                </span>
+                                <div *ngIf="['Estado'].includes(column.name)" class="flex items-center">
+                                    <span class="p-1 text-white rounded-md w-24 text-center"
+                                        [ngClass]="{'bg-gps-green': element[column.key], 'bg-gps-red': !element[column.key]}">{{element[column.key]
+                                        ? 'Activo' : 'Desactivado' }}</span>
+                                </div>
+                                <section class="flex gap-1" *ngIf="['action'].includes(column.key)">
+                                    <div class="shadow flex justify-center items-center rounded-md pt-1"
+                                        [hasPermission]="permissions" data-action="update"
+                                        (click)="actions.emit({ type: 'Edit', data: element })">
+                                        <mat-icon class="text-gps-blue text-sm cursor-pointer text-center">
+                                            edit
+                                        </mat-icon>
+                                    </div>
+                                    <div class="shadow flex justify-center items-center rounded-md pt-1"
+                                        [hasPermission]="permissions" data-action="delete"
+                                        (click)="actions.emit({ type: 'Delete', data: element})">
+                                        <mat-icon class="text-gps-red text-sm cursor-pointer text-center">
+                                            delete
+                                        </mat-icon>
+                                    </div>
+                                </section>
+                                <section class="flex gap-1" *ngIf="['classifiersMainActions'].includes(column.key)">
+                                    <div matTooltip="Agregar nuevo item" [hasPermission]="permissions" data-action="create"
+                                        class="shadow flex justify-center items-center rounded-md pt-1"
+                                        (click)="actions.emit({ type: 'Add', data: element})">
+                                        <mat-icon class="text-gps-blue text-sm cursor-pointer text-center">
+                                            add
+                                        </mat-icon>
+                                    </div>
+                                    <div matTooltip="Editar"
+                                        class="shadow flex justify-center items-center rounded-md pt-1"
+                                        [hasPermission]="permissions" data-action="update"
+                                        (click)="actions.emit({ type: 'Edit', data: element})">
+                                        <mat-icon class="text-gps-blue text-sm cursor-pointer text-center">
+                                            edit
+                                        </mat-icon>
+                                    </div>
+                                    <div matTooltip="Ver detalle"
+                                        class="shadow flex justify-center items-center rounded-md pt-1"
+                                        (click)="actions.emit({ type: 'Watch', data: element })">
+                                        <mat-icon class="text-gps-blue text-sm cursor-pointer text-center">
+                                            visibility
+                                        </mat-icon>
+                                    </div>
+                                </section>
+                                <section class="flex gap-3 items-center" *ngIf="['classifiersChildActions'].includes(column.key)">
+                                    <div matTooltip="Editar"
+                                        class="shadow flex justify-center items-center rounded-md pt-1"
+                                        [hasPermission]="permissions" data-action="update"
+                                        (click)="actions.emit({ type: 'Edit', data: element })">
+                                        <mat-icon class="text-gps-blue text-sm cursor-pointer text-center">
+                                            edit
+                                        </mat-icon>
+                                    </div>
+                                    <div matTooltip="Activar o Desactivar">
+                                        <mat-slide-toggle color="primary" [checked]="element?.clvastat" (change)="actions.emit({ type: 'Active', data: element })">
+                                        </mat-slide-toggle>
+                                    </div>
+                                </section>
+                            </td>
+                        </ng-container>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="headers; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: headers;"></tr>
+                </table>
+                <section class="w-full h-full flex justify-center items-center"
+                    *ngIf="dataSource?.filteredData?.length === 0">
+                    <img class="h-36" [src]="'../../assets/no-data-table/no-'+img+'.svg'" alt="NoData">
+                </section>
+            </div>
+            <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users">
+            </mat-paginator>
+        </div>
+    </section>
+</section>

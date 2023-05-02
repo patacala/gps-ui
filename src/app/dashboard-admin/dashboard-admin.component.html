@@ -1,0 +1,18 @@
+<section class="h-full">
+    <header class="pb-4">
+        <p class="text-xl font-semibold">Dashboard</p>
+        <b class="text-gps-gray-black2">Estadísticas generales</b>
+    </header>
+    <app-map class="block h-3/5"></app-map>
+    <section class="h-2/6 flex items-center w-full">
+        <section class="flex gap-4 w-full">
+            <section class="flex w-full gap-4" *ngIf="data$ | async as data">
+                <app-statistic title="Vehículos creados" icon="directions_car" [count]="data?.vehicules" class="w-3/12"></app-statistic>
+                <app-statistic title="Usuarios creados" icon="group" [count]="data?.users" class="w-3/12"></app-statistic>
+            </section>
+            <!-- <section class="w-3/5 rounded-lg">
+                <app-user-added></app-user-added>
+            </section> -->
+        </section>
+    </section>
+</section>

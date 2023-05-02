@@ -1,0 +1,9 @@
+<section>
+    <header class="pb-4">
+        <p class="text-xl font-semibold">Dispositivos GPS</p>
+        <b class="text-gps-gray-black2">Administra todos los dispositivos</b>
+    </header>
+    <app-table [resorce]="gps$ | async" [columns]="tableContent" (clickBtn)="openCreateUser()"
+        buttonText="Registrar GPS" tableText="Todos los dispositivos GPS" (actions)="actionsButton($event)"
+        [permissions]="['device_create','device_update', 'device_delete']"></app-table>
+</section>

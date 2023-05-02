@@ -1,0 +1,10 @@
+<section>
+    <header class="pb-4">
+        <p class="text-xl font-semibold">Usuarios</p>
+        <b class="text-gps-gray-black2">Administra todos tus usuarios</b>
+    </header>
+    <app-table 
+    [resorce]="users$ | async" 
+    [permissions]="['user_create','user_update', 'user_delete']"
+    [columns]="tableContent" (clickBtn)="openCreateUser()" buttonText="Crear nuevo" tableText="Usuarios creados" (actions)="actionEvents($event)"></app-table>
+</section>

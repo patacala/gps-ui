@@ -1,0 +1,10 @@
+<section>
+    <header class="pb-4">
+        <p class="text-xl font-semibold">Clasificadores</p>
+        <b class="text-gps-gray-black2">Administra todos tus clasificadores</b>
+    </header>
+    <app-table [resorce]="childs$ | async" 
+    [permissions]="['clasifiers_update', 'clasifiers_create']"
+    [columns]="tableContent" [buttonText]="'Atras'" (clickBtn)="goBack()" iconButton="arrow_back"
+        tableText="Todos los clasificadores" (actions)="actions($event)"></app-table>
+</section>

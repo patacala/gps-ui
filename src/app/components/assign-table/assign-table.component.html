@@ -1,0 +1,34 @@
+<input matInput class="w-full p-1 border-1 placeholder-pl-4 border-gps-blue rounded-lg my-4" 
+    placeholder="Buscar por Vehiculo, Placa o Empresa" (keyup)="applyFilter($event)" #input>
+    <div>
+        <table mat-table [dataSource]="dataSource" class="w-full" matSort
+                    *ngIf="dataSource?.filteredData?.length">
+                    <ng-container *ngFor="let column of displayedColumns">
+                        <ng-container [matColumnDef]="column.key">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                                <mat-checkbox *ngIf="!column.name"></mat-checkbox>
+                                <span *ngIf="column.name">{{column.name}}</span>
+                            </th>
+                            <td mat-cell *matCellDef="let element">
+                                <mat-checkbox *ngIf="!column.name" color="primary" (change)="shareElementChecked($event, element)"></mat-checkbox>
+                                <span *ngIf="!['Estado'].includes(column.name)">
+                                    {{element | tableValue: column.key}}
+                                </span>
+                                <div *ngIf="['Estado'].includes(column.name)" class="flex items-center">
+                                    <span class="p-1 text-white rounded-md w-24 text-center"
+                                        [ngClass]="{'bg-gps-green': element[column.key], 'bg-gps-red': !element[column.key]}">{{element[column.key]
+                                        ? 'Activo' : 'Desactivado' }}</span>
+                                </div>
+                            </td>
+                        </ng-container>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="headers; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: headers;"></tr>
+                </table>
+                <section class="w-full h-full flex justify-center items-center"
+                    *ngIf="dataSource?.filteredData?.length === 0">
+                    <!-- <img class="h-36" [src]="'../../assets/no-data-table/no-'+img+'.svg'" alt="NoData"> -->
+                </section>
+
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10]" aria-label="Select page of users"></mat-paginator>
+    </div>

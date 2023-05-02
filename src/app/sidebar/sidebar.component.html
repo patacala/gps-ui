@@ -1,0 +1,40 @@
+<article class="text-white justify-between h-full">
+    <section class="h-5/6 pt-10" [ngClass]="{
+        'pl-2': isCollapseSidebar,
+        'pl-4': !isCollapseSidebar
+    }">
+        <!-- Icons -->
+        <section class="flex items-center gap-4 pb-10">
+            <mat-icon class="cursor-pointer !overflow-visible" (click)="collapse()">menu</mat-icon>
+            <img src="../../assets/Logo.svg" alt="logo gps" class="h-7">
+        </section>
+        <mat-divider></mat-divider>
+        <!-- Options -->
+        <ul class="mx-2 mt-10">
+            <li *ngFor="let option of navigationOption; index as i" [hasPermission]="option.permission" 
+            class="flex items-center gap-5 mb-6 cursor-pointer"
+                routerLink="{{option.name | lowercase }}">
+                <mat-icon class="!overflow-visible">{{option.icon}}</mat-icon>
+                {{option.name}}
+            </li>
+        </ul>
+        <!-- Another options
+        <span class="mx-4 text-gps-purple-sweet">Atajos</span>
+        <ul class="mx-2">
+            <li *ngFor="let short of shortcut; index as i" class="flex gap-4 mb-6 first:mt-4 cursor-pointer"
+                routerLink="{{short.name | lowercase }}">
+                <mat-icon class="!overflow-visible">{{short.icon}}</mat-icon>
+                {{short.name}}
+            </li>
+        </ul> -->
+    </section>
+    <mat-divider></mat-divider>
+    <section class="flex items-center h-1/6" [ngClass]="{
+        'pl-4': isCollapseSidebar,
+        'pl-6': !isCollapseSidebar
+    }">
+        <mat-icon class="cursor-pointer !overflow-visible" (click)="logOut()">
+            logout
+        </mat-icon>
+    </section>
+</article>

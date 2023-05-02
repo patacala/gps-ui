@@ -1,0 +1,6 @@
+export * from './entity/entity.modal'
+export * from './gps/gps.modal'
+export * from './user/user.modal'
+export * from './vehicules/vehicules.modal'
+export * from './classifiers/create-classifier.modal'
+export * from './classifiers/add-option.modal'

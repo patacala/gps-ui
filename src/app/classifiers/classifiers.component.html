@@ -1,0 +1,12 @@
+<section>
+    <header class="pb-4">
+        <p class="text-xl font-semibold">Clasificadores</p>
+        <b class="text-gps-gray-black2">Administra todos tus clasificadores</b>
+    </header>
+    <app-table 
+    [resorce]="classifiers$ | async" 
+    [columns]="tableContent" 
+    [permissions]="['clasifiers_create','clasifiers_update', 'clasifiers_delete']"
+    buttonText="Crear Clasificador Principal"
+        tableText="Todos los clasificadores" (clickBtn)="openCreate()" (actions)="actions($event)"></app-table>
+</section>

@@ -1,0 +1,37 @@
+<section>
+    <header class="flex justify-between">
+        <section class="flex flex-col">
+            <b>Creación de dispositivo GPS</b>
+            <p>Digita los siguiente campos</p>
+        </section>
+        <mat-icon class="text-gps-blue cursor-pointer" (click)="closeModal()">cancel</mat-icon>
+    </header>
+    <mat-divider></mat-divider>
+    <section class="flex flex-col my-6 gap-4" [formGroup]="gpsGroup">
+        <section class="flex gap-6">
+            <app-input label="Marca" class="w-80" formControlName="brand"></app-input>
+            <app-input label="Modelo" class="w-80" formControlName="model"></app-input>
+        </section>
+        <section class="flex gap-6">
+            <app-input label="IMEI" class="w-80" formControlName="imei"></app-input>
+            <app-input label="Numero telefonico" class="w-80" formControlName="phoneNumber"></app-input>
+        </section>
+        <section *ngIf="data" class="overflow-y-scroll h-52">
+            <section class="p-3">
+                <header class="flex justify-center items-center mb-2">
+                    <b>Clasificadores</b>
+                </header>
+                <hr>
+                <app-tree-classifiers (sendClassifiers)="addClassifier($event)"></app-tree-classifiers>
+            </section>
+        </section>
+    </section>
+    <mat-divider></mat-divider>
+    <footer class="flex justify-end items-center gap-6 mt-8">
+        <app-button text="Cancelar" type="white" width="100%" class="w-52" (click)="closeModal()"></app-button>
+        <app-button *ngIf="!data" text="Crear dispositivo" type="blue" width="100%" class="w-52" (click)="gpsCreate()">
+        </app-button>
+        <app-button *ngIf="data" text="Editar dispositivo" type="blue" width="100%" class="w-52" (click)="gpsUpdate()">
+        </app-button>
+    </footer>
+</section>

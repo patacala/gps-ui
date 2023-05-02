@@ -1,0 +1,50 @@
+<section class="flex justify-between gap-1 bg-white shadow-md rounded-lg h-full">
+    <section class="h-full w-full">
+        <mat-drawer-container class="h-full w-full" autosize>
+            <mat-drawer #drawer class="example-sidenav" mode="push" position="start">
+                <section class="p-3">
+                    <header class="flex justify-center items-center mb-2">
+                        <b>Clasificadores</b>
+                    </header>
+                    <hr>
+                    <app-tree-classifiers (sendClassifiers)="saveClassifiers($event)"></app-tree-classifiers>
+                    <div class="flex justify-center w-full mt-5">
+                        <app-button (click)="filterDevices()" text="Filtrar" type="blue" width="100%" class="w-1/2"></app-button>
+                    </div>
+                </section>
+            </mat-drawer>
+            <div class="h-full w-full">
+                <button id="filters" class="text-white bg-gps-blue" (click)="drawer.toggle()">Filters</button>
+                <div id="map" class="h-full w-full"></div>
+            </div>
+            <mat-drawer #detailsVehicule class="p-3" mode="side" position="end">
+                <article *ngIf="deviceSelected$ | async as device"
+                    class="flex flex-col gap-2 items-center justify-between pb-4 text-gps-gray-black2">
+                    <header class="flex justify-center items-center pt-8 ">
+                        <p>
+                            <b>Detalle vehículo</b>
+                            <b (click)="detailsVehicule.toggle()">x</b>
+                        </p>
+                    </header>
+                    <div class="flex flex-col">
+                        <b>Vehículo</b>
+                        <small>{{device.devimark}}</small>
+                    </div>
+                    <div>
+                        <b>IMEI</b>
+                        <p>{{device.deviimei}}</p>
+                    </div>
+                    <div>
+                        <b>Coordenadas</b>
+                        <p>{{device.deviloca[0].delolati}}</p>
+                        <p>{{device.deviloca[0].delolong}}</p>
+                    </div>
+                    <div>
+                        <b>Alertas</b>
+                        <p>No presenta</p>
+                    </div>
+                </article>
+            </mat-drawer>
+        </mat-drawer-container>
+    </section>
+</section>

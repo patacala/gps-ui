@@ -1,0 +1,25 @@
+<section>
+    <header>
+        <h2>Agregar Clasificador</h2>
+    </header>
+    <section class="my-4" [formGroup]="childForm">
+        <label class="flex flex-col gap-5">
+            <app-input label="Nombre de clasificador" formControlName="name"></app-input>
+            <ng-container *ngIf="!data.isChild">
+                <label>
+                    <p>Clasificador padre</p>
+                    <mat-select formControlName="directParent"
+                        class="p-1 border-1 placeholder-pl-4 border-gps-gray-black rounded-md w-80">
+                        <mat-option [value]="0">Padre directo</mat-option>
+                        <mat-option *ngFor="let child of (childs$ | async)?.rows" [value]="child.clvanuid">{{child.clvadesc}}</mat-option>
+                    </mat-select>
+                </label>
+            </ng-container>
+        </label>
+    </section>
+    <footer class="flex gap-2 mt-3">
+        <app-button text="Cancelar" type="white" width="100%" class="w-52" (click)="closeModal()"></app-button>
+        <app-button *ngIf="!data.isChild" text="Crear Opcion" type="blue" width="100%" class="w-52" (click)="addOption()"></app-button>
+        <app-button *ngIf="data.isChild" text="Editar Opcion" type="blue" width="100%" class="w-52" (click)="editOption()"></app-button>
+    </footer>
+</section>

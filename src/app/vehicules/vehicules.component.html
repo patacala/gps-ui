@@ -1,0 +1,12 @@
+<section>
+    <header class="pb-4">
+        <p class="text-xl font-semibold">Vehículos</p>
+        <b class="text-gps-gray-black2">Administra todos los vehículos</b>
+    </header>
+    <app-table 
+    [resorce]="vehicules$ | async" 
+    [columns]="tableContent" 
+    [permissions]="['carrier_create','carrier_update', 'carrier_delete']"
+    (clickBtn)="openCreateVehicule()"
+    buttonText="Crear nuevo" tableText="Todos los vehículos" (actions)="actionsButton($event)" img="vehicules"></app-table>
+</section>

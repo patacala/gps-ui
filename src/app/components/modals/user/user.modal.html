@@ -1,0 +1,51 @@
+<section>
+    <header class="flex justify-between">
+        <section class="flex flex-col">
+            <b>Creación de Usuarios</b>
+            <p>Digita los siguiente campos</p>
+        </section>
+        <mat-divider [vertical]="true" style="height: 3em;"></mat-divider>
+        <section class="flex gap-4 items-center pb-4">
+            <mat-icon [ngClass]="{'text-gps-blue': !showInformation}">chevron_right</mat-icon>
+            <label (click)="showInformation = false" class="cursor-pointer">Informacion</label>
+            <mat-icon [ngClass]="{'text-gps-blue': showInformation}">chevron_right</mat-icon>
+            <label (click)="showInformation = true" class="cursor-pointer">Dispositivos</label>
+        </section>
+        <mat-icon class="text-gps-blue cursor-pointer" (click)="closeModal()">cancel</mat-icon>
+    </header>
+    <mat-divider></mat-divider>
+    <section>
+        <ng-container *ngIf="!showInformation then information else assignVehicle"></ng-container>
+    </section>
+    <mat-divider></mat-divider>
+    <footer class="flex justify-end items-center gap-6 mt-8">
+        <app-button text="Cancelar" type="white" width="100%" class="w-52" (click)="closeModal()"></app-button>
+        <app-button *ngIf="data" text="Editar Usuario" type="blue" width="100%" class="w-52"
+            (click)="editUser(data?.usernuid)"></app-button>
+        <app-button *ngIf="!data" text="Crear Usuario" type="blue" width="100%" class="w-52" (click)="createUser()">
+        </app-button>
+    </footer>
+</section>
+
+<ng-template #information>
+    <section class="flex flex-col my-6 gap-4" [formGroup]="userGroup">
+        <section class="flex gap-6">
+            <app-input label="Nombre completo" class="w-80" formControlName="name"></app-input>
+            <app-input label="Email" class="w-80" formControlName="email" [disabled]="!!data"></app-input>
+        </section>
+        <section class="flex gap-6">
+            <!-- <app-input label="Contraseña" class="w-80" formControlName="password"></app-input> -->
+            <label class="w-80">
+                Permisos
+                <mat-select multiple formControlName="privileges"
+                    class="p-1 mt-3 border-1 placeholder-pl-4 border-gps-gray-black rounded-md">
+                    <mat-option *ngFor="let permiso of permissions" [value]="permiso?.key">{{permiso?.description}}
+                    </mat-option>
+                </mat-select>
+            </label>
+        </section>
+    </section>
+</ng-template>
+<ng-template #assignVehicle>
+    <app-assign-table [columns]="tableContent" [resorce]="vehicules$|async"></app-assign-table>
+</ng-template>

@@ -1,0 +1,15 @@
+<section>
+    <header class="pb-4">
+        <p class="text-xl font-semibold">Entidades</p>
+        <b class="text-gps-gray-black2">Administra tus empresas</b>
+    </header>
+    <app-table 
+    [resorce]="company$ | async" 
+    [columns]="tableContent" 
+    (clickBtn)="openCreateUser()" 
+    buttonText="Crear nuevo" 
+    tableText="Todos las entidades" 
+    (actions)="actionsTable($event)" 
+    [permissions]="['entity_create','entity_update', 'entity_delete']"
+    img="entitys"></app-table>
+</section>
