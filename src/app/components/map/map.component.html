@@ -1,22 +1,72 @@
 <section class="flex justify-between gap-1 bg-white shadow-md rounded-lg h-full">
     <section class="h-full w-full">
         <mat-drawer-container class="h-full w-full" autosize>
-            <mat-drawer #drawer class="example-sidenav" mode="push" position="start">
-                <section class="p-3">
-                    <header class="flex justify-center items-center mb-2">
-                        <b>Clasificadores</b>
-                    </header>
-                    <hr>
-                    <app-tree-classifiers (sendClassifiers)="saveClassifiers($event)"></app-tree-classifiers>
-                    <div class="flex justify-center w-full mt-5">
-                        <app-button (click)="filterDevices()" text="Filtrar" type="blue" width="100%" class="w-1/2"></app-button>
+            <mat-drawer #drawer mode="push">
+                <aside class="aside-map-left">
+                    <section class="classifirs-content pb-2">
+                        <header class="flex justify-center items-center p-2">
+                            <b>Clasificadores</b>
+                        </header>
+                        <hr class="pt-2">
+                        <app-tree-classifiers (sendClassifiers)="saveClassifiers($event)"></app-tree-classifiers>
+                    </section>
+                    
+                    <section class="table-vehicles">
+                        <header class="flex justify-center items-center p-2">
+                            <b>Dispositivos</b>
+                        </header>
+                        <hr class="pt-2">
+
+                        <table mat-table [dataSource]="dataSource" class="w-full">
+                            <!-- Checkbox Column -->
+                            <ng-container matColumnDef="select">
+                              <th mat-header-cell *matHeaderCellDef>
+                                <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                                              [checked]="selection.hasValue() && isAllSelected()"
+                                              [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                              [aria-label]="checkboxLabel()">
+                                </mat-checkbox>
+                              </th>
+                              <td mat-cell *matCellDef="let row">
+                                <mat-checkbox (click)="$event.stopPropagation()"
+                                              (change)="$event ? selection.toggle(row) : null"
+                                              [checked]="selection.isSelected(row)"
+                                              [aria-label]="checkboxLabel(row)">
+                                </mat-checkbox>
+                              </td>
+                            </ng-container>
+                          
+                            <!-- Plate Column -->
+                            <ng-container matColumnDef="imei">
+                              <th mat-header-cell *matHeaderCellDef>IMEI</th>
+                              <td mat-cell *matCellDef="let element">{{element.imei}}</td>
+                            </ng-container>
+                          
+                            <!-- Type Column -->
+                            <ng-container matColumnDef="plate">
+                              <th mat-header-cell *matHeaderCellDef>PLACA</th>
+                              <td mat-cell *matCellDef="let element">{{element.plate}}</td>
+                            </ng-container>
+                          
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                (click)="selection.toggle(row)">
+                            </tr>
+                          </table>
+                    </section>
+
+                    <div class="bts-bottom">
+                        <app-button (click)="filterDevices()" text="Filtrar" type="blue" width="160px" icon="filter_list"></app-button>
+                        <app-button (click)="filterDevices()" text="Excel" type="green" width="110px" icon="cloud_download"></app-button>
                     </div>
-                </section>
+                </aside>
             </mat-drawer>
-            <div class="h-full w-full">
-                <button id="filters" class="text-white bg-gps-blue" (click)="drawer.toggle()">Filters</button>
+
+            <mat-drawer-content>
+                <app-button id="filters" (click)="drawer.toggle()" text="Filtros" type="blue" width="100px" icon="filter_list"></app-button>
                 <div id="map" class="h-full w-full"></div>
-            </div>
+            </mat-drawer-content>
+
             <mat-drawer #detailsVehicule class="p-3" mode="side" position="end">
                 <article *ngIf="deviceSelected$ | async as device"
                     class="flex flex-col gap-2 items-center justify-between pb-4 text-gps-gray-black2">

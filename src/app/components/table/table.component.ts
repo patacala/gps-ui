@@ -65,7 +65,6 @@ export class TableComponent implements OnInit, OnChanges {
       }
     }
 
-
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }

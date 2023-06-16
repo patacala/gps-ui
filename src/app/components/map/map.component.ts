@@ -3,17 +3,48 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
 import { from, interval, mergeMap, Observable, pipe, Subject, Subscription } from 'rxjs';
-import { concatAll, concatMap, filter, finalize, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
+import { concatMap, filter, map, tap, toArray } from 'rxjs/operators';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { SelectionModel } from '@angular/cdk/collections';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
+export interface Vehicle {
+    id: number,
+    imei: string;
+    plate: string;
+}
+
+const VEHICLES: Vehicle[] = [
+    {id: 1, imei: 'IMEI 1', plate: 'PLACA 1'},
+    {id: 2, imei: 'IMEI 2', plate: 'PLACA 2'},
+    {id: 3, imei: 'IMEI 3', plate: 'PLACA 3'},
+    {id: 4, imei: 'IMEI 4', plate: 'PLACA 4'},
+    {id: 5, imei: 'IMEI 5', plate: 'PLACA 5'},
+    {id: 5, imei: 'IMEI 6', plate: 'PLACA 6'},
+    {id: 6, imei: 'IMEI 7', plate: 'PLACA 7'},
+    {id: 7, imei: 'IMEI 8', plate: 'PLACA 8'},
+    {id: 8, imei: 'IMEI 9', plate: 'PLACA 9'},
+    {id: 9, imei: 'IMEI 10', plate: 'PLACA 10'},
+];
+
 @Component({
     selector: 'app-map',
     standalone: true,
-    imports: [MatSidenavModule, TreeComponent, NgIf, AsyncPipe, ButtonComponent],
+    imports: [
+        MatSidenavModule, MatCheckboxModule, 
+        MatTableModule, TreeComponent, 
+        NgIf, AsyncPipe, ButtonComponent
+    ],
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, AfterViewChecked {
+    displayedColumns: string[] = ['select', 'imei', 'plate'];
+    dataSource = new MatTableDataSource<Vehicle>(VEHICLES);
+    selection = new SelectionModel<Vehicle>(true, []);
+    
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
     devices!: Array<any>;
@@ -27,6 +58,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
         tap(devices => this.devices = devices),
     );
     subscriptions: Subscription[] = [];
+    
     constructor(private _map: MapService, private _classifier: ClassifierService) { }
 
     ngOnInit(): void {
@@ -91,5 +123,31 @@ export class MapComponent implements OnInit, AfterViewChecked {
                     )
             )
         }
+    }
+
+    isAllSelected() {
+        const numSelected = this.selection.selected.length;
+        const numRows = this.dataSource.data.length;
+        return numSelected === numRows;
+    }
+
+    toggleAllRows() {
+        if (this.isAllSelected()) {
+          this.selection.clear();
+          return;
+        }
+    
+        this.selection.select(...this.dataSource.data);
+    }
+
+    checkboxLabel(row?: Vehicle): string {
+        if (!row) {
+          return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+        }
+        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+    }
+
+    selectedDatas() {
+        console.log(this.selection);
     }
 }

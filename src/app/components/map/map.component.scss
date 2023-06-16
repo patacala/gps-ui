@@ -7,3 +7,42 @@
     border-radius: 10px;
     padding: 0.7em 1.3em;
 }
+
+.btn-filter {
+    display: flex;
+    justify-content: center;
+}
+
+.aside-map-left {
+    display: flex;
+    position: relative;
+    width: auto;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    
+    .classifirs-content {
+        height: 475px;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+
+    .table-vehicles {
+        position: relative;
+
+        width: 300px;
+        border-left: 1px solid #D0D3D4;
+    }
+
+    .bts-bottom {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      grid-gap: 10px;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 50px;
+      background-color:#FFF;
+    }
+}

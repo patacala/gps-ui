@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   // apiUrl: 'http://44.227.100.80:3000/api',
   // apiUrl: 'https://e202-2800-484-68a-7579-1eea-8484-d9f4-d4b.ngrok.io/api',
-  apiUrl: 'http://localhost:4000/api',
+  //apiUrl: 'http://localhost:4000/api',
+  apiUrl: 'http://190.85.170.13:4000/api'
 };
 
 /*
