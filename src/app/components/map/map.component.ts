@@ -148,6 +148,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     selectedDatas() {
-        console.log(this.selection);
+        console.log(this.selection.selected);
     }
 }
