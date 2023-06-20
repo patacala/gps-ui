@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
@@ -12,7 +12,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { InputComponent } from '../input/input.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormControl, FormGroup, FormGroupDirective, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
 
 export interface Device {
@@ -44,7 +45,7 @@ const DEVICE: Device[] = [
         ButtonComponent, MatFormFieldModule, 
         MatDatepickerModule, MatNativeDateModule,
         FormsModule, ReactiveFormsModule,
-        JsonPipe, DatePipe
+        JsonPipe, DatePipe, MatInputModule
     ],
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
@@ -67,9 +68,11 @@ export class MapComponent implements OnInit, AfterViewChecked {
         tap(devices => this.devices = devices),
     );
     subscriptions: Subscription[] = [];
-    range = new FormGroup({
-        start: new FormControl<Date | null>(null),
-        end: new FormControl<Date | null>(null),
+    formFilter = new FormGroup({
+        plate: new FormControl<String | null>(null),
+        startDateOnly: new FormControl<Date | null>(null),
+        endDateOnly: new FormControl<Date | null>(null),
+        withAlert: new FormControl<Boolean | false>(false)
     });
     
     constructor(private _map: MapService, private _classifier: ClassifierService) { }
@@ -167,5 +170,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
     selectedDevices() {
         console.log(this.selection.selected);
+        console.log(this.formFilter.value);
     }
 }
