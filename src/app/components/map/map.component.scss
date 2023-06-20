@@ -27,6 +27,11 @@
         overflow-y: auto;
     }
 
+    .table-devices,
+    .form-search {
+        border-left: 1px solid #D0D3D4;
+    }
+
     .table-devices {
         position: relative;
         border-left: 1px solid #D0D3D4;

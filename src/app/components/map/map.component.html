@@ -65,16 +65,18 @@
                             <b>Rango de fecha</b>
                         </header>
                         <hr>
-                        <mat-form-field appearance="fill">
-                            <mat-label>Ingresa un rango</mat-label>
-                            <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
-                              <input matStartDate formControlName="start" placeholder="Start date">
-                              <input matEndDate formControlName="end" placeholder="End date">
-                            </mat-date-range-input>
-                            <mat-hint>{{range.value.start | json}} - {{range.value.end | json}}</mat-hint>
-                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #picker></mat-date-range-picker>
-                        </mat-form-field>
+                        <div class="p-2">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Ingresa un rango</mat-label>
+                                <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+                                  <input matStartDate formControlName="start" placeholder="Fecha inicial" (click)="dateTClick()">
+                                  <input matEndDate formControlName="end" placeholder="Fecha final" (click)="dateTClick()">
+                                </mat-date-range-input>
+                                <mat-hint>{{range.value.start | date}} - {{range.value.end | date}}</mat-hint>
+                                <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
+                                <mat-date-range-picker #picker></mat-date-range-picker>
+                            </mat-form-field>
+                        </div>
                     </section>
                     <div class="bts-bottom">
                         <app-button (click)="filterDevices()" text="Filtrar" type="blue" width="160px" icon="filter_list"></app-button>

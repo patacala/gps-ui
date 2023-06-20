@@ -1,10 +1,10 @@
-import { AfterViewChecked, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
 import { from, interval, mergeMap, Observable, pipe, Subject, Subscription } from 'rxjs';
 import { concatMap, filter, map, tap, toArray } from 'rxjs/operators';
-import { AsyncPipe, JsonPipe, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, JsonPipe, NgIf } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -44,7 +44,7 @@ const DEVICE: Device[] = [
         ButtonComponent, MatFormFieldModule, 
         MatDatepickerModule, MatNativeDateModule,
         FormsModule, ReactiveFormsModule,
-        JsonPipe
+        JsonPipe, DatePipe
     ],
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
@@ -68,6 +68,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     );
     subscriptions: Subscription[] = [];
 
+    @ViewChild('dpClick1', { read: ElementRef }) datePicker1:ElementRef = {} as ElementRef;
     range = new FormGroup({
         start: new FormControl<Date | null>(null),
         end: new FormControl<Date | null>(null),
@@ -168,5 +169,11 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
     selectedDevices() {
         console.log(this.selection.selected);
+    }
+
+    dateTClick() {
+        let dpElement: HTMLElement;
+        dpElement = this.datePicker1.nativeElement as HTMLElement;
+        dpElement.click();
     }
 }
