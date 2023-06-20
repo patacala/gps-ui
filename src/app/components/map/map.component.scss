@@ -35,11 +35,32 @@
     .table-devices {
         position: relative;
         border-left: 1px solid #D0D3D4;
-        
+
         .table-devices-regis {
             width: 300px;
             height: 389px;
             overflow-y: auto;
+
+            &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
+                width: 5px; 
+                height: 2px;
+                border-radius: 4px;
+                background-color:#D7DBDD;
+            }
+              
+            &:-moz-scrollbar {/* Firefox */
+                width: 5px; 
+                height: 5px;
+                border-radius: 4px;
+                background-color:#D7DBDD;
+            }
+            
+            &::-ms-scrollbar {/* Internet Explorer, Edge */
+                width: 5px; 
+                height: 5px;
+                border-radius: 4px;
+                background-color:#D7DBDD;
+            }
         }
     }
 
