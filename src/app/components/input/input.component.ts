@@ -24,9 +24,9 @@ export class InputComponent implements OnInit, ControlValueAccessor {
     @Input() placeholder: string = '';
     @Input() type: string = 'text';
     @Input() disabled: boolean = false;
+    @Input() value: string = '';
     onChange: any = (_: any) => { }
     onTouch: any = () => { }
-    value!: string;
     constructor() { }
 
     ngOnInit(): void { }

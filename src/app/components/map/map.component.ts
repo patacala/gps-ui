@@ -4,29 +4,34 @@ import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
 import { from, interval, mergeMap, Observable, pipe, Subject, Subscription } from 'rxjs';
 import { concatMap, filter, map, tap, toArray } from 'rxjs/operators';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe, JsonPipe, NgIf } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { InputComponent } from '../input/input.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormControl, FormGroup, FormGroupDirective, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatNativeDateModule } from '@angular/material/core';
 
-export interface Vehicle {
+export interface Device {
     id: number,
     imei: string;
     plate: string;
 }
 
-const VEHICLES: Vehicle[] = [
-    {id: 1, imei: 'IMEI 1', plate: 'PLACA 1'},
-    {id: 2, imei: 'IMEI 2', plate: 'PLACA 2'},
-    {id: 3, imei: 'IMEI 3', plate: 'PLACA 3'},
+const DEVICE: Device[] = [
+    {id: 1, imei: '868166052489887', plate: 'PLACA 1'},
+    {id: 2, imei: '868166051431047', plate: 'PLACA 2'},
+    {id: 3, imei: '868166051000339', plate: 'PLACA 3'},
     {id: 4, imei: 'IMEI 4', plate: 'PLACA 4'},
     {id: 5, imei: 'IMEI 5', plate: 'PLACA 5'},
-    {id: 5, imei: 'IMEI 6', plate: 'PLACA 6'},
-    {id: 6, imei: 'IMEI 7', plate: 'PLACA 7'},
-    {id: 7, imei: 'IMEI 8', plate: 'PLACA 8'},
-    {id: 8, imei: 'IMEI 9', plate: 'PLACA 9'},
-    {id: 9, imei: 'IMEI 10', plate: 'PLACA 10'},
+    {id: 6, imei: 'IMEI 6', plate: 'PLACA 6'},
+    {id: 7, imei: 'IMEI 7', plate: 'PLACA 7'},
+    {id: 8, imei: 'IMEI 8', plate: 'PLACA 8'},
+    {id: 9, imei: 'IMEI 9', plate: 'PLACA 9'},
+    {id: 10, imei: 'IMEI 10', plate: 'PLACA 10'},
 ];
 
 @Component({
@@ -35,15 +40,19 @@ const VEHICLES: Vehicle[] = [
     imports: [
         MatSidenavModule, MatCheckboxModule, 
         MatTableModule, TreeComponent, 
-        NgIf, AsyncPipe, ButtonComponent
+        InputComponent, NgIf, AsyncPipe, 
+        ButtonComponent, MatFormFieldModule, 
+        MatDatepickerModule, MatNativeDateModule,
+        FormsModule, ReactiveFormsModule,
+        JsonPipe
     ],
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, AfterViewChecked {
     displayedColumns: string[] = ['select', 'imei', 'plate'];
-    dataSource = new MatTableDataSource<Vehicle>(VEHICLES);
-    selection = new SelectionModel<Vehicle>(true, []);
+    dataSource = new MatTableDataSource<Device>(DEVICE);
+    selection = new SelectionModel<Device>(true, []);
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
@@ -58,6 +67,11 @@ export class MapComponent implements OnInit, AfterViewChecked {
         tap(devices => this.devices = devices),
     );
     subscriptions: Subscription[] = [];
+
+    range = new FormGroup({
+        start: new FormControl<Date | null>(null),
+        end: new FormControl<Date | null>(null),
+    });
     
     constructor(private _map: MapService, private _classifier: ClassifierService) { }
 
@@ -140,14 +154,19 @@ export class MapComponent implements OnInit, AfterViewChecked {
         this.selection.select(...this.dataSource.data);
     }
 
-    checkboxLabel(row?: Vehicle): string {
+    checkboxLabel(row?: Device): string {
         if (!row) {
           return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
         }
         return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
     }
 
-    selectedDatas() {
+    applyFilter(event: Event) {
+        const filterValue = (event.target as HTMLInputElement).value;
+        this.dataSource.filter = filterValue.trim().toLowerCase();
+    }
+
+    selectedDevices() {
         console.log(this.selection.selected);
     }
 }
