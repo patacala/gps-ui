@@ -168,6 +168,12 @@ export class MapComponent implements OnInit, AfterViewChecked {
         this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
+    upperCase(event: any) {
+        const input = event.target.value;
+        const uppercase = input.toUpperCase();
+        event.target.value = uppercase;
+    }
+
     // Ejemplo para ver los datos que se deben filtrar
     selectedDevices() {
         const unionDataFilters = [{selectedDevices: this.selection.selected, formFilter: this.formFilter.value}];
