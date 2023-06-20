@@ -62,15 +62,15 @@
                     </section>
                     <section class="form-search">
                         <header class="flex justify-center items-center p-2">
-                            <b>Rango de fecha</b>
+                            <b>Filtro</b>
                         </header>
                         <hr>
                         <div class="p-2">
                             <mat-form-field appearance="fill">
                                 <mat-label>Ingresa un rango</mat-label>
                                 <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
-                                  <input matStartDate formControlName="start" placeholder="Fecha inicial" (click)="dateTClick()">
-                                  <input matEndDate formControlName="end" placeholder="Fecha final" (click)="dateTClick()">
+                                  <input matStartDate formControlName="start" placeholder="Fecha inicial" (click)="picker.open()">
+                                  <input matEndDate formControlName="end" placeholder="Fecha final" (click)="picker.open()">
                                 </mat-date-range-input>
                                 <mat-hint>{{range.value.start | date}} - {{range.value.end | date}}</mat-hint>
                                 <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>

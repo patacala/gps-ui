@@ -67,8 +67,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
         tap(devices => this.devices = devices),
     );
     subscriptions: Subscription[] = [];
-
-    @ViewChild('dpClick1', { read: ElementRef }) datePicker1:ElementRef = {} as ElementRef;
     range = new FormGroup({
         start: new FormControl<Date | null>(null),
         end: new FormControl<Date | null>(null),
@@ -169,11 +167,5 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
     selectedDevices() {
         console.log(this.selection.selected);
-    }
-
-    dateTClick() {
-        let dpElement: HTMLElement;
-        dpElement = this.datePicker1.nativeElement as HTMLElement;
-        dpElement.click();
     }
 }
