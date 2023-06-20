@@ -65,7 +65,7 @@
                             <b>Filtro</b>
                         </header>
                         <hr>
-                        <div class="grid gx-10 p-3" [formGroup]="formFilter">
+                        <div class="grid p-3" [formGroup]="formFilter">
                             <mat-form-field appearance="fill">
                                 <mat-label>Placa</mat-label>
                                 <input matInput formControlName="plate" type="text" #plate>
@@ -82,7 +82,7 @@
                                 <mat-date-range-picker #picker></mat-date-range-picker>
                             </mat-form-field>
 
-                            <mat-checkbox formControlName="withAlert">APLICAR ALERTA</mat-checkbox>
+                            <mat-checkbox class="pt-2" formControlName="withAlert">CON ALERTAS</mat-checkbox>
                         </div>
                     </section>
                     <div class="bts-bottom">

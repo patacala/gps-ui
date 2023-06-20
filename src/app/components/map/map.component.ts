@@ -168,8 +168,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
         this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
+    // Ejemplo para ver los datos que se deben filtrar
     selectedDevices() {
-        console.log(this.selection.selected);
-        console.log(this.formFilter.value);
+        const unionDataFilters = [{selectedDevices: this.selection.selected, formFilter: this.formFilter.value}];
+        console.log(unionDataFilters);
     }
 }
