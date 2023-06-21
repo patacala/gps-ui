@@ -22,9 +22,33 @@
     z-index: 1;
     
     .classifirs-content {
-        height: 475px;
         overflow: hidden;
-        overflow-y: auto;
+
+        .list-tree-regis {
+            height: 420px;
+            overflow-y: auto;
+
+            &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
+                width: 5px; 
+                height: 2px;
+                border-radius: 4px;
+                background-color:#D7DBDD;
+            }
+              
+            &:-moz-scrollbar {/* Firefox */
+                width: 5px; 
+                height: 5px;
+                border-radius: 4px;
+                background-color:#D7DBDD;
+            }
+            
+            &::-ms-scrollbar {/* Internet Explorer, Edge */
+                width: 5px; 
+                height: 5px;
+                border-radius: 4px;
+                background-color:#D7DBDD;
+            }
+        }
     }
 
     .table-devices,
