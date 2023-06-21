@@ -15,7 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
-import { CsvService } from 'src/app/services/csv/csv.service';
+import { UtilsService } from 'src/app/services/utils/utils.service';
 import { Device } from './map.model';
 
 @Component({
@@ -64,7 +64,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
         withAlert: new FormControl<Boolean | false>(false)
     });
     
-    constructor(private _map: MapService, private _classifier: ClassifierService, private _csvService: CsvService) { }
+    constructor(private _map: MapService, private _classifier: ClassifierService, private _utilsService: UtilsService) { }
 
     ngOnInit(): void {
         setTimeout(() => {
@@ -171,7 +171,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
     // Exportar .csv
     saveDataInCSV(name: string, data: Array<any>): void {
-        let csvContent = this._csvService.saveDataInCSV(data);
+        let csvContent = this._utilsService.saveDataInCSV(data);
     
         var hiddenElement = document.createElement('a');
         hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
