@@ -15,25 +15,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
-
-export interface Device {
-    id: number,
-    imei: string;
-    plate: string;
-}
-
-const DEVICE: Device[] = [
-    {id: 1, imei: '868166052489887', plate: 'PLACA 1'},
-    {id: 2, imei: '868166051431047', plate: 'PLACA 2'},
-    {id: 3, imei: '868166051000339', plate: 'PLACA 3'},
-    {id: 4, imei: 'IMEI 4', plate: 'PLACA 4'},
-    {id: 5, imei: 'IMEI 5', plate: 'PLACA 5'},
-    {id: 6, imei: 'IMEI 6', plate: 'PLACA 6'},
-    {id: 7, imei: 'IMEI 7', plate: 'PLACA 7'},
-    {id: 8, imei: 'IMEI 8', plate: 'PLACA 8'},
-    {id: 9, imei: 'IMEI 9', plate: 'PLACA 9'},
-    {id: 10, imei: 'IMEI 10', plate: 'PLACA 10'},
-];
+import { CsvService } from 'src/app/services/csv/csv.service';
+import { Device } from './map.model';
 
 @Component({
     selector: 'app-map',
@@ -52,7 +35,20 @@ const DEVICE: Device[] = [
 })
 export class MapComponent implements OnInit, AfterViewChecked {
     displayedColumns: string[] = ['select', 'imei', 'plate'];
-    dataSource = new MatTableDataSource<Device>(DEVICE);
+    deviceArray: Device[] = [
+        {id: 1, imei: '868166052489887', plate: 'PLACA 1'},
+        {id: 2, imei: '868166051431047', plate: 'PLACA 2'},
+        {id: 3, imei: '868166051000339', plate: 'PLACA 3'},
+        {id: 4, imei: 'IMEI 4', plate: 'PLACA 4'},
+        {id: 5, imei: 'IMEI 5', plate: 'PLACA 5'},
+        {id: 6, imei: 'IMEI 6', plate: 'PLACA 6'},
+        {id: 7, imei: 'IMEI 7', plate: 'PLACA 7'},
+        {id: 8, imei: 'IMEI 8', plate: 'PLACA 8'},
+        {id: 9, imei: 'IMEI 9', plate: 'PLACA 9'},
+        {id: 10, imei: 'IMEI 10', plate: 'PLACA 10'},
+    ];
+    
+    dataSource = new MatTableDataSource<Device>(this.deviceArray);
     selection = new SelectionModel<Device>(true, []);
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
@@ -75,7 +71,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
         withAlert: new FormControl<Boolean | false>(false)
     });
     
-    constructor(private _map: MapService, private _classifier: ClassifierService) { }
+    constructor(private _map: MapService, private _classifier: ClassifierService, private _csvService: CsvService) { }
 
     ngOnInit(): void {
         setTimeout(() => {
@@ -178,5 +174,16 @@ export class MapComponent implements OnInit, AfterViewChecked {
     selectedDevices() {
         const unionDataFilters = [{selectedDevices: this.selection.selected, formFilter: this.formFilter.value}];
         console.log(unionDataFilters);
+    }
+
+    // Exportar .csv
+    saveDataInCSV(name: string, data: Array<any>): void {
+        let csvContent = this._csvService.saveDataInCSV(data);
+    
+        var hiddenElement = document.createElement('a');
+        hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
+        hiddenElement.target = '_blank';
+        hiddenElement.download = name + '.csv';
+        hiddenElement.click();
     }
 }
