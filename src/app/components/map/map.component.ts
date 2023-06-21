@@ -35,7 +35,7 @@ import { Device } from './map.model';
 })
 export class MapComponent implements OnInit, AfterViewChecked {
     displayedColumns: string[] = ['select', 'imei', 'plate'];
-    deviceArray: Device[] = [
+    deviceArray: Array<Device> = [
         {id: 1, imei: '868166052489887', plate: 'PLACA 1'},
         {id: 2, imei: '868166051431047', plate: 'PLACA 2'},
         {id: 3, imei: '868166051000339', plate: 'PLACA 3'},
