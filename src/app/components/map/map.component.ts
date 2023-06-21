@@ -39,13 +39,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
         {id: 1, imei: '868166052489887', plate: 'PLACA 1'},
         {id: 2, imei: '868166051431047', plate: 'PLACA 2'},
         {id: 3, imei: '868166051000339', plate: 'PLACA 3'},
-        {id: 4, imei: 'IMEI 4', plate: 'PLACA 4'},
-        {id: 5, imei: 'IMEI 5', plate: 'PLACA 5'},
-        {id: 6, imei: 'IMEI 6', plate: 'PLACA 6'},
-        {id: 7, imei: 'IMEI 7', plate: 'PLACA 7'},
-        {id: 8, imei: 'IMEI 8', plate: 'PLACA 8'},
-        {id: 9, imei: 'IMEI 9', plate: 'PLACA 9'},
-        {id: 10, imei: 'IMEI 10', plate: 'PLACA 10'},
     ];
     
     dataSource = new MatTableDataSource<Device>(this.deviceArray);
