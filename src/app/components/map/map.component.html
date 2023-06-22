@@ -29,16 +29,17 @@
                                 <ng-container matColumnDef="select">
                                   <th mat-header-cell *matHeaderCellDef>
                                     <mat-checkbox (change)="$event ? toggleAllRows() : null"
-                                                  [checked]="selection.hasValue() && isAllSelected()"
-                                                  [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                                  [checked]="checksDevices.hasValue() && isAllSelected()"
+                                                  [indeterminate]="checksDevices.hasValue() && !isAllSelected()"
                                                   [aria-label]="checkboxLabel()">
                                     </mat-checkbox>
                                   </th>
                                   <td mat-cell *matCellDef="let row">
-                                    <mat-checkbox (click)="$event.stopPropagation()"
-                                                  (change)="$event ? selection.toggle(row) : null"
-                                                  [checked]="selection.isSelected(row)"
-                                                  [aria-label]="checkboxLabel(row)">
+                                    <mat-checkbox 
+                                    (click)="$event.stopPropagation()"
+                                    (change)="$event ? checksDevices.toggle(row) : null"
+                                    [checked]="checksDevices.isSelected(row)"
+                                    [aria-label]="checkboxLabel(row)">
                                     </mat-checkbox>
                                   </td>
                                 </ng-container>
@@ -46,18 +47,18 @@
                                 <!-- Imei Column -->
                                 <ng-container matColumnDef="imei">
                                   <th mat-header-cell *matHeaderCellDef>IMEI</th>
-                                  <td mat-cell *matCellDef="let element">{{element.imei}}</td>
+                                  <td mat-cell *matCellDef="let element">{{element.deviimei}}</td>
                                 </ng-container>
                               
                                 <!-- Plate Column -->
                                 <ng-container matColumnDef="plate">
                                   <th mat-header-cell *matHeaderCellDef>PLACA</th>
-                                  <td mat-cell *matCellDef="let element">{{element.plate}}</td>
+                                  <td mat-cell *matCellDef="let element">{{element.carrlice}}</td>
                                 </ng-container>
                               
                                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                    (click)="selection.toggle(row)">
+                                    (click)="checksDevices.toggle(row)">
                                 </tr>
                               </table>
                         </div>
@@ -89,7 +90,7 @@
                     </section>
                     <div class="bts-bottom">
                         <app-button (click)="filterDevices()" text="Filtrar" type="blue" width="160px" icon="filter_list"></app-button>
-                        <!-- <app-button (click)="selectedDevices()" text="Filtro" type="green" width="110px" icon="cloud_download"></app-button> -->
+                        <app-button (click)="selectedDevices()" text="Filtro" type="green" width="110px" icon="cloud_download"></app-button>
                         <app-button (click)="saveDataInCSV('dispositivos', devicesTable)" text="Csv" type="green" width="110px" icon="cloud_download"></app-button>
                     </div>
                 </aside>

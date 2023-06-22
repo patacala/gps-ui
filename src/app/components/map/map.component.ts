@@ -38,7 +38,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     
     devicesTable: Device[]=[];
     dataSource = new MatTableDataSource<Device>([]);
-    selection = new SelectionModel<Device>(true, []);
+    checksDevices = new SelectionModel<Device>(true, []);
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
@@ -106,7 +106,18 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     filterDevices() {
-        this._classifier.filterByClassifier(this.classifiers).pipe(
+        const filterDataDvs = {
+            classifiers: this.classifiers.flat(),
+            plate: this.formFilter.value.plate,
+            deviceIds: this.checksDevices.selected.map(device => device.devinuid),
+            isAlarm: this.formFilter.value.withAlert,
+            date: {
+                startDate: this.formFilter.value.startDateOnly?.toISOString().slice(0, 10),
+                endDate: this.formFilter.value.endDateOnly?.toISOString().slice(0, 10)
+            }
+        };
+
+        this._classifier.filterByClassifier(filterDataDvs).pipe(
             map((devices: any) => devices.response),
             this.getDevicesLocation(true)
         ).subscribe()
@@ -132,25 +143,25 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     isAllSelected() {
-        const numSelected = this.selection.selected.length;
+        const numSelected = this.checksDevices.selected.length;
         const numRows = this.dataSource.data.length;
         return numSelected === numRows;
     }
 
     toggleAllRows() {
         if (this.isAllSelected()) {
-          this.selection.clear();
+          this.checksDevices.clear();
           return;
         }
     
-        this.selection.select(...this.dataSource.data);
+        this.checksDevices.select(...this.dataSource.data);
     }
 
     checkboxLabel(row?: Device): string {
         if (!row) {
           return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
         }
-        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.devinuid + 1}`;
+        return `${this.checksDevices.isSelected(row) ? 'deselect' : 'select'} row ${row.devinuid + 1}`;
     }
 
     applyFilter(event: Event) {
@@ -164,8 +175,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
         event.target.value = uppercase;
     }
 
-    rowsDeviceTable(devices: Array<any>): { devinuid: number; imei: string; plate: string; }[] {
-        const devicesTable: { devinuid: number; imei: string; plate: string; }[] = [];
+    // Metodo utilizado para obtener los datos de lista devices
+    rowsDeviceTable(devices: Array<any>): { devinuid: number; deviimei: string; carrlice: string; }[] {
+        const devicesTable: { devinuid: number; deviimei: string; carrlice: string; }[] = [];
       
         devices.forEach(device => {
           let carrdevi = 'Sin Asignar';
@@ -175,8 +187,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
       
           devicesTable.push({
             devinuid: device.devinuid,
-            imei: device.deviimei,
-            plate: carrdevi
+            deviimei: device.deviimei,
+            carrlice: carrdevi
           });
         });
         
@@ -185,7 +197,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
       
     // Ejemplo para ver los datos que se deben filtrar
     selectedDevices() {
-        const unionDataFilters = [{selectedDevices: this.selection.selected, formFilter: this.formFilter.value}];
+        const unionDataFilters = [{selectedDevices: this.checksDevices.selected, formFilter: this.formFilter.value}];
         console.log(unionDataFilters);
     }
 
