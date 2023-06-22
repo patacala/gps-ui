@@ -1,5 +1,5 @@
 export interface Device {
-    id: number,
+    devinuid: number,
     imei: string;
     plate: string;
 }

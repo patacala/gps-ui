@@ -14,7 +14,6 @@ export class DeviceService {
 
     getDevice(skip: number = 0) {
         this.http.get(`${this.root}/entity/${this.entityId}?limit=10&offset=${skip}`).pipe(map(({ response }: any) => response)).subscribe(value => {
-            console.log(value)
             this.device$.next(value)
         });
 
@@ -29,7 +28,9 @@ export class DeviceService {
     }
     createDevice(device: IDeviceCreate): Observable<IDeviceResponse> {
         return this.http.post<IDeviceResponse>(`${this.root}/entity/${this.entityId}`, device).pipe(
-            tap(({ response }: any) => this.addItem(response))
+            tap(({ response }: any) => {
+                this.addItem(response) 
+            })
         )
     }
 

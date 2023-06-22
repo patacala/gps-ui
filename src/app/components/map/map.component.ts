@@ -35,13 +35,9 @@ import { Device } from './map.model';
 })
 export class MapComponent implements OnInit, AfterViewChecked {
     displayedColumns: string[] = ['select', 'imei', 'plate'];
-    deviceArray: Array<Device> = [
-        {id: 1, imei: '868166052489887', plate: 'PLACA 1'},
-        {id: 2, imei: '868166051431047', plate: 'PLACA 2'},
-        {id: 3, imei: '868166051000339', plate: 'PLACA 3'},
-    ];
     
-    dataSource = new MatTableDataSource<Device>(this.deviceArray);
+    devicesTable: Device[]=[];
+    dataSource = new MatTableDataSource<Device>([]);
     selection = new SelectionModel<Device>(true, []);
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
@@ -74,7 +70,12 @@ export class MapComponent implements OnInit, AfterViewChecked {
                 this.getDevicesLocation(false),
                 toArray(),
                 tap(devices => this.devices = devices),
-            ).subscribe();
+            ).subscribe((devices) => {
+                // Obtener información de los dispositivos
+                this.devicesTable = this.rowsDeviceTable(devices);
+                this.dataSource.data = this.devicesTable;
+            });
+
             this.subscriptions.push(locationSub$)
         }, 1000);
 
@@ -149,7 +150,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
         if (!row) {
           return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
         }
-        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.devinuid + 1}`;
     }
 
     applyFilter(event: Event) {
@@ -163,6 +164,25 @@ export class MapComponent implements OnInit, AfterViewChecked {
         event.target.value = uppercase;
     }
 
+    rowsDeviceTable(devices: Array<any>): { devinuid: number; imei: string; plate: string; }[] {
+        const devicesTable: { devinuid: number; imei: string; plate: string; }[] = [];
+      
+        devices.forEach(device => {
+          let carrdevi = 'Sin Asignar';
+          if (device.carrdevi && device.carrdevi.carrier.carrlice) {
+            carrdevi = device.carrdevi.carrier.carrlice;
+          }
+      
+          devicesTable.push({
+            devinuid: device.devinuid,
+            imei: device.deviimei,
+            plate: carrdevi
+          });
+        });
+        
+        return devicesTable;
+      }
+      
     // Ejemplo para ver los datos que se deben filtrar
     selectedDevices() {
         const unionDataFilters = [{selectedDevices: this.selection.selected, formFilter: this.formFilter.value}];
