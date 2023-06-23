@@ -106,36 +106,58 @@
                 <div id="map" class="h-full w-full"></div>
             </mat-drawer-content>
 
-            <mat-drawer #detailsVehicule class="p-3" mode="side" position="end">
-                <!-- <article *ngIf="deviceSelected$ | async as device">
-                    <header class="p-2">
-                        <b>Detalle Vehículo</b>
+            <mat-drawer #detailsVehicule mode="side" position="end">
+                <article *ngIf="deviceSelected$ | async as device" class="details-vehicule">
+                    <div class="flex justify-end p-1">
+                        <div class="dt-vh-close" (click)="detailsVehicule.toggle()">
+                            <mat-icon>close</mat-icon>
+                        </div>
+                    </div>
+                    
+                    <header class="dt-vh-header">
+                        <h2 class="h2">Detalle Vehículo</h2>
                     </header>
-                </article> -->
-                <article *ngIf="deviceSelected$ | async as device"
-                    class="flex flex-col gap-2 items-center justify-between pb-4 text-gps-gray-black2">
-                    <header class="flex justify-center items-center pt-8 ">
-                        <p>
-                            <b>Detalle vehículo</b>
-                            <mat-icon (click)="detailsVehicule.toggle()">cancel</mat-icon>
-                        </p>
-                    </header>
-                    <div class="flex flex-col">
-                        <b>Vehículo</b>
-                        <small>{{device.devimark}}</small>
-                    </div>
-                    <div>
-                        <b>IMEI</b>
-                        <p>{{device.deviimei}}</p>
-                    </div>
-                    <div>
-                        <b>Coordenadas</b>
-                        <p>{{device.deviloca[0].delolati}}</p>
-                        <p>{{device.deviloca[0].delolong}}</p>
-                    </div>
-                    <div>
-                        <b>Alertas</b>
-                        <p>No presenta</p>
+                    <div class="dt-vh-content m-2 border">
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>directions_car</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Marca:</b>
+                                <small class="sub-title">{{device.devimark}}</small>
+                            </div>
+                        </div>
+
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>sim_card</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Imei:</b>
+                                <small class="sub-title">{{device.deviimei}}</small>
+                            </div>
+                        </div>
+
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon> location_on</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Localización (Latitud - Longitud):</b>
+                                <small class="pr-1 sub-title">{{device.deviloca[0].delolati}},</small>
+                                <small class="sub-title">{{device.deviloca[0].delolong}}</small>
+                            </div>
+                        </div>
+
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>notification_important</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Alertas:</b>
+                                <small class="pr-1">No presenta</small>
+                            </div>
+                        </div>
                     </div>
                 </article>
             </mat-drawer>

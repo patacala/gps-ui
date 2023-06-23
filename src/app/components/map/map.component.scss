@@ -100,3 +100,68 @@
       background-color:#FFF;
     }
 }
+
+$E5E7E9: #E5E7E9;
+.details-vehicule {
+    width: 300px;
+    overflow: hidden;
+    overflow-y: auto;
+
+    .dt-vh-close {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        background-color:$E5E7E9;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .dt-vh-header {
+        text-align: center;
+    }
+
+    .dt-vh-content {
+        .dt-vh-citem {
+            display: grid;
+            grid-template-columns: 15% 85%;
+            padding: 0.70em;
+
+            .icon,
+            .value {
+                display: flex;
+                align-items: center;
+            }
+
+            .icon {
+                position: relative;
+                justify-content: center;
+
+                mat-icon {
+                    position: relative;
+                    top: -2px;
+                    transform: scale(1.2);
+                }
+            }
+            .value {
+                position: relative;
+                font-size: 1.2em;
+                font-weight: 500;
+
+                .sup-title {
+                    position: absolute;
+                    top: -7px;
+                    left: 0px;
+                    font-size: 0.75rem;
+                    font-weight: bold;
+                }
+
+                .sub-title {
+                    padding-top: 5px;
+                }
+            }
+        }
+    }
+}
