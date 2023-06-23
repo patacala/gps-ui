@@ -15,4 +15,5 @@ export interface LocationData {
     LONGITUD: string;
     "FECHA SISTEMA": string;
     "FECHA REAL": string;
+    VELOCIDAD: string
 }

@@ -128,6 +128,7 @@ $E5E7E9: #E5E7E9;
             display: grid;
             grid-template-columns: 15% 85%;
             padding: 0.70em;
+            border-bottom: 1px solid #E5E7Eb;
 
             .icon,
             .value {
@@ -142,13 +143,12 @@ $E5E7E9: #E5E7E9;
                 mat-icon {
                     position: relative;
                     top: -2px;
-                    transform: scale(1.2);
+                    transform: scale(1.1);
                 }
             }
             .value {
                 position: relative;
                 font-size: 1.2em;
-                font-weight: 500;
 
                 .sup-title {
                     position: absolute;
@@ -159,7 +159,8 @@ $E5E7E9: #E5E7E9;
                 }
 
                 .sub-title {
-                    padding-top: 5px;
+                    padding-top: 10px;
+                    font-weight: 500;
                 }
             }
         }

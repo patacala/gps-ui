@@ -127,7 +127,15 @@
                                 <small class="sub-title">{{device.devimark}}</small>
                             </div>
                         </div>
-
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>money</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Placa:</b>
+                                <small class="sub-title">{{device.carrdevi.carrier?.carrlice}}</small>
+                            </div>
+                        </div>
                         <div class="dt-vh-citem">
                             <div class="icon p-1">
                                 <mat-icon>sim_card</mat-icon>
@@ -137,10 +145,9 @@
                                 <small class="sub-title">{{device.deviimei}}</small>
                             </div>
                         </div>
-
                         <div class="dt-vh-citem">
                             <div class="icon p-1">
-                                <mat-icon> location_on</mat-icon>
+                                <mat-icon>location_on</mat-icon>
                             </div>
                             <div class="value p-1 pl-2">
                                 <b class="sup-title">Localización (Latitud - Longitud):</b>
@@ -148,7 +155,15 @@
                                 <small class="sub-title">{{device.deviloca[0].delolong}}</small>
                             </div>
                         </div>
-
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>trip_origin</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Velocidad:</b>
+                                <small class="sub-title">{{device.deviloca[0].delospee}} KM/H</small>
+                            </div>
+                        </div>
                         <div class="dt-vh-citem">
                             <div class="icon p-1">
                                 <mat-icon>notification_important</mat-icon>

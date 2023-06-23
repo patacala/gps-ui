@@ -85,7 +85,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
         let clickSubs$ = this._map.getVehiculeObs().pipe(
             tap(console.log),
             map(id => this.devices.find(({ devinuid }) => devinuid == id)),
-            tap((device) => this.deviceSelected$.next(device)),
+            tap((device) => { 
+                console.log(device);
+                this.deviceSelected$.next(device) 
+            }),
             map((device) => {
                 let posicion = device.deviloca.filter((p: any) => new Date(p.delofesi).toDateString() === new Date().toDateString());
                 this._map.getLocationWithGap(posicion, device);
@@ -148,7 +151,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
                 delolati: data.deviloca.map((loc: any) => loc.delolati),
                 delolong: data.deviloca.map((loc: any) => loc.delolong),
                 delofesi: data.deviloca.map((loc: any) => loc.delofesi),
-                delotime: data.deviloca.map((loc: any) => loc.delotime)
+                delotime: data.deviloca.map((loc: any) => loc.delotime),
+                delospee: data.deviloca.map((loc: any) => loc.delospee)
             }
         }));  
 
@@ -166,6 +170,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
                     LONGITUD: locations.delolong[index],
                     "FECHA SISTEMA": locations.delofesi[index],
                     "FECHA REAL": locations.delotime[index],
+                    VELOCIDAD: locations.delospee[index],
                 })
             });
         });
