@@ -16,7 +16,8 @@ import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
 import { UtilsService } from 'src/app/services/utils/utils.service';
-import { Device } from './map.model';
+import { Device, LocationData } from './map.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-map',
@@ -28,7 +29,8 @@ import { Device } from './map.model';
         ButtonComponent, MatFormFieldModule, 
         MatDatepickerModule, MatNativeDateModule,
         FormsModule, ReactiveFormsModule,
-        JsonPipe, DatePipe, MatInputModule
+        JsonPipe, DatePipe, MatInputModule,
+        MatIconModule
     ],
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
@@ -37,14 +39,15 @@ export class MapComponent implements OnInit, AfterViewChecked {
     displayedColumns: string[] = ['select', 'imei', 'plate'];
     
     devicesTable: Device[]=[];
+    proFilterDevices: LocationData[] = [];
     dataSource = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true, []);
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
     devices!: Array<any>;
-    deviceSelected$: Subject<any> = new Subject()
-    classifiers!: any
+    deviceSelected$: Subject<any> = new Subject();
+    classifiers!: any;
     imitationRealTime$ = interval(20000).pipe(
         concatMap(v => this._map.getLocationDevices()),
         mergeMap((devices: any) => from(devices.response.rows)),
@@ -105,9 +108,16 @@ export class MapComponent implements OnInit, AfterViewChecked {
         this.classifiers = event
     }
 
+    validDisabledArray(array: Array<any>) {
+        if (typeof(array) !== 'undefined') {
+            if (array.length > 0) return false;
+        }
+        return true;
+    }
+
     filterDevices() {
         const filterDataDvs = {
-            classifiers: this.classifiers.flat(),
+            classifiers: this.classifiers?.flat(),
             plate: this.formFilter.value.plate,
             deviceIds: this.checksDevices.selected.map(device => device.devinuid),
             isAlarm: this.formFilter.value.withAlert,
@@ -120,7 +130,46 @@ export class MapComponent implements OnInit, AfterViewChecked {
         this._classifier.filterByClassifier(filterDataDvs).pipe(
             map((devices: any) => devices.response),
             this.getDevicesLocation(true)
-        ).subscribe()
+        ).subscribe((devices: any) => {
+            this.proFilterDevices = this.processFilterData(devices);
+        });
+    }
+
+    processFilterData(datas: any) {
+        const newArray: LocationData[] = [];
+        const mappedArray = datas.map((data:any) => ({
+            deviimei: data.deviimei,
+            devimark: data.devimark,
+            devimode: data.devimode,
+            deviphon: data.deviphon,
+            carrlice: data.carrdevi.carrier.carrlice,
+            carrtype: data.carrdevi.carrier.carrtype,
+            locations: {
+                delolati: data.deviloca.map((loc: any) => loc.delolati),
+                delolong: data.deviloca.map((loc: any) => loc.delolong),
+                delofesi: data.deviloca.map((loc: any) => loc.delofesi),
+                delotime: data.deviloca.map((loc: any) => loc.delotime)
+            }
+        }));  
+
+        mappedArray.forEach((row: any) => {
+            const locations = row.locations;
+            locations.delolati.forEach((lat: any, index: number) => {
+                newArray.push({
+                    IMEI: row.deviimei,
+                    MARCA: row.devimark,
+                    MODELO: row.devimode,
+                    CELULAR: row.deviphon,
+                    PLACA: row.carrlice,
+                    "TIPO VEHICULO": row.carrtype,
+                    LATITUD: lat,
+                    LONGITUD: locations.delolong[index],
+                    "FECHA SISTEMA": locations.delofesi[index],
+                    "FECHA REAL": locations.delotime[index],
+                })
+            });
+        });
+        return newArray;  
     }
 
     getDevicesLocation(isFilter: boolean) {
@@ -195,12 +244,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
         return devicesTable;
       }
       
-    // Ejemplo para ver los datos que se deben filtrar
-    selectedDevices() {
-        const unionDataFilters = [{selectedDevices: this.checksDevices.selected, formFilter: this.formFilter.value}];
-        console.log(unionDataFilters);
-    }
-
     // Exportar .csv
     saveDataInCSV(name: string, data: Array<any>): void {
         let csvContent = this._utilsService.saveDataInCSV(data);

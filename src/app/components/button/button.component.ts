@@ -13,6 +13,7 @@ export class ButtonComponent implements OnInit {
     @Input() width: string = '50%'
     @Input() text!: string;
     @Input() icon!: string;
+    @Input() disabled: boolean = false;
     public style!: string;
     
     constructor() {}
