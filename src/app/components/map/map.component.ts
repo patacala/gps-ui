@@ -14,10 +14,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 import { Device, LocationData } from './map.model';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
     selector: 'app-map',
@@ -30,7 +31,7 @@ import { MatIconModule } from '@angular/material/icon';
         MatDatepickerModule, MatNativeDateModule,
         FormsModule, ReactiveFormsModule,
         JsonPipe, DatePipe, MatInputModule,
-        MatIconModule
+        MatIconModule, MatSlideToggleModule
     ],
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
@@ -42,6 +43,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
     proFilterDevices: LocationData[] = [];
     dataSource = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true, []);
+    color: ThemePalette = 'accent';
+    checked = false;
+    disabled = false;
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
