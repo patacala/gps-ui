@@ -13,7 +13,7 @@ import { InputComponent } from '../input/input.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 import { Device, LocationData } from './map.model';
@@ -44,8 +44,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
     dataSource = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true, []);
     color: ThemePalette = 'accent';
-    checked = false;
-    disabled = false;
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
@@ -61,9 +59,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
     );
     subscriptions: Subscription[] = [];
     formFilter = new FormGroup({
-        plate: new FormControl<String | null>(null),
-        startDateOnly: new FormControl<Date | null>(null),
-        endDateOnly: new FormControl<Date | null>(null),
+       /*  plate: new FormControl<String | null>(null), */
+        startDateOnly: new FormControl<Date | null>(null, Validators.required),
+        endDateOnly: new FormControl<Date | null>(null, Validators.required),
         withAlert: new FormControl<Boolean | false>(false)
     });
     
@@ -115,17 +113,20 @@ export class MapComponent implements OnInit, AfterViewChecked {
         this.classifiers = event
     }
 
-    validDisabledArray(array: Array<any>) {
-        if (typeof(array) !== 'undefined') {
-            if (array.length > 0) return false;
+    validDisabledArray(...arrays: Array<Array<any>>): boolean {
+        for (const array of arrays) {
+          if (typeof array === 'undefined' || array.length === 0) {
+            return true;
+          }
         }
-        return true;
+        return false;
     }
+      
 
     filterDevices() {
         const filterDataDvs = {
             classifiers: this.classifiers?.flat(),
-            plate: this.formFilter.value.plate,
+            /* plate: this.formFilter.value.plate, */
             deviceIds: this.checksDevices.selected.map(device => device.devinuid),
             isAlarm: this.formFilter.value.withAlert,
             date: {
@@ -133,6 +134,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
                 endDate: this.formFilter.value.endDateOnly?.toISOString().slice(0, 10)
             }
         };
+
+        console.log(filterDataDvs);
 
         this._classifier.filterByClassifier(filterDataDvs).pipe(
             map((devices: any) => devices.response),

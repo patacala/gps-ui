@@ -18,8 +18,8 @@
                             <b>Dispositivos</b>
                         </header>
                         <hr>
-                        <div class="flex flex-column">
-                            <mat-form-field appearance="fill">
+                        <div class="p-2">
+                            <mat-form-field appearance="fill" class="w-full">
                                 <mat-label>Rango de fecha</mat-label>
                                 <mat-date-range-input [rangePicker]="picker">
                                   <input matStartDate formControlName="startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
@@ -30,19 +30,16 @@
                                 <mat-date-range-picker #picker></mat-date-range-picker>
                             </mat-form-field>
                             <mat-slide-toggle
-                                class="pt-2"
                                 formControlName="withAlert"
-                                [color]="color"
-                                [checked]="checked"
-                                [disabled]="disabled">
-                            ALERTAS
+                                [color]="color">
+                                ALERTAS
                             </mat-slide-toggle>
                         </div>
                         
                         <div class="flex justify-center w-full p-2">
                             <input type="text" placeholder="Buscar por imei, placa"
                             (keyup)="applyFilter($event)"
-                            class="w-3/5 p-1 border-1 placeholder-pl-4 border-gps-blue rounded-lg">
+                            class="p-1 ml-3 mr-3 w-full border-1 placeholder-pl-4 border-gps-blue rounded-lg">
                         </div>
                         <div class="table-devices-regis">
                             <table mat-table [dataSource]="dataSource" class="w-full">
@@ -112,8 +109,10 @@
                     </section> -->
                     <div class="bts-bottom">
                         <app-button 
-                        (click)="filterDevices()" text="Filtrar" type="blue" 
-                        width="160px" icon="filter_list" [disabled]="validDisabledArray(classifiers)"></app-button>
+                            (click)="filterDevices()" text="Filtrar" type="blue" 
+                            width="160px" icon="filter_list" 
+                            [disabled]="validDisabledArray(classifiers, checksDevices.selected) || formFilter.invalid">
+                        </app-button>
                         <!-- <app-button (click)="selectedDevices()" text="Filtro" type="green" width="110px" icon="cloud_download"></app-button> -->
                         <app-button 
                         (click)="saveDataInCSV('dispositivos', proFilterDevices)" text="Csv" type="green" 
