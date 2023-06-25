@@ -14,6 +14,6 @@ export interface LocationData {
     LATITUD: string;
     LONGITUD: string;
     "FECHA SISTEMA": string;
-    "FECHA REAL": string;
+    "FECHA REGISTRO": string;
     VELOCIDAD: string
 }

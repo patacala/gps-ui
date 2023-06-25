@@ -87,10 +87,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
         let clickSubs$ = this._map.getVehiculeObs().pipe(
             tap(console.log),
             map(id => this.devices.find(({ devinuid }) => devinuid == id)),
-            tap((device) => { 
-                console.log(device);
-                this.deviceSelected$.next(device) 
-            }),
+            tap((device) => this.deviceSelected$.next(device)),
             map((device) => {
                 let posicion = device.deviloca.filter((p: any) => new Date(p.delofesi).toDateString() === new Date().toDateString());
                 this._map.getLocationWithGap(posicion, device);
@@ -135,8 +132,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
             }
         };
 
-        console.log(filterDataDvs);
-
         this._classifier.filterByClassifier(filterDataDvs).pipe(
             map((devices: any) => devices.response),
             this.getDevicesLocation(true)
@@ -176,7 +171,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
                     LATITUD: lat,
                     LONGITUD: locations.delolong[index],
                     "FECHA SISTEMA": locations.delofesi[index],
-                    "FECHA REAL": locations.delotime[index],
+                    "FECHA REGISTRO": locations.delotime[index],
                     VELOCIDAD: locations.delospee[index],
                 })
             });
