@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { JsonPipe } from '@angular/common';
-import { Component, EventEmitter, Injectable, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Injectable, Input, OnInit, Output } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular/material/tree';
@@ -94,6 +94,7 @@ export class ChecklistDatabase {
     providers: [ChecklistDatabase],
 })
 export class TreeComponent {
+    @Input() activeClassifier: any
     /** Map from flat node to nested node. This helps us finding the nested node to be modified */
     flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
 
@@ -106,16 +107,17 @@ export class TreeComponent {
     /** The new item's name */
     newItemName = '';
 
-    treeControl: FlatTreeControl<TodoItemFlatNode>;
+    treeControl!: FlatTreeControl<TodoItemFlatNode>;
 
-    treeFlattener: MatTreeFlattener<TodoItemNode, TodoItemFlatNode>;
+    treeFlattener!: MatTreeFlattener<TodoItemNode, TodoItemFlatNode>;
 
-    dataSource: MatTreeFlatDataSource<TodoItemNode, TodoItemFlatNode>;
+    dataSource!: MatTreeFlatDataSource<TodoItemNode, TodoItemFlatNode>;
 
     /** The selection for checklist */
     checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
 
     classifiers: Map<string, number[]> = new Map();
+    classifiers2: Map<string, Set<number>> = new Map();
 
     @Output() sendClassifiers: EventEmitter<any> = new EventEmitter();
 
@@ -130,8 +132,9 @@ export class TreeComponent {
         this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
         _database.dataChange.subscribe(data => {
-            console.log(data)
-            this.dataSource.data = data;
+            if (data) this.dataSource.data = data;
+
+            if (this.treeControl.dataNodes && this.activeClassifier) this.checkNodesSelected();
         });
     }
 
@@ -154,15 +157,35 @@ export class TreeComponent {
         flatNode.item = node;
         flatNode.level = level;
         flatNode.expandable = !!node.children?.length;
-
         this.flatNodeMap.set(flatNode, node);
         this.nestedNodeMap.set(node, flatNode);
         return flatNode;
     };
 
+
+    checkNodesSelected() {
+        this.treeControl.dataNodes.map((node: any) => {
+            if (this.activeClassifier.includes(node.item.clvanuid)) {
+                let descendants = this.treeControl.getDescendants(node);
+
+                if (descendants.length > 0) this.checkAllDecendants(descendants);
+
+                this.checklistSelection.select(node);
+                this.checkAllParentsSelection(node);
+            }
+        })
+    }
+
+    checkAllDecendants(descendants: Array<TodoItemFlatNode>) {
+        descendants.map(child => this.checklistSelection.select(child))
+    }
+
     /** Whether all the descendants of the node are selected. */
     descendantsAllSelected(node: TodoItemFlatNode): boolean {
+        if (!this.treeControl.dataNodes) return false;
+
         const descendants = this.treeControl.getDescendants(node);
+
         const descAllSelected =
             descendants.length > 0 &&
             descendants.every(child => {
@@ -173,7 +196,9 @@ export class TreeComponent {
 
     /** Whether part of the descendants are selected */
     descendantsPartiallySelected(node: TodoItemFlatNode): boolean {
+        if (!this.treeControl.dataNodes) return false;
         const descendants = this.treeControl.getDescendants(node);
+
         const result = descendants.some(child => this.checklistSelection.isSelected(child));
         return result && !this.descendantsAllSelected(node);
     }
@@ -197,23 +222,85 @@ export class TreeComponent {
         this.checkAllParentsSelection(node);
     }
 
-    /* Checks all the parents when a leaf node is selected/unselected */
-    checkAllParentsSelection(node: TodoItemFlatNode): void {
-        let name = (node.item as any).clvadesc;
+
+    getParentName(node: TodoItemFlatNode) {
         let parent: TodoItemFlatNode | null = this.getParentNode(node);
-        this.classifiers.set(name, [(node.item as any).clvanuid]);
+        let name = '';
 
         while (parent) {
-            if (this.classifiers.has(name) && (parent.item as any).clvanuid) {
-                this.classifiers.set(name, [...this.classifiers.get(name) as number[], (parent.item as any).clvanuid])
+            // @ts-ignore
+            if (!this.getParentNode(parent)) {
+                name = (parent.item as any).clasdesc;
+
+                return name;
             }
 
-            this.checkRootNodeSelection(parent);
             parent = this.getParentNode(parent);
         }
 
-        if(!this.checklistSelection.isSelected(node)) this.classifiers.delete(name);
+        if (!parent) return (node.item as any).clasdesc
+    }
 
+    addClassifiers(node: TodoItemFlatNode) {
+        let parent: TodoItemFlatNode | null = this.getParentNode(node);
+        let ids: Set<number> = new Set();
+        let parentName = this.getParentName(node);
+
+        if (!parent) {
+            let name = (node.item as any).clasdesc;
+            // @ts-ignore
+            this.classifiers2.set(name, new Set([node.item.clasnuid]));
+
+            let descendants = this.treeControl.getDescendants(node);
+
+            descendants.length > 0 && descendants.map(child => this.classifiers2.get(name)?.add(
+                (child.item as any).clvanuid
+            ))
+        } else {
+            // @ts-ignore
+            ids.add(node.item.clvanuid)
+
+            while (parent) {
+                // @ts-ignore
+                parent.item.clvanuid && ids.add(parent.item.clvanuid);
+
+                parent = this.getParentNode(parent);
+            }
+        }
+        // Create a Set or push into existing Set
+        // @ts-ignore
+        this.classifiers2.set(parentName, this.classifiers2.has(parentName) ? this.classifiers2.get(parentName).add(...Array.from(ids)) : ids);
+    }
+
+    deleteClassifiers(node: TodoItemFlatNode) {
+        let name = this.getParentName(node);
+
+        // Delete whole Set
+        if ((node.item as any).clasdesc === name) {
+            this.classifiers2.delete(name);
+
+            return;
+        }
+
+        // Delete an ID
+        this.classifiers2.has(name) ? this.classifiers2.get(name)?.delete((node.item as any).clvanuid) : null;
+    }
+
+
+
+    /* Checks all the parents when a leaf node is selected/unselected */
+    checkAllParentsSelection(node: TodoItemFlatNode): void {
+        let parent: TodoItemFlatNode | null = this.getParentNode(node);
+
+
+        while (parent) {
+            this.checkRootNodeSelection(parent);
+
+            // End while
+            parent = this.getParentNode(parent);
+        }
+
+        !this.checklistSelection.isSelected(node) ? this.deleteClassifiers(node) : this.addClassifiers(node);
         this.saveClassifiers();
     }
 
@@ -253,26 +340,10 @@ export class TreeComponent {
         return null;
     }
 
-    /** Select the category so we can insert the new item. */
-    addNewItem(node: TodoItemFlatNode) {
-        const parentNode = this.flatNodeMap.get(node);
-        this._database.insertItem(parentNode!, '');
-        this.treeControl.expand(node);
-    }
+    saveClassifiers() {
+        let sets = Object.fromEntries(this.classifiers2)
+        let arrIds = Object.keys(sets).map(key => Array.from(sets[key]));
 
-    /** Save the node to database */
-    saveNode(node: TodoItemFlatNode, itemValue: string) {
-        const nestedNode = this.flatNodeMap.get(node);
-        this._database.updateItem(nestedNode!, itemValue);
+        this.sendClassifiers.emit(arrIds)
     }
-
-    saveClassifiers(){
-        let ids: number[][] = [];
-        
-        this.classifiers.forEach(id => {
-            ids.push(id)
-        });
-        console.log(ids)
-        this.sendClassifiers.emit(ids)
-    }  
 }

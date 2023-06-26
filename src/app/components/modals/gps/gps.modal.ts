@@ -43,7 +43,7 @@ export class GpsModal implements OnInit {
             if (this.data.clasdevi.length > 0) {
                 this.classifiers$ = from(this.data.clasdevi)
                     .pipe(
-                        map((classifier: any) => classifier.classvalue.clvanuid),
+                        map((classifier: any) => classifier.clvaclde),
                         toArray()
                     );
             }
@@ -73,7 +73,6 @@ export class GpsModal implements OnInit {
     gpsUpdate() {
         const deviceUpdate = this.gpsGroup.getRawValue();
 
-        console.log(deviceUpdate)
         this._device.updateDevice(deviceUpdate, this.data.devinuid).subscribe(() => {
             this._snack.showSuccess('Dispositivo editado correctamente');
 
