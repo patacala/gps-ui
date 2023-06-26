@@ -1,0 +1,40 @@
+.dt-vh-citem {
+                display: grid;
+                grid-template-columns: 15% 85%;
+                padding: 0.70em;
+                border-bottom: 1px solid #E5E7Eb;
+
+                .icon,
+                .value {
+                    display: flex;
+                    align-items: center;
+                }
+
+                .icon {
+                    position: relative;
+                    justify-content: center;
+
+                    mat-icon {
+                        position: relative;
+                        top: -2px;
+                        transform: scale(1.1);
+                    }
+                }
+                .value {
+                    position: relative;
+                    font-size: 1.2em;
+
+                    .sup-title {
+                        position: absolute;
+                        top: -7px;
+                        left: 0px;
+                        font-size: 0.75rem;
+                        font-weight: bold;
+                    }
+
+                    .sub-title {
+                        padding-top: 10px;
+                        font-weight: 500;
+                    }
+                }
+            }

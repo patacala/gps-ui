@@ -21,6 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
+import { ItemDtDvComponent } from '../item-dt-dv/item-dt-dv.component';
 
 @Component({
     selector: 'app-map',
@@ -34,7 +35,7 @@ import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
         FormsModule, ReactiveFormsModule,
         JsonPipe, DatePipe, MatInputModule,
         MatIconModule, MatSlideToggleModule,
-        MatDialogModule
+        MatDialogModule, ItemDtDvComponent
     ],
     providers: [DatePipe],
     templateUrl: './map.component.html',
@@ -145,6 +146,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
             map((devices: any) => devices.response),
             this.getDevicesLocation(true)
         ).subscribe((devices: any) => {
+            console.log('Inicio array devices filtro');
+            console.log(devices);
+            console.log('Fin array devices filtro');
             this.proFilterDevices = this.processFilterData(devices);
         });
     }
@@ -272,11 +276,254 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     openDialogHistory() {
-        this.dialog.open(DataTimeHComponent, {
-            data: {
-              animal: 'panda',
+        const locations = [
+            {
+                "delofesi": "2023-06-26 15:57:38",
+                "delonuid": 15324,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "001",
+                "delotime": "230626155738",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205738.00",
+                "delosigc": "A",
+                "delolati": "10.950521",
+                "delolaor": "N",
+                "delolong": "-74.791963",
+                "deloloor": "W",
+                "delospee": "0",
+                "delodat1": "",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
             },
-        });
+            {
+                "delofesi": "2023-06-26 15:57:38",
+                "delonuid": 15322,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "001",
+                "delotime": "230626155738",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205738.00",
+                "delosigc": "A",
+                "delolati": "10.950521",
+                "delolaor": "N",
+                "delolong": "-74.791963",
+                "deloloor": "W",
+                "delospee": "0",
+                "delodat1": "",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
+            },
+            {
+                "delofesi": "2023-06-26 15:57:38",
+                "delonuid": 15323,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "001",
+                "delotime": "230626155738",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205738.00",
+                "delosigc": "A",
+                "delolati": "10.950521",
+                "delolaor": "N",
+                "delolong": "-74.791963",
+                "deloloor": "W",
+                "delospee": "0",
+                "delodat1": "",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
+            },
+            {
+                "delofesi": "2023-06-26 15:52:54",
+                "delonuid": 15321,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "acc off",
+                "delotime": "230626155253",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205253.00",
+                "delosigc": "A",
+                "delolati": "10.950521",
+                "delolaor": "N",
+                "delolong": "-74.792007",
+                "deloloor": "W",
+                "delospee": "0",
+                "delodat1": "",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
+            },
+            {
+                "delofesi": "2023-06-26 15:52:54",
+                "delonuid": 15320,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "acc on",
+                "delotime": "230626155253",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205253.00",
+                "delosigc": "A",
+                "delolati": "10.950521",
+                "delolaor": "N",
+                "delolong": "-74.792007",
+                "deloloor": "W",
+                "delospee": "0",
+                "delodat1": "",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
+            },
+            {
+                "delofesi": "2023-06-26 15:52:52",
+                "delonuid": 15319,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "acc on",
+                "delotime": "230626155251",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205251.00",
+                "delosigc": "A",
+                "delolati": "10.95052",
+                "delolaor": "N",
+                "delolong": "-74.792008",
+                "deloloor": "W",
+                "delospee": "0",
+                "delodat1": "",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
+            },
+            {
+                "delofesi": "2023-06-26 15:52:48",
+                "delonuid": 15318,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "acc off",
+                "delotime": "230626155248",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205248.00",
+                "delosigc": "A",
+                "delolati": "10.950517",
+                "delolaor": "N",
+                "delolong": "-74.792017",
+                "deloloor": "W",
+                "delospee": "1.85",
+                "delodat1": "84.89",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
+            },
+            {
+                "delofesi": "2023-06-26 15:52:38",
+                "delonuid": 15317,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "acc on",
+                "delotime": "230626155238",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205238.00",
+                "delosigc": "A",
+                "delolati": "10.950542",
+                "delolaor": "N",
+                "delolong": "-74.792098",
+                "deloloor": "W",
+                "delospee": "0",
+                "delodat1": "",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
+            },
+            {
+                "delofesi": "2023-06-26 15:52:37",
+                "delonuid": 15316,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "acc off",
+                "delotime": "230626155237",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205237.00",
+                "delosigc": "A",
+                "delolati": "10.950542",
+                "delolaor": "N",
+                "delolong": "-74.792096",
+                "deloloor": "W",
+                "delospee": "0",
+                "delodat1": "",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
+            },
+            {
+                "delofesi": "2023-06-26 15:52:21",
+                "delonuid": 15315,
+                "devidelo": 8,
+                "delotinu": "2023-06-26",
+                "delokeyw": "acc on",
+                "delotime": "230626155221",
+                "delosimc": "",
+                "delosign": "F",
+                "delohour": "205221.00",
+                "delosigc": "A",
+                "delolati": "10.950485",
+                "delolaor": "N",
+                "delolong": "-74.792096",
+                "deloloor": "W",
+                "delospee": "0",
+                "delodat1": "",
+                "delodat2": "8",
+                "deloacc": "1",
+                "delodoor": "0",
+                "delodat3": null,
+                "delodat4": null,
+                "delodat5": null
+            }
+        ]
+        this._map.drawRoute(locations);
+        /* this.dialog.open(DataTimeHComponent, {
+            data: {
+              
+            },
+        }); */
     }
 
     formatTimestamp(timestamp: string): string {

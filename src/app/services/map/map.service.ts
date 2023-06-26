@@ -48,7 +48,6 @@ export class MapService {
         })
 
         this.mapDevices.set(id, marker);
-
         this.centerMapOnMarkers();
     }
 
@@ -56,7 +55,6 @@ export class MapService {
         for(let key of this.routeOfMarkers.keys()){
             // @ts-ignore
             if(!this.routeOfMarkers.get(key)?.at(0).getMap()) continue;
-
             this.routeOfMarkers.get(key)?.map(m => m.setMap(null))
         }
 
@@ -91,22 +89,59 @@ export class MapService {
     }
 
     drawRoute(points: Array<any>) {
-        console.log(points)
         let waypoints = [];
         for (let position of points) {
-            let wayp = [Number(position.delolati), Number(position.delolong)]
-            waypoints.push(...wayp)
+            let wayp = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
+            waypoints.push(wayp)
         }
-        console.log(waypoints)
+ 
         const polyline = new google.maps.Polyline({
-            // path: waypoints,
+            path: waypoints,
             geodesic: true,
-            strokeColor: '#FF0000',
+            strokeColor: '#3498DB',
             strokeOpacity: 1.0,
             strokeWeight: 2
         })
 
         polyline.setMap(this.map)
+
+        // Colocar icono en cada punto de ubicación
+        const markers = [];
+        for (const waypoint of waypoints) {
+            const marker = new google.maps.Marker({
+                position: waypoint,
+                map: this.map,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,  // Utilizar un círculo como icono
+                    fillColor: '#3498DB',
+                    fillOpacity: 1.0,
+                    strokeWeight: 0,
+                    scale: 3  // Tamaño del icono
+                }
+            });
+
+            markers.push(marker);
+            const infoWindow = new google.maps.InfoWindow({
+                content: 'Información del dispositivo.'
+            });
+        
+            marker.addListener('mouseover', () => {
+                infoWindow.open(this.map, marker);
+            });
+        
+            marker.addListener('mouseout', () => {
+                infoWindow.close();
+            });
+
+            // Crear un límite para ajustar el zoom
+            const bounds = new google.maps.LatLngBounds();
+            for (const waypoint of waypoints) {
+                bounds.extend(waypoint);
+            }
+
+            // Ajustar el zoom para mostrar la ruta y los marcadores
+            this.map.fitBounds(bounds);
+        }
     }
 
     centerMapOnMarkers() {
