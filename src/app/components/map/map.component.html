@@ -127,74 +127,84 @@
             </mat-drawer-content>
 
             <mat-drawer #detailsVehicule mode="side" position="end">
-                <article *ngIf="deviceSelected$ | async as device" class="details-vehicule">
+                <aside class="details-vehicle m-2">
                     <div class="flex justify-end p-1">
                         <div class="dt-vh-close" (click)="detailsVehicule.toggle()">
                             <mat-icon>close</mat-icon>
                         </div>
                     </div>
-                    
-                    <header class="dt-vh-header">
+                    <header class="flex justify-center">
                         <h2 class="h2">Detalle Vehículo</h2>
                     </header>
-                    <div class="dt-vh-content m-2 border">
-                        <div class="dt-vh-citem">
-                            <div class="icon p-1">
-                                <mat-icon>directions_car</mat-icon>
+
+                    <article *ngIf="deviceSelected$ | async as device" class="dt-vh-info">
+                        <div class="dt-vh-content border">
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>directions_car</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Marca:</b>
+                                    <small class="sub-title">{{device.devimark}}</small>
+                                </div>
                             </div>
-                            <div class="value p-1 pl-2">
-                                <b class="sup-title">Marca:</b>
-                                <small class="sub-title">{{device.devimark}}</small>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>money</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Placa:</b>
+                                    <small class="sub-title" *ngIf="device.carrdevi?.carrier">{{device.carrdevi.carrier.carrlice}}</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>sim_card</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Imei:</b>
+                                    <small class="sub-title">{{device.deviimei}}</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>location_on</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Localización (Latitud - Longitud):</b>
+                                    <small class="pr-1 sub-title">{{device.deviloca[0].delolati}},</small>
+                                    <small class="sub-title">{{device.deviloca[0].delolong}}</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>trip_origin</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Velocidad:</b>
+                                    <small class="sub-title">{{device.deviloca[0].delospee}} KM/H</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>notification_important</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Alertas:</b>
+                                    <small class="pr-1">No presenta</small>
+                                </div>
                             </div>
                         </div>
-                        <div class="dt-vh-citem">
-                            <div class="icon p-1">
-                                <mat-icon>money</mat-icon>
-                            </div>
-                            <div class="value p-1 pl-2">
-                                <b class="sup-title">Placa:</b>
-                                <small class="sub-title" *ngIf="device.carrdevi?.carrier">{{device.carrdevi.carrier.carrlice}}</small>
-                            </div>
-                        </div>
-                        <div class="dt-vh-citem">
-                            <div class="icon p-1">
-                                <mat-icon>sim_card</mat-icon>
-                            </div>
-                            <div class="value p-1 pl-2">
-                                <b class="sup-title">Imei:</b>
-                                <small class="sub-title">{{device.deviimei}}</small>
-                            </div>
-                        </div>
-                        <div class="dt-vh-citem">
-                            <div class="icon p-1">
-                                <mat-icon>location_on</mat-icon>
-                            </div>
-                            <div class="value p-1 pl-2">
-                                <b class="sup-title">Localización (Latitud - Longitud):</b>
-                                <small class="pr-1 sub-title">{{device.deviloca[0].delolati}},</small>
-                                <small class="sub-title">{{device.deviloca[0].delolong}}</small>
-                            </div>
-                        </div>
-                        <div class="dt-vh-citem">
-                            <div class="icon p-1">
-                                <mat-icon>trip_origin</mat-icon>
-                            </div>
-                            <div class="value p-1 pl-2">
-                                <b class="sup-title">Velocidad:</b>
-                                <small class="sub-title">{{device.deviloca[0].delospee}} KM/H</small>
-                            </div>
-                        </div>
-                        <div class="dt-vh-citem">
-                            <div class="icon p-1">
-                                <mat-icon>notification_important</mat-icon>
-                            </div>
-                            <div class="value p-1 pl-2">
-                                <b class="sup-title">Alertas:</b>
-                                <small class="pr-1">No presenta</small>
-                            </div>
-                        </div>
+                    </article>
+
+                    <div class="btn-history">
+                        <app-button 
+                            (click)="openDialogHistory()"
+                            text="Historial" type="white" 
+                            width="130px" icon="access_time">
+                        </app-button>
                     </div>
-                </article>
+                </aside>
             </mat-drawer>
         </mat-drawer-container>
     </section>

@@ -19,6 +19,8 @@ import { UtilsService } from 'src/app/services/utils/utils.service';
 import { Device, LocationData } from './map.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
 
 @Component({
     selector: 'app-map',
@@ -31,7 +33,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
         MatDatepickerModule, MatNativeDateModule,
         FormsModule, ReactiveFormsModule,
         JsonPipe, DatePipe, MatInputModule,
-        MatIconModule, MatSlideToggleModule
+        MatIconModule, MatSlideToggleModule,
+        MatDialogModule
     ],
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
@@ -65,7 +68,12 @@ export class MapComponent implements OnInit, AfterViewChecked {
         withAlert: new FormControl<Boolean | false>(false)
     });
     
-    constructor(private _map: MapService, private _classifier: ClassifierService, private _utilsService: UtilsService) { }
+    constructor(
+        private _map: MapService, 
+        private _classifier: ClassifierService, 
+        private _utilsService: UtilsService,
+        public dialog: MatDialog
+    ) {}
 
     ngOnInit(): void {
         setTimeout(() => {
@@ -119,7 +127,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
         return false;
     }
       
-
     filterDevices() {
         const filterDataDvs = {
             classifiers: this.classifiers?.flat(),
@@ -260,5 +267,13 @@ export class MapComponent implements OnInit, AfterViewChecked {
         hiddenElement.target = '_blank';
         hiddenElement.download = name + '.csv';
         hiddenElement.click();
+    }
+
+    openDialogHistory() {
+        this.dialog.open(DataTimeHComponent, {
+            data: {
+              animal: 'panda',
+            },
+        });
     }
 }

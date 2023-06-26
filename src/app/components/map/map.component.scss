@@ -102,11 +102,9 @@
     }
 }
 
-$E5E7E9: #E5E7E9;
-.details-vehicule {
-    width: 300px;
+.details-vehicle {
+    $E5E7E9: #E5E7E9;
     overflow: hidden;
-    overflow-y: auto;
 
     .dt-vh-close {
         display: flex;
@@ -120,50 +118,81 @@ $E5E7E9: #E5E7E9;
         cursor: pointer;
     }
 
-    .dt-vh-header {
-        text-align: center;
-    }
+    .dt-vh-info {
+        width: 300px;
+        height: 380px;
+        overflow: hidden;
+        overflow-y: auto;
 
-    .dt-vh-content {
-        .dt-vh-citem {
-            display: grid;
-            grid-template-columns: 15% 85%;
-            padding: 0.70em;
-            border-bottom: 1px solid #E5E7Eb;
+        &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
+            width: 5px; 
+            height: 2px;
+            border-radius: 4px;
+            background-color:#D7DBDD;
+        }
+          
+        &:-moz-scrollbar {/* Firefox */
+            width: 5px; 
+            height: 5px;
+            border-radius: 4px;
+            background-color:#D7DBDD;
+        }
+        
+        &::-ms-scrollbar {/* Internet Explorer, Edge */
+            width: 5px; 
+            height: 5px;
+            border-radius: 4px;
+            background-color:#D7DBDD;
+        }
 
-            .icon,
-            .value {
-                display: flex;
-                align-items: center;
-            }
+        .dt-vh-content {
+            .dt-vh-citem {
+                display: grid;
+                grid-template-columns: 15% 85%;
+                padding: 0.70em;
+                border-bottom: 1px solid #E5E7Eb;
 
-            .icon {
-                position: relative;
-                justify-content: center;
+                .icon,
+                .value {
+                    display: flex;
+                    align-items: center;
+                }
 
-                mat-icon {
+                .icon {
                     position: relative;
-                    top: -2px;
-                    transform: scale(1.1);
-                }
-            }
-            .value {
-                position: relative;
-                font-size: 1.2em;
+                    justify-content: center;
 
-                .sup-title {
-                    position: absolute;
-                    top: -7px;
-                    left: 0px;
-                    font-size: 0.75rem;
-                    font-weight: bold;
+                    mat-icon {
+                        position: relative;
+                        top: -2px;
+                        transform: scale(1.1);
+                    }
                 }
+                .value {
+                    position: relative;
+                    font-size: 1.2em;
 
-                .sub-title {
-                    padding-top: 10px;
-                    font-weight: 500;
+                    .sup-title {
+                        position: absolute;
+                        top: -7px;
+                        left: 0px;
+                        font-size: 0.75rem;
+                        font-weight: bold;
+                    }
+
+                    .sub-title {
+                        padding-top: 10px;
+                        font-weight: 500;
+                    }
                 }
             }
         }
+    }
+
+    .btn-history {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 42px;
     }
 }
