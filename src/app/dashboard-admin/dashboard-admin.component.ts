@@ -4,11 +4,16 @@ import { MapComponent, StatisticComponent, UserAddedComponent } from '@component
 import { UserService, VehiculeService } from '@services'
 import { forkJoin, Observable } from 'rxjs';
 import { map, mergeMap, tap} from 'rxjs/operators';
+import { TableHistoryComponent } from '../components/table-history/table-history.component';
 @Component({
   selector: 'app-dashboard-admin',
   templateUrl: './dashboard-admin.component.html',
   standalone: true,
-  imports: [CommonModule, MapComponent, StatisticComponent, UserAddedComponent]
+  imports: [
+    CommonModule, MapComponent, 
+    StatisticComponent, UserAddedComponent, 
+    TableHistoryComponent
+  ]
 })
 export class DashboardAdminComponent implements OnInit {
   data$!: Observable<any>

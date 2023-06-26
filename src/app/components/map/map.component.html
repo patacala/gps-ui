@@ -127,7 +127,7 @@
             </mat-drawer-content>
 
             <mat-drawer #detailsVehicule mode="side" position="end">
-                <aside class="details-vehicle m-2">
+                <aside class="details-vehicle mt-2 ml-2 mr-2">
                     <div class="flex justify-end p-1">
                         <div class="dt-vh-close" (click)="detailsVehicule.toggle()">
                             <mat-icon>close</mat-icon>
@@ -139,15 +139,6 @@
 
                     <article *ngIf="deviceSelected$ | async as device" class="dt-vh-info">
                         <div class="dt-vh-content border">
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>directions_car</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Marca:</b>
-                                    <small class="sub-title">{{device.devimark}}</small>
-                                </div>
-                            </div>
                             <div class="dt-vh-citem">
                                 <div class="icon p-1">
                                     <mat-icon>money</mat-icon>
@@ -168,6 +159,15 @@
                             </div>
                             <div class="dt-vh-citem">
                                 <div class="icon p-1">
+                                    <mat-icon>settings_input_antenna</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Marca:</b>
+                                    <small class="sub-title">{{device.devimark}}</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
                                     <mat-icon>location_on</mat-icon>
                                 </div>
                                 <div class="value p-1 pl-2">
@@ -183,6 +183,24 @@
                                 <div class="value p-1 pl-2">
                                     <b class="sup-title">Velocidad:</b>
                                     <small class="sub-title">{{device.deviloca[0].delospee}} KM/H</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>update</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Fecha GPS:</b>
+                                    <small class="sub-title">{{ formatTimestamp(device.deviloca[0].delotime) | date:'medium' }}</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>date_range</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Fecha sistema:</b>
+                                    <small class="sub-title">{{device.deviloca[0].delofesi | date:'medium' }}</small>
                                 </div>
                             </div>
                             <div class="dt-vh-citem">

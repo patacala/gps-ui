@@ -36,6 +36,7 @@ import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
         MatIconModule, MatSlideToggleModule,
         MatDialogModule
     ],
+    providers: [DatePipe],
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
 })
@@ -72,7 +73,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
         private _map: MapService, 
         private _classifier: ClassifierService, 
         private _utilsService: UtilsService,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private datePipe: DatePipe
     ) {}
 
     ngOnInit(): void {
@@ -275,5 +277,19 @@ export class MapComponent implements OnInit, AfterViewChecked {
               animal: 'panda',
             },
         });
+    }
+
+    formatTimestamp(timestamp: string): string {
+        const year = timestamp.slice(0, 2);
+        const month = timestamp.slice(2, 4);
+        const day = timestamp.slice(4, 6);
+        const hour = timestamp.slice(6, 8);
+        const min = timestamp.slice(8, 10);
+        const sec = timestamp.slice(10, 12);
+    
+        const formattedDate = `20${year}-${month}-${day} ${hour}:${min}:${sec}`;
+        const date = new Date(formattedDate);
+    
+        return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') || '';
     }
 }
