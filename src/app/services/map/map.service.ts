@@ -116,7 +116,7 @@ export class MapService {
                     fillColor: '#3498DB',
                     fillOpacity: 1.0,
                     strokeWeight: 0,
-                    scale: 3  // Tamaño del icono
+                    scale: 5  // Tamaño del icono
                 }
             });
 
