@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { HistoryLoc } from './table-history.model';
+import { DeviceService, MapService } from '@services';
 
 @Component({
   selector: 'app-table-history',
@@ -14,10 +15,15 @@ export class TableHistoryComponent implements OnInit {
   dataSource = new MatTableDataSource<HistoryLoc>([]);
   displayedColumns: string[] = ['dloclati', 'dloclong', 'dspeed', 'delotime', 'delofesi'];
   
-  constructor() { }
+  constructor(
+    private _device: DeviceService,
+    private _map: MapService
+  ) {}
 
   ngOnInit(): void {
-    this.dataSource.data = [];
+    this._device.getHistoryLoc().subscribe((data: HistoryLoc[]) => {
+      this.dataSource.data = data;
+      this._map.drawRoute(data);
+    });
   }
-
 }

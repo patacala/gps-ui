@@ -34,7 +34,7 @@ export class MapService {
             map: this.map,
             position: new google.maps.LatLng(lat, lng),
             icon: {
-                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
                 scaledSize: new google.maps.Size(40, 40),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(20, 40)
@@ -112,17 +112,17 @@ export class MapService {
                 position: waypoint,
                 map: this.map,
                 icon: {
-                    path: google.maps.SymbolPath.CIRCLE,  // Utilizar un círculo como icono
-                    fillColor: '#3498DB',
-                    fillOpacity: 1.0,
-                    strokeWeight: 0,
-                    scale: 5  // Tamaño del icono
+                    url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                    scaledSize: new google.maps.Size(40, 40),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(20, 40)
                 }
             });
 
             markers.push(marker);
+            const poinRow = points[0].delolati;
             const infoWindow = new google.maps.InfoWindow({
-                content: 'Información del dispositivo.'
+                content: `${poinRow}`
             });
         
             marker.addListener('mouseover', () => {
@@ -143,7 +143,7 @@ export class MapService {
             this.map.fitBounds(bounds);
 
             // Aplicar factor de ampliación al límite
-            const zoomFactor = 10; // Factor de ampliación (puedes ajustar este valor según tus necesidades)
+            const zoomFactor = 10; // Factor de ampliación
             const extendedBounds = this.applyZoomFactorToBounds(bounds, zoomFactor);
 
             // Ajustar el zoom para mostrar la ruta y los marcadores

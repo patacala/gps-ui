@@ -8,9 +8,10 @@ import { IDeviceCreate, IDeviceResponse } from './device.interface';
 export class DeviceService {
     private root: string = `${environment.apiUrl}/device`;
     private device$: BehaviorSubject<any> = new BehaviorSubject([]);
+    private historyLoc$: BehaviorSubject<any> = new BehaviorSubject([]);
     private entityId: string = JSON.parse(localStorage.getItem('entity') as string).entinuid;
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {}
 
     getDevice(skip: number = 0) {
         this.http.get(`${this.root}/entity/${this.entityId}?limit=10&offset=${skip}`).pipe(map(({ response }: any) => response)).subscribe(value => {
@@ -33,7 +34,6 @@ export class DeviceService {
             })
         )
     }
-
     updateDevice(device: IDeviceCreate, deviceId: string) {
         return this.http.patch(`${this.root}/${deviceId}`, device).pipe(
             tap(console.log),
@@ -73,5 +73,26 @@ export class DeviceService {
         let newList = list.rows.filter(({ devinuid }: any) => devinuid !== id);
 
         this.device$.next({ ...list, rows: newList });
+    }
+
+    public setHistoryLoc(locations: any) {
+        if (locations && locations.length > 0 && locations[0].deviloca) {
+          const historyLocs = locations[0].deviloca.map((location: any) => {
+            return {
+              delonuid: Number(location.delonuid),
+              delolati: Number(location.delolati),
+              delolong: Number(location.delolong),
+              delospee: location.delospee,
+              delotime: location.delotime,
+              delofesi: location.delofesi
+            };
+          });
+          console.log(historyLocs);
+          this.historyLoc$.next(historyLocs);
+        }
+    }
+    
+    public getHistoryLoc() {
+        return this.historyLoc$.asObservable();
     }
 }

@@ -1,7 +1,8 @@
 export interface HistoryLoc {
-    delolati: string;
-    delolong: string;
-    delospee: number;
+    delonuid: number,
+    delolati: number;
+    delolong: number;
+    delospee: string;
     delotime: string;
     delofesi: string;
 }

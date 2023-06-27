@@ -146,9 +146,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
             map((devices: any) => devices.response),
             this.getDevicesLocation(true)
         ).subscribe((devices: any) => {
-            console.log('Inicio array devices filtro');
-            console.log(devices);
-            console.log('Fin array devices filtro');
             this.proFilterDevices = this.processFilterData(devices);
         });
     }
@@ -275,7 +272,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
         hiddenElement.click();
     }
 
-    openDialogHistory() {
+    openDialogHistory(deviceId: number) {
         const locations = [
             {
                 "delofesi": "2023-06-26 15:57:38",
@@ -518,12 +515,12 @@ export class MapComponent implements OnInit, AfterViewChecked {
                 "delodat5": null
             }
         ]
-        this._map.drawRoute(locations);
-        /* this.dialog.open(DataTimeHComponent, {
+        //this._map.drawRoute(locations);
+        this.dialog.open(DataTimeHComponent, {
             data: {
-              
+              deviceId
             },
-        }); */
+        });
     }
 
     formatTimestamp(timestamp: string): string {
