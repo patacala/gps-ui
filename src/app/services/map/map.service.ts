@@ -94,7 +94,11 @@ export class MapService {
             let wayp = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
             waypoints.push(wayp)
         }
- 
+
+        // Resetear mapa
+        //this.resetMapToInitial();
+        
+        // Trazar lineas entre localizaciones
         const polyline = new google.maps.Polyline({
             path: waypoints,
             geodesic: true,
@@ -103,11 +107,11 @@ export class MapService {
             strokeWeight: 2
         })
 
-        polyline.setMap(this.map)
+        polyline.setMap(this.map);
 
         // Colocar icono en cada punto de ubicación
         const markers = [];
-        for (const waypoint of waypoints) {
+        for (const [index, waypoint] of waypoints.entries()) {
             const marker = new google.maps.Marker({
                 position: waypoint,
                 map: this.map,
@@ -120,9 +124,9 @@ export class MapService {
             });
 
             markers.push(marker);
-            const poinRow = points[0].delolati;
+            const pointRow = points[index].delolati;
             const infoWindow = new google.maps.InfoWindow({
-                content: `${poinRow}`
+                content: `Lat: ${pointRow}`
             });
         
             marker.addListener('mouseover', () => {
