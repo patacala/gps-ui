@@ -141,7 +141,28 @@ export class MapService {
 
             // Ajustar el zoom para mostrar la ruta y los marcadores
             this.map.fitBounds(bounds);
+
+            // Aplicar factor de ampliación al límite
+            const zoomFactor = 10; // Factor de ampliación (puedes ajustar este valor según tus necesidades)
+            const extendedBounds = this.applyZoomFactorToBounds(bounds, zoomFactor);
+
+            // Ajustar el zoom para mostrar la ruta y los marcadores
+            this.map.fitBounds(extendedBounds);
         }
+    }
+
+    applyZoomFactorToBounds(bounds: google.maps.LatLngBounds, factor: number): google.maps.LatLngBounds {
+        const center = bounds.getCenter();
+        const newBounds = new google.maps.LatLngBounds();
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
+        const dx = ne.lng() - center.lng();
+        const dy = ne.lat() - center.lat();
+        const newNe = new google.maps.LatLng(center.lat() + dy * factor, center.lng() + dx * factor);
+        const newSw = new google.maps.LatLng(center.lat() - dy * factor, center.lng() - dx * factor);
+        newBounds.extend(newNe);
+        newBounds.extend(newSw);
+        return newBounds;
     }
 
     centerMapOnMarkers() {
