@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from 'src/environments/environment';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { IDeviceCreate, IDeviceResponse } from './device.interface';
+import { MapService } from '../map/map.service';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceService {
@@ -11,7 +12,10 @@ export class DeviceService {
     private historyLoc$: BehaviorSubject<any> = new BehaviorSubject([]);
     private entityId: string = JSON.parse(localStorage.getItem('entity') as string).entinuid;
 
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient,
+        private _map: MapService
+    ) {}
 
     getDevice(skip: number = 0) {
         this.http.get(`${this.root}/entity/${this.entityId}?limit=10&offset=${skip}`).pipe(map(({ response }: any) => response)).subscribe(value => {
@@ -75,7 +79,7 @@ export class DeviceService {
         this.device$.next({ ...list, rows: newList });
     }
 
-    public setHistoryLoc(locations: any) {
+    public setHistoryLoc(deviceId: number, locations: any) {
         if (locations && locations.length > 0 && locations[0].deviloca) {
           const historyLocs = locations[0].deviloca.map((location: any) => {
             return {
@@ -87,7 +91,9 @@ export class DeviceService {
               delofesi: location.delofesi
             };
           });
-          console.log(historyLocs);
+
+          const dvStringId = deviceId.toString();
+          this._map.drawRoute(dvStringId, historyLocs);
           this.historyLoc$.next(historyLocs);
         }
     }

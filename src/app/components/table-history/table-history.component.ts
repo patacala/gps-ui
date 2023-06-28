@@ -16,14 +16,12 @@ export class TableHistoryComponent implements OnInit {
   displayedColumns: string[] = ['dloclati', 'dloclong', 'dspeed', 'delotime', 'delofesi'];
   
   constructor(
-    private _device: DeviceService,
-    private _map: MapService
+    private _device: DeviceService
   ) {}
 
   ngOnInit(): void {
     this._device.getHistoryLoc().subscribe((data: HistoryLoc[]) => {
       this.dataSource.data = data;
-      this._map.drawRoute(data);
     });
   }
 }

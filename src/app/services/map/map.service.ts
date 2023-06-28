@@ -13,7 +13,9 @@ export class MapService {
     private entityId: string = !!localStorage.getItem('entity') ? JSON.parse(localStorage.getItem('entity') as string).entinuid : null;
     private mapDevices: Map<string, google.maps.Marker> = new Map();
     private routeOfMarkers: Map<string, google.maps.Marker[]> = new Map();
-    constructor(private http: HttpClient) { }
+    private rtOfLineH: Map<string, google.maps.Polyline[]> = new Map(); 
+    private rtOfMarkersH: Map<string, google.maps.Marker[]> = new Map(); 
+    constructor(private http: HttpClient) {}
 
     drawMap(idElement: string) {
         const element = document.getElementById(idElement) as HTMLElement;
@@ -88,15 +90,13 @@ export class MapService {
         })
     }
 
-    drawRoute(points: Array<any>) {
+    drawRoute(key: string, points: Array<any>) {
+        const stringKey = key.toString();
         let waypoints = [];
         for (let position of points) {
             let wayp = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
             waypoints.push(wayp)
         }
-
-        // Resetear mapa
-        //this.resetMapToInitial();
         
         // Trazar lineas entre localizaciones
         const polyline = new google.maps.Polyline({
@@ -108,9 +108,10 @@ export class MapService {
         })
 
         polyline.setMap(this.map);
+        this.rtOfLineH.set(stringKey, [polyline]);
 
-        // Colocar icono en cada punto de ubicación
         const markers = [];
+        // Colocar icono en cada punto de ubicación
         for (const [index, waypoint] of waypoints.entries()) {
             const marker = new google.maps.Marker({
                 position: waypoint,
@@ -120,13 +121,17 @@ export class MapService {
                     scaledSize: new google.maps.Size(40, 40),
                     origin: new google.maps.Point(0, 0),
                     anchor: new google.maps.Point(20, 40)
-                }
+                },
             });
 
-            markers.push(marker);
-            const pointRow = points[index].delolati;
+            const pointRow = `
+                <b>Lat:</b> ${points[index].delolati}, <b>Long:</b> ${points[index].delolong}<br> 
+                <b>Vel:</b> ${points[index].delospee} KM/H,<br>
+                <b>F.GPS:</b> ${points[index].delotime},<br>
+                <b>F.SIST:</b> ${points[index].delofesi}
+            `;
             const infoWindow = new google.maps.InfoWindow({
-                content: `Lat: ${pointRow}`
+                content: pointRow
             });
         
             marker.addListener('mouseover', () => {
@@ -136,6 +141,9 @@ export class MapService {
             marker.addListener('mouseout', () => {
                 infoWindow.close();
             });
+
+            markers.push(marker);
+            this.rtOfMarkersH.set(stringKey, markers);
 
             // Crear un límite para ajustar el zoom
             const bounds = new google.maps.LatLngBounds();
@@ -147,7 +155,7 @@ export class MapService {
             this.map.fitBounds(bounds);
 
             // Aplicar factor de ampliación al límite
-            const zoomFactor = 10; // Factor de ampliación
+            const zoomFactor = 2; // Factor de ampliación
             const extendedBounds = this.applyZoomFactorToBounds(bounds, zoomFactor);
 
             // Ajustar el zoom para mostrar la ruta y los marcadores
@@ -167,6 +175,27 @@ export class MapService {
         newBounds.extend(newNe);
         newBounds.extend(newSw);
         return newBounds;
+    }
+
+    resetMap(key: string) {
+        const stringKey = key.toString();
+        console.log(stringKey);
+
+        const polylineToDelete = this.rtOfLineH.get(stringKey);
+        if (polylineToDelete) {
+            for (const polyline of polylineToDelete) {
+                polyline.setMap(null); // Eliminar la polyline del mapa
+            }
+            this.rtOfLineH.delete(stringKey); // Eliminar la polyline del Map
+        }
+
+        const markersToDelete = this.rtOfMarkersH.get(stringKey);
+        if (markersToDelete) {
+            for (const marker of markersToDelete) {
+                marker.setMap(null); // Eliminar el marcador del mapa
+            }
+            this.rtOfMarkersH.delete(stringKey); // Eliminar el marcador del Map
+        }
     }
 
     centerMapOnMarkers() {

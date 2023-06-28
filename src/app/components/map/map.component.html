@@ -221,6 +221,10 @@
                             text="Historial" type="white" 
                             width="130px" icon="access_time">
                         </app-button>
+                        <mat-icon 
+                        (click)="resetMap(device.devinuid)"
+                        class="clear-history"
+                        >delete_outline</mat-icon>
                     </div>
                 </aside>
             </mat-drawer>

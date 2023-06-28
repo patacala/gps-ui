@@ -51,7 +51,7 @@ export class DataTimeHComponent implements OnInit {
       }; 
 
       this._classifier.filterByClassifier(filterDataDv).subscribe((histoyDevice: any) => {
-          this._device.setHistoryLoc(histoyDevice.response);
+          this._device.setHistoryLoc(deviceId, histoyDevice.response);
       });
     }
   }
