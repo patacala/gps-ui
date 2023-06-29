@@ -98,6 +98,9 @@ export class MapService {
             waypoints.push(wayp);
         }
         
+        // Resetear mapa
+        this.resetMap(key);
+
         // Trazar lineas entre localizaciones
         const polyline = new google.maps.Polyline({
             path: waypoints,
