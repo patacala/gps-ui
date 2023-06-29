@@ -98,7 +98,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
         }, 1000);
 
         let clickSubs$ = this._map.getVehiculeObs().pipe(
-            tap(console.log),
             map(id => this.devices.find(({ devinuid }) => devinuid == id)),
             tap((device) => this.deviceSelected$.next(device)),
             map((device) => {
@@ -152,19 +151,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
         });
     }
 
-    prueba() {
-        /* this.devices.forEach(device => {
-            console.log('Start Row Device');
-            console.log(device);
-            console.log('End Row Device');
-            this._map.drawMarker({ lat: Number(device?.deviloca[0].delolati), lng: Number(device.deviloca[0].delolong), id: device.devinuid.toString() });
-        }); */
-        this._map.resetMapToInitial();
-    }
-
     processFilterData(datas: any) {
         const newArray: LocationData[] = [];
-        console.log(datas);
         const mappedArray = datas.map((data:any) => ({
             deviimei: data.deviimei,
             devimark: data.devimark,
@@ -272,7 +260,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
         });
         
         return devicesTable;
-      }
+    }
       
     // Exportar .csv
     saveDataInCSV(name: string, data: Array<any>): void {

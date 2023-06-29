@@ -30,7 +30,18 @@ export class MapService {
     drawMarker({ lat, lng, id }: { lat: number, lng: number, id: string }): void {
         let referenceSubj = this.vehicule$;
 
-        if (this.mapDevices.has(id)) return this.mapDevices.get(id)?.setPosition(new google.maps.LatLng(lat, lng));
+        // Verificar si ya existe un marcador para el mismo id
+        if (this.mapDevices.has(id)) {
+            const existingMarker = this.mapDevices.get(id);
+            // Verificar si el marcador actual tiene la misma posición
+            if (existingMarker && existingMarker.getPosition()?.lat() === lat && existingMarker.getPosition()?.lng() === lng) {
+            // El mismo elemento ya ha sido seleccionado, no se realiza ninguna acción adicional
+            return;
+            }
+            // Actualizar la posición del marcador existente
+            existingMarker?.setPosition(new google.maps.LatLng(lat, lng));
+            return;
+        }
 
         let marker = new google.maps.Marker({
             map: this.map,
@@ -45,7 +56,6 @@ export class MapService {
         })
 
         marker.addListener('click', function (e) {
-            console.log('HOLAAA? ')
             referenceSubj.next(this.getTitle());
         })
 
@@ -55,8 +65,6 @@ export class MapService {
 
     resetMapToInitial() {
         for(let key of this.routeOfMarkers.keys()){
-            // @ts-ignore
-            if(!this.routeOfMarkers.get(key)?.at(0).getMap()) continue;
             this.routeOfMarkers.get(key)?.map(m => m.setMap(null))
         }
 

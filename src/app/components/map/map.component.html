@@ -82,38 +82,13 @@
                               </table>
                         </div>
                     </section>
-                    <!-- <section class="form-search">
-                        <header class="flex justify-center items-center p-2">
-                            <b>Filtro</b>
-                        </header>
-                        <hr>
-                        <div class="grid p-3" [formGroup]="formFilter">
-                            <mat-form-field appearance="fill">
-                                <mat-label>Placa</mat-label>
-                                <input matInput formControlName="plate" (input)="upperCase($event)" type="text" #plate>
-                            </mat-form-field>
-
-                            <mat-form-field appearance="fill">
-                                <mat-label>Rango de fecha</mat-label>
-                                <mat-date-range-input [rangePicker]="picker">
-                                  <input matStartDate formControlName="startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
-                                  <input matEndDate formControlName="endDateOnly" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
-                                </mat-date-range-input>
-                                <mat-hint>{{formFilter.value.startDateOnly | date}} - {{formFilter.value.endDateOnly | date}}</mat-hint>
-                                <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
-                                <mat-date-range-picker #picker></mat-date-range-picker>
-                            </mat-form-field>
-
-                            <mat-checkbox class="pt-2" formControlName="withAlert">ALERTAS</mat-checkbox>
-                        </div>
-                    </section> -->
                     <div class="bts-bottom">
                         <app-button 
                             (click)="filterDevices()" text="Filtrar" type="blue" 
                             width="160px" icon="filter_list" 
                             [disabled]="validDisabledArray(classifiers, checksDevices.selected) || formFilter.invalid">
                         </app-button>
-                        <app-button (click)="prueba()" text="Filtro" type="green" width="110px" icon="cloud_download"></app-button>
+                       <!--  <app-button (click)="prueba()" text="Filtro" type="green" width="110px" icon="cloud_download"></app-button> -->
                         <app-button 
                             (click)="saveDataInCSV('dispositivos', proFilterDevices)" text="Csv" type="green" 
                             width="110px" icon="cloud_download" 
