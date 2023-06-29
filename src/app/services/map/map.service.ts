@@ -95,7 +95,7 @@ export class MapService {
         let waypoints = [];
         for (let position of points) {
             let wayp = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
-            waypoints.push(wayp)
+            waypoints.push(wayp);
         }
         
         // Trazar lineas entre localizaciones
@@ -105,7 +105,7 @@ export class MapService {
             strokeColor: '#3498DB',
             strokeOpacity: 1.0,
             strokeWeight: 2
-        })
+        });
 
         polyline.setMap(this.map);
         this.rtOfLineH.set(stringKey, [polyline]);
@@ -179,7 +179,6 @@ export class MapService {
 
     resetMap(key: string) {
         const stringKey = key.toString();
-        console.log(stringKey);
 
         const polylineToDelete = this.rtOfLineH.get(stringKey);
         if (polylineToDelete) {

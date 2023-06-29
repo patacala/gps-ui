@@ -22,6 +22,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
 import { ItemDtDvComponent } from '../item-dt-dv/item-dt-dv.component';
+import { DeviceService } from '@services';
 
 @Component({
     selector: 'app-map',
@@ -72,7 +73,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
     
     constructor(
         private _map: MapService, 
-        private _classifier: ClassifierService, 
+        private _classifier: ClassifierService,
+        private _device: DeviceService, 
         private _utilsService: UtilsService,
         public dialog: MatDialog,
         private datePipe: DatePipe
@@ -281,6 +283,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     resetMap(key: string) {
+        this._device.clearHistoryLoc();
         this._map.resetMap(key);
     }
 
@@ -296,5 +299,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
         const date = new Date(formattedDate);
     
         return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') || '';
+    }
+
+    validBtnDelHLoc() {
+        return this._device.validHistoryLoc();
     }
 }

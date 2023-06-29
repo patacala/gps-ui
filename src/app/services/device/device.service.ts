@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { IDeviceCreate, IDeviceResponse } from './device.interface';
 import { MapService } from '../map/map.service';
+import { HistoryLoc } from 'src/app/components/table-history/table-history.model';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceService {
@@ -72,6 +73,7 @@ export class DeviceService {
 
         this.device$.next(newList);
     }
+
     private deleteItem(id: string) {
         let list = this.device$.value;
         let newList = list.rows.filter(({ devinuid }: any) => devinuid !== id);
@@ -100,5 +102,17 @@ export class DeviceService {
     
     public getHistoryLoc() {
         return this.historyLoc$.asObservable();
+    }
+
+    public clearHistoryLoc() {
+        this.historyLoc$.next([]);
+    }
+    
+    public validHistoryLoc() {
+        const dataHLoc: HistoryLoc[] = this.historyLoc$.getValue();
+        if (typeof(dataHLoc) !== undefined) {
+            if (dataHLoc.length) return true;
+        }
+        return false;
     }
 }

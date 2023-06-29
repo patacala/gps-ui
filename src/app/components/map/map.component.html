@@ -222,8 +222,9 @@
                             width="130px" icon="access_time">
                         </app-button>
                         <mat-icon 
-                        (click)="resetMap(device.devinuid)"
-                        class="clear-history"
+                            (click)="resetMap(device.devinuid)"
+                            *ngIf="validBtnDelHLoc()"
+                            class="clear-history"
                         >delete_outline</mat-icon>
                     </div>
                 </aside>
