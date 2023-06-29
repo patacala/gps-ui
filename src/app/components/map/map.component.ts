@@ -152,15 +152,26 @@ export class MapComponent implements OnInit, AfterViewChecked {
         });
     }
 
+    prueba() {
+        /* this.devices.forEach(device => {
+            console.log('Start Row Device');
+            console.log(device);
+            console.log('End Row Device');
+            this._map.drawMarker({ lat: Number(device?.deviloca[0].delolati), lng: Number(device.deviloca[0].delolong), id: device.devinuid.toString() });
+        }); */
+        this._map.resetMapToInitial();
+    }
+
     processFilterData(datas: any) {
         const newArray: LocationData[] = [];
+        console.log(datas);
         const mappedArray = datas.map((data:any) => ({
             deviimei: data.deviimei,
             devimark: data.devimark,
             devimode: data.devimode,
             deviphon: data.deviphon,
-            carrlice: data.carrdevi.carrier.carrlice,
-            carrtype: data.carrdevi.carrier.carrtype,
+            carrlice: data.carrdevi?.carrier?.carrlice,
+            carrtype: data.carrdevi?.carrier?.carrtype,
             locations: {
                 delolati: data.deviloca.map((loc: any) => loc.delolati),
                 delolong: data.deviloca.map((loc: any) => loc.delolong),
