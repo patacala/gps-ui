@@ -286,6 +286,13 @@ export class MapComponent implements OnInit, AfterViewChecked {
         this._map.resetMap(key);
     }
 
+    closeToggle(key: string) {
+        /* this._device.clearHistoryLoc();
+        this._map.resetMap(key);
+        this._map.resetMapToInitial(); */
+        this.details.close();
+    }
+
     formatTimestamp(timestamp: string): string {
         const year = timestamp.slice(0, 2);
         const month = timestamp.slice(2, 4);

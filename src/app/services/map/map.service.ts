@@ -124,18 +124,47 @@ export class MapService {
         const markers = [];
         // Colocar icono en cada punto de ubicación
         for (const [index, waypoint] of waypoints.entries()) {
-            const marker = new google.maps.Marker({
-                position: waypoint,
-                map: this.map,
-                icon: {
-                    url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                    scaledSize: new google.maps.Size(40, 40),
-                    origin: new google.maps.Point(0, 0),
-                    anchor: new google.maps.Point(20, 40)
-                },
-            });
-
+            let marker = new google.maps.Marker();
+            let typeOfTour = 'Ubicación.';
+            if (index == 0) {
+                typeOfTour  = 'Ultima ubicación.';
+                marker = new google.maps.Marker({
+                    position: waypoint,
+                    map: this.map,
+                    icon: {
+                        url: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
+                        scaledSize: new google.maps.Size(40, 40),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(20, 40)
+                    },
+                });
+            } else if (index == points.length - 1) {
+                typeOfTour  = 'Primera ubicación.';
+                marker = new google.maps.Marker({
+                    position: waypoint,
+                    map: this.map,
+                    icon: {
+                        url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                        scaledSize: new google.maps.Size(40, 40),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(20, 40)
+                    },
+                });
+            } else {
+                marker = new google.maps.Marker({
+                    position: waypoint,
+                    map: this.map,
+                    icon: {
+                        url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                        scaledSize: new google.maps.Size(40, 40),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(20, 40)
+                    },
+                });
+            }
+            
             const pointRow = `
+                <h3>${typeOfTour}</h3>
                 <b>Lat:</b> ${points[index].delolati}, <b>Long:</b> ${points[index].delolong}<br> 
                 <b>Vel:</b> ${points[index].delospee} KM/H,<br>
                 <b>F.GPS:</b> ${points[index].delotime},<br>
