@@ -15,6 +15,7 @@ export class MapService {
     private routeOfMarkers: Map<string, google.maps.Marker[]> = new Map();
     private rtOfLineH: Map<string, google.maps.Polyline[]> = new Map(); 
     private rtOfMarkersH: Map<string, google.maps.Marker[]> = new Map(); 
+    private markers = []=[];
     constructor(private http: HttpClient) {}
 
     drawMap(idElement: string) {
@@ -87,7 +88,7 @@ export class MapService {
         this.routeOfMarkers.set(id, markers)
         this.centerMapOnMarkers();
     }
-
+    
     filterMarkers(devices: any[]) {
         this.mapDevices.forEach(m => {
             m.setMap(null)
@@ -100,67 +101,27 @@ export class MapService {
 
     drawRoute(key: string, points: Array<any>) {
         const stringKey = key.toString();
-        let waypoints = [];
-        for (let position of points) {
-            let wayp = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
-            waypoints.push(wayp);
-        }
-        
+
         // Resetear mapa
-        this.resetMap(key);
+        this.clearMapHistory(stringKey);
 
-        // Trazar lineas entre localizaciones
-        const polyline = new google.maps.Polyline({
-            path: waypoints,
-            geodesic: true,
-            strokeColor: '#3498DB',
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        });
-
-        polyline.setMap(this.map);
-        this.rtOfLineH.set(stringKey, [polyline]);
+        // Aplicar lineas
+        this.drawColorLine(stringKey, points, '#3498DB');
 
         const markers = [];
         // Colocar icono en cada punto de ubicación
-        for (const [index, waypoint] of waypoints.entries()) {
+        for (const [index, point] of points.entries()) {
             let marker = new google.maps.Marker();
             let typeOfTour = 'Ubicación.';
+
             if (index == 0) {
                 typeOfTour  = 'Ultima ubicación.';
-                marker = new google.maps.Marker({
-                    position: waypoint,
-                    map: this.map,
-                    icon: {
-                        url: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
-                        scaledSize: new google.maps.Size(40, 40),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(20, 40)
-                    },
-                });
+                marker = this.drawColorTag(point, 'yellow');
             } else if (index == points.length - 1) {
                 typeOfTour  = 'Primera ubicación.';
-                marker = new google.maps.Marker({
-                    position: waypoint,
-                    map: this.map,
-                    icon: {
-                        url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
-                        scaledSize: new google.maps.Size(40, 40),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(20, 40)
-                    },
-                });
+                marker = this.drawColorTag(point, 'red');
             } else {
-                marker = new google.maps.Marker({
-                    position: waypoint,
-                    map: this.map,
-                    icon: {
-                        url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                        scaledSize: new google.maps.Size(40, 40),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(20, 40)
-                    },
-                });
+                marker = this.drawSymbolTag(point, '#3498DB');
             }
             
             const pointRow = `
@@ -184,23 +145,88 @@ export class MapService {
 
             markers.push(marker);
             this.rtOfMarkersH.set(stringKey, markers);
-
-            // Crear un límite para ajustar el zoom
-            const bounds = new google.maps.LatLngBounds();
-            for (const waypoint of waypoints) {
-                bounds.extend(waypoint);
-            }
-
-            // Ajustar el zoom para mostrar la ruta y los marcadores
-            this.map.fitBounds(bounds);
-
-            // Aplicar factor de ampliación al límite
-            const zoomFactor = 2; // Factor de ampliación
-            const extendedBounds = this.applyZoomFactorToBounds(bounds, zoomFactor);
-
-            // Ajustar el zoom para mostrar la ruta y los marcadores
-            this.map.fitBounds(extendedBounds);
         }
+
+        this.adjustZoom(points);
+    }
+
+    drawColorTag(position: any, color: string) {
+        const wayPoint = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
+
+        const marker = new google.maps.Marker({
+            position: wayPoint,
+            map: this.map,
+            icon: {
+                url: `http://maps.google.com/mapfiles/ms/icons/${color}-dot.png`,
+                scaledSize: new google.maps.Size(40, 40),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(20, 40)
+            },
+        });
+        
+        return marker;
+    }
+
+    drawSymbolTag(position: any, color: string) {
+        const wayPoint = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
+        const marker = new google.maps.Marker({
+            position: wayPoint,
+            map: this.map,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,  // Aplicar icono
+                fillColor: color,
+                fillOpacity: 1.0,
+                strokeWeight: 0,
+                scale: 6  // Tamaño del icono
+            }
+        });
+        return marker;
+    }
+
+    drawColorLine(key: string, points: Array<any>, color: string) {
+        const stringKey = key.toString();
+        const waypoints = [];
+
+        for (let position of points) {
+            let wayp = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
+            waypoints.push(wayp);
+        }
+        
+        // Trazar lineas entre localizaciones
+        const polyline = new google.maps.Polyline({
+            path: waypoints,
+            geodesic: true,
+            strokeColor: color,
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+
+        polyline.setMap(this.map);
+        this.rtOfLineH.set(stringKey, [polyline]);
+    }
+
+    adjustZoom(points: Array<any>) {
+        let waypoints = [];
+        for (let position of points) {
+            let wayp = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
+            waypoints.push(wayp);
+        }
+
+        // Crear un límite para ajustar el zoom
+        const bounds = new google.maps.LatLngBounds();
+        for (const waypoint of waypoints) {
+            bounds.extend(waypoint);
+        }
+
+        // Ajustar el zoom para mostrar la ruta y los marcadores
+        this.map.fitBounds(bounds);
+
+        // Aplicar factor de ampliación al límite
+        const zoomFactor = 2; // Factor de ampliación
+        const extendedBounds = this.applyZoomFactorToBounds(bounds, zoomFactor);
+
+        // Ajustar el zoom para mostrar la ruta y los marcadores
+        this.map.fitBounds(extendedBounds);
     }
 
     applyZoomFactorToBounds(bounds: google.maps.LatLngBounds, factor: number): google.maps.LatLngBounds {
@@ -217,7 +243,7 @@ export class MapService {
         return newBounds;
     }
 
-    resetMap(key: string) {
+    clearMapHistory(key: string) {
         const stringKey = key.toString();
 
         const polylineToDelete = this.rtOfLineH.get(stringKey);

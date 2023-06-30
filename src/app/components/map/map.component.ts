@@ -281,15 +281,14 @@ export class MapComponent implements OnInit, AfterViewChecked {
         });
     }
 
-    resetMap(key: string) {
+    clearMapHistory(key: string) {
         this._device.clearHistoryLoc();
-        this._map.resetMap(key);
+        this._map.clearMapHistory(key);
     }
 
     closeToggle(key: string) {
-        /* this._device.clearHistoryLoc();
-        this._map.resetMap(key);
-        this._map.resetMapToInitial(); */
+        this._device.clearHistoryLoc();
+        this._map.clearMapHistory(key);
         this.details.close();
     }
 
