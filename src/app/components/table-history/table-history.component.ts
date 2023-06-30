@@ -5,19 +5,20 @@ import { DeviceService } from '@services';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { DatePipe } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-table-history',
   standalone: true,
   providers: [DatePipe],
-  imports: [MatTableModule, MatPaginatorModule, DatePipe],
+  imports: [MatTableModule, MatPaginatorModule, DatePipe, MatIconModule],
   templateUrl: './table-history.component.html',
   styleUrls: ['./table-history.component.scss']
 })
 export class TableHistoryComponent implements OnInit {
   devicesTable: HistoryLoc[]=[];
   dataSource = new MatTableDataSource<HistoryLoc>([]);
-  displayedColumns: string[] = ['dloclati', 'dloclong', 'dspeed', 'delotime', 'delofesi'];
+  displayedColumns: string[] = ['dloclati', 'dloclong', 'dspeed', 'delotime', 'delofesi', 'action'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   
