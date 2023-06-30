@@ -98,7 +98,7 @@ export class MapService {
             this.mapDevices.get(device.devinuid.toString())?.setMap(this.map)
         })
     }
-
+    
     drawRoute(key: string, points: Array<any>) {
         const stringKey = key.toString();
 
@@ -109,6 +109,7 @@ export class MapService {
         this.drawColorLine(stringKey, points, '#3498DB');
 
         const markers = [];
+        
         // Colocar icono en cada punto de ubicación
         for (const [index, point] of points.entries()) {
             let marker = new google.maps.Marker();
@@ -134,14 +135,11 @@ export class MapService {
             const infoWindow = new google.maps.InfoWindow({
                 content: pointRow
             });
-        
-            marker.addListener('mouseover', () => {
+
+            const openInfoWindow = () => {
                 infoWindow.open(this.map, marker);
-            });
-        
-            marker.addListener('mouseout', () => {
-                infoWindow.close();
-            });
+            }
+            marker.addListener('click', openInfoWindow);
 
             markers.push(marker);
             this.rtOfMarkersH.set(stringKey, markers);
