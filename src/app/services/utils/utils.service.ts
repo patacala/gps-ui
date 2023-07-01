@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UtilsService {
 
-  constructor() { }
+  constructor() {}
   
   saveDataInCSV(data: Array<any>): string {
     if (data.length === 0) {

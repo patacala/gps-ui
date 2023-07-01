@@ -193,6 +193,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        grid-gap: 10px;
         height: 50px;
+
+        .clear-history {
+            cursor: pointer;
+        }
     }
 }

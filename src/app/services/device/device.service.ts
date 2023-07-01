@@ -3,6 +3,8 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from 'src/environments/environment';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { IDeviceCreate, IDeviceResponse } from './device.interface';
+import { MapService } from '../map/map.service';
+import { HistoryLoc } from 'src/app/components/table-history/table-history.model';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceService {
@@ -11,7 +13,10 @@ export class DeviceService {
     private historyLoc$: BehaviorSubject<any> = new BehaviorSubject([]);
     private entityId: string = JSON.parse(localStorage.getItem('entity') as string).entinuid;
 
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient,
+        private _map: MapService
+    ) {}
 
     getDevice(skip: number = 0) {
         this.http.get(`${this.root}/entity/${this.entityId}?limit=10&offset=${skip}`).pipe(map(({ response }: any) => response)).subscribe(value => {
@@ -68,6 +73,7 @@ export class DeviceService {
 
         this.device$.next(newList);
     }
+
     private deleteItem(id: string) {
         let list = this.device$.value;
         let newList = list.rows.filter(({ devinuid }: any) => devinuid !== id);
@@ -75,7 +81,7 @@ export class DeviceService {
         this.device$.next({ ...list, rows: newList });
     }
 
-    public setHistoryLoc(locations: any) {
+    public setHistoryLoc(deviceId: number, locations: any) {
         if (locations && locations.length > 0 && locations[0].deviloca) {
           const historyLocs = locations[0].deviloca.map((location: any) => {
             return {
@@ -87,12 +93,26 @@ export class DeviceService {
               delofesi: location.delofesi
             };
           });
-          console.log(historyLocs);
+
+          const dvStringId = deviceId.toString();
+          this._map.drawRoute(dvStringId, historyLocs);
           this.historyLoc$.next(historyLocs);
         }
     }
     
     public getHistoryLoc() {
         return this.historyLoc$.asObservable();
+    }
+
+    public clearHistoryLoc() {
+        this.historyLoc$.next([]);
+    }
+    
+    public validHistoryLoc() {
+        const dataHLoc: HistoryLoc[] = this.historyLoc$.getValue();
+        if (typeof(dataHLoc) !== undefined) {
+            if (dataHLoc.length) return true;
+        }
+        return false;
     }
 }

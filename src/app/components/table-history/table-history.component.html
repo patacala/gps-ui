@@ -1,36 +1,45 @@
 <section class="table-history">
     <table mat-table [dataSource]="dataSource" class="w-full">
         <!-- Dloclati Column -->
-        <ng-container matColumnDef="dloclati" aling="center">
+        <ng-container matColumnDef="dloclati">
             <th mat-header-cell *matHeaderCellDef>LATITUD</th>
             <td mat-cell *matCellDef="let element">{{element.delolati}}</td>
         </ng-container>
     
         <!-- Dloclong Column -->
-        <ng-container matColumnDef="dloclong" aling="center">
+        <ng-container matColumnDef="dloclong">
             <th mat-header-cell *matHeaderCellDef>LONGITUD</th>
             <td mat-cell *matCellDef="let element">{{element.delolong}}</td>
         </ng-container>
     
         <!-- Dspeed Column -->
-        <ng-container matColumnDef="dspeed" aling="center">
+        <ng-container matColumnDef="dspeed">
             <th mat-header-cell *matHeaderCellDef>VELOCIDAD</th>
-            <td mat-cell *matCellDef="let element">{{element.delospee}}</td>
+            <td mat-cell *matCellDef="let element"  align="center">{{element.delospee}} KM/H</td>
         </ng-container>
     
         <!-- Ddelotime Column -->
-        <ng-container matColumnDef="delotime" aling="center">
+        <ng-container matColumnDef="delotime">
             <th mat-header-cell *matHeaderCellDef>FECHA GPS</th>
-            <td mat-cell *matCellDef="let element">{{element.delotime}}</td>
+            <td mat-cell *matCellDef="let element"  align="center">{{ formatTimestamp(element.delotime) | date:'medium' }}</td>
         </ng-container>
     
         <!-- Delofesi Column -->
-        <ng-container matColumnDef="delofesi" aling="center">
+        <ng-container matColumnDef="delofesi">
             <th mat-header-cell *matHeaderCellDef>FECHA SISTEMA</th>
-            <td mat-cell *matCellDef="let element">{{element.delofesi}}</td>
+            <td mat-cell *matCellDef="let element"  align="center">{{element.delofesi | date:'medium'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="action" >
+            <th mat-header-cell *matHeaderCellDef>ACCIÓN</th>
+            <td mat-cell *matCellDef="let element" align="center">
+                <mat-icon>location_on</mat-icon>
+            </td>
         </ng-container>
         
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+
+    <mat-paginator [pageSize]="4"></mat-paginator>
 </section>

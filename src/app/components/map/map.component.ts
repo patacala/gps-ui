@@ -22,6 +22,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
 import { ItemDtDvComponent } from '../item-dt-dv/item-dt-dv.component';
+import { DeviceService } from '@services';
 
 @Component({
     selector: 'app-map',
@@ -72,7 +73,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
     
     constructor(
         private _map: MapService, 
-        private _classifier: ClassifierService, 
+        private _classifier: ClassifierService,
+        private _device: DeviceService, 
         private _utilsService: UtilsService,
         public dialog: MatDialog,
         private datePipe: DatePipe
@@ -96,7 +98,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
         }, 1000);
 
         let clickSubs$ = this._map.getVehiculeObs().pipe(
-            tap(console.log),
             map(id => this.devices.find(({ devinuid }) => devinuid == id)),
             tap((device) => this.deviceSelected$.next(device)),
             map((device) => {
@@ -157,8 +158,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
             devimark: data.devimark,
             devimode: data.devimode,
             deviphon: data.deviphon,
-            carrlice: data.carrdevi.carrier.carrlice,
-            carrtype: data.carrdevi.carrier.carrtype,
+            carrlice: data.carrdevi?.carrier?.carrlice,
+            carrtype: data.carrdevi?.carrier?.carrtype,
             locations: {
                 delolati: data.deviloca.map((loc: any) => loc.delolati),
                 delolong: data.deviloca.map((loc: any) => loc.delolong),
@@ -259,7 +260,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
         });
         
         return devicesTable;
-      }
+    }
       
     // Exportar .csv
     saveDataInCSV(name: string, data: Array<any>): void {
@@ -273,254 +274,22 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     openDialogHistory(deviceId: number) {
-        const locations = [
-            {
-                "delofesi": "2023-06-26 15:57:38",
-                "delonuid": 15324,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "001",
-                "delotime": "230626155738",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205738.00",
-                "delosigc": "A",
-                "delolati": "10.950521",
-                "delolaor": "N",
-                "delolong": "-74.791963",
-                "deloloor": "W",
-                "delospee": "0",
-                "delodat1": "",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            },
-            {
-                "delofesi": "2023-06-26 15:57:38",
-                "delonuid": 15322,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "001",
-                "delotime": "230626155738",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205738.00",
-                "delosigc": "A",
-                "delolati": "10.950521",
-                "delolaor": "N",
-                "delolong": "-74.791963",
-                "deloloor": "W",
-                "delospee": "0",
-                "delodat1": "",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            },
-            {
-                "delofesi": "2023-06-26 15:57:38",
-                "delonuid": 15323,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "001",
-                "delotime": "230626155738",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205738.00",
-                "delosigc": "A",
-                "delolati": "10.950521",
-                "delolaor": "N",
-                "delolong": "-74.791963",
-                "deloloor": "W",
-                "delospee": "0",
-                "delodat1": "",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            },
-            {
-                "delofesi": "2023-06-26 15:52:54",
-                "delonuid": 15321,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "acc off",
-                "delotime": "230626155253",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205253.00",
-                "delosigc": "A",
-                "delolati": "10.950521",
-                "delolaor": "N",
-                "delolong": "-74.792007",
-                "deloloor": "W",
-                "delospee": "0",
-                "delodat1": "",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            },
-            {
-                "delofesi": "2023-06-26 15:52:54",
-                "delonuid": 15320,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "acc on",
-                "delotime": "230626155253",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205253.00",
-                "delosigc": "A",
-                "delolati": "10.950521",
-                "delolaor": "N",
-                "delolong": "-74.792007",
-                "deloloor": "W",
-                "delospee": "0",
-                "delodat1": "",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            },
-            {
-                "delofesi": "2023-06-26 15:52:52",
-                "delonuid": 15319,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "acc on",
-                "delotime": "230626155251",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205251.00",
-                "delosigc": "A",
-                "delolati": "10.95052",
-                "delolaor": "N",
-                "delolong": "-74.792008",
-                "deloloor": "W",
-                "delospee": "0",
-                "delodat1": "",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            },
-            {
-                "delofesi": "2023-06-26 15:52:48",
-                "delonuid": 15318,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "acc off",
-                "delotime": "230626155248",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205248.00",
-                "delosigc": "A",
-                "delolati": "10.950517",
-                "delolaor": "N",
-                "delolong": "-74.792017",
-                "deloloor": "W",
-                "delospee": "1.85",
-                "delodat1": "84.89",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            },
-            {
-                "delofesi": "2023-06-26 15:52:38",
-                "delonuid": 15317,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "acc on",
-                "delotime": "230626155238",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205238.00",
-                "delosigc": "A",
-                "delolati": "10.950542",
-                "delolaor": "N",
-                "delolong": "-74.792098",
-                "deloloor": "W",
-                "delospee": "0",
-                "delodat1": "",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            },
-            {
-                "delofesi": "2023-06-26 15:52:37",
-                "delonuid": 15316,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "acc off",
-                "delotime": "230626155237",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205237.00",
-                "delosigc": "A",
-                "delolati": "10.950542",
-                "delolaor": "N",
-                "delolong": "-74.792096",
-                "deloloor": "W",
-                "delospee": "0",
-                "delodat1": "",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            },
-            {
-                "delofesi": "2023-06-26 15:52:21",
-                "delonuid": 15315,
-                "devidelo": 8,
-                "delotinu": "2023-06-26",
-                "delokeyw": "acc on",
-                "delotime": "230626155221",
-                "delosimc": "",
-                "delosign": "F",
-                "delohour": "205221.00",
-                "delosigc": "A",
-                "delolati": "10.950485",
-                "delolaor": "N",
-                "delolong": "-74.792096",
-                "deloloor": "W",
-                "delospee": "0",
-                "delodat1": "",
-                "delodat2": "8",
-                "deloacc": "1",
-                "delodoor": "0",
-                "delodat3": null,
-                "delodat4": null,
-                "delodat5": null
-            }
-        ]
-        //this._map.drawRoute(locations);
         this.dialog.open(DataTimeHComponent, {
             data: {
               deviceId
             },
         });
+    }
+
+    clearMapHistory(key: string) {
+        this._device.clearHistoryLoc();
+        this._map.clearMapHistory(key);
+    }
+
+    closeToggle(key: string) {
+        this._device.clearHistoryLoc();
+        this._map.clearMapHistory(key);
+        this.details.close();
     }
 
     formatTimestamp(timestamp: string): string {
@@ -535,5 +304,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
         const date = new Date(formattedDate);
     
         return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') || '';
+    }
+
+    validBtnDelHLoc() {
+        return this._device.validHistoryLoc();
     }
 }
