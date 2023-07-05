@@ -30,9 +30,6 @@ export class LoginComponent implements OnInit {
   }
 
   selectEntity(entity: string | any) {
-    console.log(entity)
-
-
     localStorage.setItem('entity', JSON.stringify(entity));
   }
 

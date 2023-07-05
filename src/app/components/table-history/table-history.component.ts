@@ -18,7 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class TableHistoryComponent implements OnInit {
   devicesTable: HistoryLoc[]=[];
   dataSource = new MatTableDataSource<HistoryLoc>([]);
-  displayedColumns: string[] = ['dloclati', 'dloclong', 'dspeed', 'delotime', 'delofesi', 'action'];
+  displayedColumns: string[] = ['dloclati', 'dloclong', 'daddress', 'dneighbh', 'devent', 'dspeed', 'delotime', 'delofesi', 'action'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   

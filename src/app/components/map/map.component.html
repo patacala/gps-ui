@@ -1,6 +1,6 @@
-<section class="flex justify-between gap-1 bg-white shadow-md rounded-lg h-full">
-    <section class="h-full w-full">
-        <mat-drawer-container class="h-full w-full" autosize>
+<section class="flex justify-between gap-1 bg-white shadow-md rounded-lg" style="height: 520px;">
+    <section class="w-full" style="height: 520px;">
+        <mat-drawer-container class="w-full" style="height: 520px;">
             <mat-drawer #drawer mode="push">
                 <aside class="aside-map-left">
                     <section class="classifirs-content pb-2">
@@ -160,6 +160,15 @@
                                 <div class="value p-1 pl-2">
                                     <b class="sup-title">Velocidad:</b>
                                     <small class="sub-title">{{device.deviloca[0].delospee}} KM/H</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>swap_calls</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Kilometraje:</b>
+                                    <small class="sub-title">0 KM</small>
                                 </div>
                             </div>
                             <div class="dt-vh-citem">

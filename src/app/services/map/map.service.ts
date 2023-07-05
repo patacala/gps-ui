@@ -15,10 +15,10 @@ export class MapService {
     private routeOfMarkers: Map<string, google.maps.Marker[]> = new Map();
     private rtOfLineH: Map<string, google.maps.Polyline[]> = new Map(); 
     private rtOfMarkersH: Map<string, google.maps.Marker[]> = new Map(); 
-    private markers = []=[];
     constructor(private http: HttpClient) {}
 
     drawMap(idElement: string) {
+        console.log(idElement);
         const element = document.getElementById(idElement) as HTMLElement;
         this.map = new google.maps.Map(element, {
             center: { lat: 11.0041, lng: -74.8070 },

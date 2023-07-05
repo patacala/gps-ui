@@ -13,6 +13,7 @@ export interface LocationData {
     "TIPO VEHICULO": string;
     LATITUD: string;
     LONGITUD: string;
+    EVENTO: string;
     "FECHA SISTEMA": string;
     "FECHA REGISTRO": string;
     VELOCIDAD: string

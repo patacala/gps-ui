@@ -11,6 +11,24 @@
             <th mat-header-cell *matHeaderCellDef>LONGITUD</th>
             <td mat-cell *matCellDef="let element">{{element.delolong}}</td>
         </ng-container>
+
+        <!-- Daddress Column -->
+        <ng-container matColumnDef="daddress">
+            <th mat-header-cell *matHeaderCellDef>DIRECCIÓN</th>
+            <td mat-cell *matCellDef="let element"></td>
+        </ng-container>
+
+        <!-- Dneighbh Column -->
+        <ng-container matColumnDef="dneighbh">
+            <th mat-header-cell *matHeaderCellDef>BARRIO</th>
+            <td mat-cell *matCellDef="let element"></td>
+        </ng-container>
+
+        <!-- Dneighbh Column -->
+        <ng-container matColumnDef="devent">
+            <th mat-header-cell *matHeaderCellDef>EVENTO</th>
+            <td mat-cell *matCellDef="let element"></td>
+        </ng-container>
     
         <!-- Dspeed Column -->
         <ng-container matColumnDef="dspeed">

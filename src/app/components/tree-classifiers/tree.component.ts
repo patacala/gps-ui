@@ -130,7 +130,6 @@ export class TreeComponent {
         this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
         _database.dataChange.subscribe(data => {
-            console.log(data)
             this.dataSource.data = data;
         });
     }
@@ -272,7 +271,6 @@ export class TreeComponent {
         this.classifiers.forEach(id => {
             ids.push(id)
         });
-        console.log(ids)
         this.sendClassifiers.emit(ids)
     }  
 }

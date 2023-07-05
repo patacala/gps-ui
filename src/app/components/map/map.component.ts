@@ -81,8 +81,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
     ) {}
 
     ngOnInit(): void {
+        this._map.drawMap('map');
         setTimeout(() => {
-            this._map.drawMap('map');
             let locationSub$ = this._map.getLocationDevices().pipe(
                 mergeMap((devices: any) => from(devices.response.rows)),
                 this.getDevicesLocation(false),
@@ -90,6 +90,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
                 tap(devices => this.devices = devices),
             ).subscribe((devices) => {
                 // Obtener información de los dispositivos
+                console.log(devices);
                 this.devicesTable = this.rowsDeviceTable(devices);
                 this.dataSource.data = this.devicesTable;
             });
@@ -107,8 +108,11 @@ export class MapComponent implements OnInit, AfterViewChecked {
             tap(() => this.details.toggle()),
             concatMap(() => this.imitationRealTime$),
         ).subscribe()
-
         // this.subscriptions.push(clickSubs$)
+    }
+
+    loadData(): void {
+        
     }
 
     ngAfterViewChecked(): void {
@@ -181,6 +185,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
                     "TIPO VEHICULO": row.carrtype,
                     LATITUD: lat,
                     LONGITUD: locations.delolong[index],
+                    EVENTO: '',
                     "FECHA SISTEMA": locations.delofesi[index],
                     "FECHA REGISTRO": locations.delotime[index],
                     VELOCIDAD: locations.delospee[index],
