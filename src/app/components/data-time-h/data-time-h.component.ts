@@ -42,7 +42,7 @@ export class DataTimeHComponent implements OnInit {
     if (typeof(this.data.deviceId) !== undefined) {
       const deviceId = this.data.deviceId;
       const filterDataDv = {
-        classifiers: [-1],
+        classifiers: [],
         deviceIds: [deviceId],
         date: {
           startDate: this.formDates.value.startDate?.toISOString().slice(0, 10),

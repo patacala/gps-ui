@@ -134,18 +134,18 @@ export class MapComponent implements OnInit, AfterViewChecked {
         this.classifiers = event
     }
 
-    validDisabledArray(...arrays: Array<Array<any>>): boolean {
+    validDisabledArray(...arrays: Array<any>[]): boolean {
         for (const array of arrays) {
-          if (typeof array === 'undefined' || array.length === 0) {
-            return true;
+          if (Array.isArray(array) && array.length > 0) {
+            return false;
           }
         }
-        return false;
+        return true;
     }
       
     filterDevices() {
         const filterDataDvs = {
-            classifiers: this.classifiers?.flat(),
+            classifiers: this.classifiers?.flat() ?? [],
             /* plate: this.formFilter.value.plate, */
             deviceIds: this.checksDevices.selected.map(device => device.devinuid),
             isAlarm: this.formFilter.value.withAlert,
@@ -200,6 +200,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
                 })
             });
         });
+        console.log(newArray);
         return newArray;  
     }
 

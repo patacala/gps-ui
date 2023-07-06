@@ -86,9 +86,8 @@
                         <app-button 
                             (click)="filterDevices()" text="Filtrar" type="blue" 
                             width="160px" icon="filter_list" 
-                            [disabled]="validDisabledArray(classifiers, checksDevices.selected) || formFilter.invalid">
+                            [disabled]="validDisabledArray(classifiers, checksDevices.selected) && formFilter.invalid">
                         </app-button>
-                       <!--  <app-button (click)="prueba()" text="Filtro" type="green" width="110px" icon="cloud_download"></app-button> -->
                         <app-button 
                             (click)="saveDataInCSV('dispositivos', proFilterDevices)" text="Csv" type="green" 
                             width="110px" icon="cloud_download" 

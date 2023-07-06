@@ -7,56 +7,35 @@ export class UtilsService {
 
   constructor() {}
   
-  saveDataInCSV(data: Array<any>): string {
-    if (data.length === 0) {
+  saveDataInCSV(objects: any[]): string {
+    if (objects.length === 0) {
       return '';
     }
   
-    const flattenData: { key: string; value: any; }[] = [];
+    const propertyNames = Object.keys(objects[0]);
+    const headerRow = propertyNames.join(',') + '\n';
   
-    // Función para aplanar un objeto recursivamente
-    const flattenObject = (obj: { [x: string]: { toString: () => any; }; }, prefix = '') => {
-      for (let key in obj) {
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
-          flattenObject(obj[key], prefix + key + '.');
-        } else {
-          flattenData.push({
-            key: prefix + key,
-            value: obj[key] !== null ? obj[key].toString() : ''
-          });
+    const rows = objects.map(obj => {
+      const values = propertyNames.map(prop => {
+        let value = obj[prop];
+  
+        // Convertir el valor al tipo de dato correcto
+        if (typeof value === 'string') {
+          value = '"' + value + '"';
+        } else if (typeof value === 'boolean') {
+          value = value ? 'true' : 'false';
+        } else if (value instanceof Date) {
+          value = value.toISOString();
+        } else if (value === null || value === undefined) {
+          value = '';
         }
-      }
-    };
   
-    data.forEach(item => flattenObject(item));
-  
-    const propertyNames = Array.from(new Set(flattenData.map(item => item.key)));
-  
-    let rowWithPropertyNames = propertyNames.join(',') + '\n';
-    let csvContent = rowWithPropertyNames;
-  
-    const rows: string[] = [];
-  
-    data.forEach(item => {
-      const values: string[] = [];
-  
-      propertyNames.forEach(key => {
-        const matchedItem = flattenData.find(
-          item => item.key === key
-        );
-  
-        if (matchedItem) {
-          values.push(matchedItem.value);
-        } else {
-          values.push('');
-        }
+        return value;
       });
   
-      rows.push(values.join(','));
+      return values.join(',');
     });
   
-    csvContent += rows.join('\n');
-  
-    return csvContent;
-  }  
+    return headerRow + rows.join('\n');
+  }   
 }
