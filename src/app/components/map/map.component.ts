@@ -90,29 +90,33 @@ export class MapComponent implements OnInit, AfterViewChecked {
                 tap(devices => this.devices = devices),
             ).subscribe((devices) => {
                 // Obtener información de los dispositivos
-                console.log(devices);
                 this.devicesTable = this.rowsDeviceTable(devices);
                 this.dataSource.data = this.devicesTable;
             });
 
             this.subscriptions.push(locationSub$)
-        }, 1000);
+        }, 100);
 
-        let clickSubs$ = this._map.getVehiculeObs().pipe(
+        this._map.getVehiculeObs().pipe(
             map(id => this.devices.find(({ devinuid }) => devinuid == id)),
             tap((device) => this.deviceSelected$.next(device)),
             map((device) => {
                 let posicion = device.deviloca.filter((p: any) => new Date(p.delofesi).toDateString() === new Date().toDateString());
+                this.clearMapHistory(device.devinuid);
                 this._map.getLocationWithGap(posicion, device);
             }),
             tap(() => this.details.toggle()),
             concatMap(() => this.imitationRealTime$),
         ).subscribe()
         // this.subscriptions.push(clickSubs$)
-    }
 
-    loadData(): void {
-        
+        // Verificar si la página fue recargada previamente
+        if (!localStorage.getItem('pageReloaded')) {
+            // Realizar la recarga de la página
+            window.location.reload();
+            // Establecer la bandera de recarga en el almacenamiento de sesión
+            localStorage.setItem('pageReloaded', 'true');
+        }
     }
 
     ngAfterViewChecked(): void {
@@ -120,6 +124,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
             this.subscriptions.map(s => s.unsubscribe());
             this._map.resetMapToInitial()
         })
+    }
+
+    ngOnDestroy(): void {
+        localStorage.removeItem('pageReloaded');
     }
 
     saveClassifiers(event: any) {

@@ -18,7 +18,6 @@ export class MapService {
     constructor(private http: HttpClient) {}
 
     drawMap(idElement: string) {
-        console.log(idElement);
         const element = document.getElementById(idElement) as HTMLElement;
         this.map = new google.maps.Map(element, {
             center: { lat: 11.0041, lng: -74.8070 },
