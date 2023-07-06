@@ -195,7 +195,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
                     LONGITUD: locations.delolong[index],
                     EVENTO: '',
                     "FECHA SISTEMA": locations.delofesi[index],
-                    "FECHA REGISTRO": locations.delotime[index],
+                    "FECHA REGISTRO": this.formatTimestamp(locations.delotime[index]),
                     VELOCIDAD: locations.delospee[index],
                 })
             });
