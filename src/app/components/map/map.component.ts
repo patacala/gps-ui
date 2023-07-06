@@ -192,6 +192,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
                     PLACA: row.carrlice,
                     "TIPO VEHICULO": row.carrtype,
                     LATITUD: lat,
+                    DIRECCION: '',
+                    BARRIO: '',
                     LONGITUD: locations.delolong[index],
                     EVENTO: '',
                     "FECHA SISTEMA": locations.delofesi[index],
@@ -200,7 +202,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
                 })
             });
         });
-        console.log(newArray);
         return newArray;  
     }
 

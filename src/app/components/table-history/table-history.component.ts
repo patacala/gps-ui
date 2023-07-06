@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { HistoryLoc } from './table-history.model';
-import { DeviceService } from '@services';
+import { DeviceService, MapService } from '@services';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { DatePipe } from '@angular/common';
@@ -24,6 +24,7 @@ export class TableHistoryComponent implements OnInit {
   
   constructor(
     private _device: DeviceService,
+    private _map: MapService,
     private datePipe: DatePipe
   ) {}
 
@@ -47,5 +48,9 @@ export class TableHistoryComponent implements OnInit {
     const date = new Date(formattedDate);
 
     return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') || '';
+  }
+
+  openInfoWdById(id: string) {
+    this._map.openInfoWdById('8', id);
   }
 }

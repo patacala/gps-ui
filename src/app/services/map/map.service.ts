@@ -51,13 +51,14 @@ export class MapService {
                 scaledSize: new google.maps.Size(40, 40),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(20, 40)
-            },
-            title: id
+            }
         })
 
-        marker.addListener('click', function (e) {
-            referenceSubj.next(this.getTitle());
-        })
+        marker.set('id', id);
+        marker.addListener('click', () => {
+            const markerId = marker.get('id');
+            referenceSubj.next(markerId);
+        });
 
         this.mapDevices.set(id, marker);
         this.centerMapOnMarkers();
@@ -112,34 +113,24 @@ export class MapService {
         // Colocar icono en cada punto de ubicación
         for (const [index, point] of points.entries()) {
             let marker = new google.maps.Marker();
-            let typeOfTour = 'Ubicación.';
+            const locId = point.delonuid;
 
             if (index == 0) {
-                typeOfTour  = 'Ultima ubicación.';
-                marker = this.drawColorTag(point, 'yellow');
+                point.typeOfTour = 'Ultima ubicación.';
+                marker = this.drawColorTag(locId.toString(), point, 'yellow');
             } else if (index == points.length - 1) {
-                typeOfTour  = 'Primera ubicación.';
-                marker = this.drawColorTag(point, 'red');
+                point.typeOfTour = 'Primera ubicación.';
+                marker = this.drawColorTag(locId.toString(), point, 'red');
             } else {
-                marker = this.drawSymbolTag(point, '#3498DB');
+                point.typeOfTour = 'Ubicación';
+                marker = this.drawSymbolTag(locId.toString(), point, '#3498DB');
             }
             
-            const pointRow = `
-                <h3>${typeOfTour}</h3>
-                <b>Lat:</b> ${points[index].delolati}, <b>Long:</b> ${points[index].delolong}<br> 
-                <b>Vel:</b> ${points[index].delospee} KM/H,<br>
-                <b>F.GPS:</b> ${points[index].delotime},<br>
-                <b>F.SIST:</b> ${points[index].delofesi}
-            `;
-            const infoWindow = new google.maps.InfoWindow({
-                content: pointRow
+            marker.addListener('click', () => {
+                const markerId = marker.get('id');
+                this.openInfoWdById(stringKey, markerId);
             });
-
-            const openInfoWindow = () => {
-                infoWindow.open(this.map, marker);
-            }
-            marker.addListener('click', openInfoWindow);
-
+              
             markers.push(marker);
             this.rtOfMarkersH.set(stringKey, markers);
         }
@@ -147,7 +138,33 @@ export class MapService {
         this.adjustZoom(points);
     }
 
-    drawColorTag(position: any, color: string) {
+    openInfoWdById(stringKey: string, id: string) {
+        stringKey = stringKey.toString();
+        id = id.toString();
+        const markers = this.rtOfMarkersH.get(stringKey);
+
+        if (markers) {
+            const marker = markers.find(marker => marker.get('id') === id);
+
+            if (marker) {
+                const point = marker.get('point');
+                const pointRow = `
+                    <h3>${point.typeOfTour}</h3>
+                    <b>Lat:</b> ${point.delolati}, <b>Long:</b> ${point.delolong}<br> 
+                    <b>Vel:</b> ${point.delospee} KM/H,<br>
+                    <b>F.GPS:</b> ${point.delotime},<br>
+                    <b>F.SIST:</b> ${point.delofesi}
+                `;
+                const infoWindow = new google.maps.InfoWindow({
+                    content: pointRow
+                });
+                
+                infoWindow.open(this.map, marker);
+            }
+        }
+    }
+
+    drawColorTag(id: string, position: any, color: string) {
         const wayPoint = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
 
         const marker = new google.maps.Marker({
@@ -160,11 +177,13 @@ export class MapService {
                 anchor: new google.maps.Point(20, 40)
             },
         });
-        
+
+        marker.set('id', id);
+        marker.set('point', position);
         return marker;
     }
 
-    drawSymbolTag(position: any, color: string) {
+    drawSymbolTag(id: string, position: any, color: string) {
         const wayPoint = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
         const marker = new google.maps.Marker({
             position: wayPoint,
@@ -177,6 +196,9 @@ export class MapService {
                 scale: 6  // Tamaño del icono
             }
         });
+
+        marker.set('id', id);
+        marker.set('point', position);
         return marker;
     }
 
