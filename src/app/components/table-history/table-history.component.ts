@@ -4,19 +4,21 @@ import { HistoryLoc } from './table-history.model';
 import { DeviceService, MapService } from '@services';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-table-history',
   standalone: true,
   providers: [DatePipe],
-  imports: [MatTableModule, MatPaginatorModule, DatePipe, MatIconModule],
+  imports: [MatTableModule, MatPaginatorModule, DatePipe, MatIconModule, NgIf],
   templateUrl: './table-history.component.html',
   styleUrls: ['./table-history.component.scss']
 })
 export class TableHistoryComponent implements OnInit {
+  deviceId: number = -1;
   devicesTable: HistoryLoc[]=[];
+  openInfoLoc: []=[];
   dataSource = new MatTableDataSource<HistoryLoc>([]);
   displayedColumns: string[] = ['dloclati', 'dloclong', 'daddress', 'dneighbh', 'devent', 'dspeed', 'delotime', 'delofesi', 'action'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -29,11 +31,14 @@ export class TableHistoryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._device.getHistoryLoc().subscribe((data: HistoryLoc[]) => {
-      this.dataSource.data = data;
+    this._device.getHistoryLoc().subscribe((data: { deviceId: number, historyLocs: HistoryLoc[] }) => {
+      this.deviceId = data.deviceId;
+      this.dataSource.data = data.historyLocs;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
+
+    this.openInfoLocIds();
   }
 
   formatTimestamp(timestamp: string): string {
@@ -51,6 +56,18 @@ export class TableHistoryComponent implements OnInit {
   }
 
   openInfoWdById(id: string) {
-    this._map.openInfoWdById('8', id);
+    this._map.openInfoWdById(this.deviceId.toString(), id);
+  }
+
+  openInfoLocIds() {
+    this._map.getOpenInfoLocIds().subscribe((data: any) => {
+      this.openInfoLoc = data;
+    });
+  }
+
+  hidIconInfoLoc(id: string) {
+    const openInfId = this.openInfoLoc.findIndex(openInfId => openInfId === id.toString());
+    if (openInfId === -1) return true;
+    return false;
   }
 }

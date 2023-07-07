@@ -51,7 +51,9 @@
         <ng-container matColumnDef="action" >
             <th mat-header-cell *matHeaderCellDef>ACCIÓN</th>
             <td mat-cell *matCellDef="let element" align="center">
-                <mat-icon (click)="openInfoWdById(element.delonuid)">location_on</mat-icon>
+                <mat-icon (click)="openInfoWdById(element.delonuid)" 
+                *ngIf="hidIconInfoLoc(element.delonuid)">location_on</mat-icon>
+                <!-- <mat-icon *ngIf="!hidIconInfoLoc(element.delonuid)">cancel</mat-icon> -->
             </td>
         </ng-container>
         

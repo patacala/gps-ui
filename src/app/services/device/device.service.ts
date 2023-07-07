@@ -96,7 +96,8 @@ export class DeviceService {
 
           const dvStringId = deviceId.toString();
           this._map.drawRoute(dvStringId, historyLocs);
-          this.historyLoc$.next(historyLocs);
+
+          this.historyLoc$.next({deviceId, historyLocs});
         }
     }
     

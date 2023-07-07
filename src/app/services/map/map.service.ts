@@ -1,7 +1,7 @@
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, take, tap } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -9,6 +9,8 @@ import { Subject } from 'rxjs';
 export class MapService {
     map!: google.maps.Map;
     private vehicule$: Subject<any> = new Subject();
+    private openInfoLoc$: Subject<any> = new Subject<any>();
+    private openInfoLocIds: any[]=[];
     private root: string = `${environment.apiUrl}`;
     private entityId: string = !!localStorage.getItem('entity') ? JSON.parse(localStorage.getItem('entity') as string).entinuid : null;
     private mapDevices: Map<string, google.maps.Marker> = new Map();
@@ -142,26 +144,42 @@ export class MapService {
         stringKey = stringKey.toString();
         id = id.toString();
         const markers = this.rtOfMarkersH.get(stringKey);
-
+      
         if (markers) {
-            const marker = markers.find(marker => marker.get('id') === id);
+          const marker = markers.find((marker) => marker.get('id') === id);
+        
+          if (marker) {
+            const point = marker.get('point');
+            const pointRow = `
+              <h3>${point.typeOfTour}</h3>
+              <b>Lat:</b> ${point.delolati}, <b>Long:</b> ${point.delolong}<br> 
+              <b>Vel:</b> ${point.delospee} KM/H,<br>
+              <b>F.GPS:</b> ${point.delotime},<br>
+              <b>F.SIST:</b> ${point.delofesi}
+            `;
+            const infoWindow = new google.maps.InfoWindow({
+              content: pointRow,
+            });
 
-            if (marker) {
-                const point = marker.get('point');
-                const pointRow = `
-                    <h3>${point.typeOfTour}</h3>
-                    <b>Lat:</b> ${point.delolati}, <b>Long:</b> ${point.delolong}<br> 
-                    <b>Vel:</b> ${point.delospee} KM/H,<br>
-                    <b>F.GPS:</b> ${point.delotime},<br>
-                    <b>F.SIST:</b> ${point.delofesi}
-                `;
-                const infoWindow = new google.maps.InfoWindow({
-                    content: pointRow
-                });
-                
-                infoWindow.open(this.map, marker);
-            }
+            infoWindow.addListener('closeclick', () => {
+                this.rmOpenInfoId(id);
+            });
+
+            this.openInfoLocIds.push(id);
+            this.openInfoLoc$.next(this.openInfoLocIds);
+            infoWindow.open(this.map, marker);
+          }
         }
+    }
+
+    rmOpenInfoId(id: string) {
+        const opInfoIndex = this.openInfoLocIds.findIndex(openInfId => openInfId === id.toString());
+        this.openInfoLocIds.splice(opInfoIndex);
+        this.openInfoLoc$.next(this.openInfoLocIds);
+    }
+      
+    getOpenInfoLocIds() {
+        return this.openInfoLoc$.asObservable();
     }
 
     drawColorTag(id: string, position: any, color: string) {
