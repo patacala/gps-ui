@@ -17,6 +17,7 @@
   <div class="flex justify-center">
     <app-button 
       (click)="searchHistoryDv()"
+      [disabled]="formDates.invalid"
       text="Buscar" type="blue" 
       width="160px" icon="search">
     </app-button>

@@ -7,7 +7,7 @@ import { DatePipe, NgIf } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ButtonComponent } from '../button/button.component';
 import { ClassifierService } from 'src/app/services/classifiers/classifiers.service';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DeviceService } from '@services';
 
 @Component({
@@ -31,6 +31,7 @@ export class DataTimeHComponent implements OnInit {
  
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<DataTimeHComponent>,
     private _device: DeviceService,
     private _classifier: ClassifierService, 
   ) {}
@@ -41,7 +42,7 @@ export class DataTimeHComponent implements OnInit {
     if (typeof(this.data.deviceId) !== undefined) {
       const deviceId = this.data.deviceId;
       const filterDataDv = {
-        classifiers: [-1],
+        classifiers: [],
         deviceIds: [deviceId],
         date: {
           startDate: this.formDates.value.startDate?.toISOString().slice(0, 10),
@@ -51,7 +52,12 @@ export class DataTimeHComponent implements OnInit {
       }; 
 
       this._classifier.filterByClassifier(filterDataDv).subscribe((histoyDevice: any) => {
-          this._device.setHistoryLoc(histoyDevice.response);
+          if (typeof(histoyDevice.response) !== undefined) {
+            if (histoyDevice.response.length > 0) {
+              this.dialogRef.close();
+              this._device.setHistoryLoc(deviceId, histoyDevice.response);
+            }
+          }
       });
     }
   }
