@@ -82,12 +82,14 @@ export class DeviceService {
     }
 
     public setHistoryLoc(deviceId: number, locations: any) {
+        console.log(locations);
         if (locations && locations.length > 0 && locations[0].deviloca) {
           const historyLocs = locations[0].deviloca.map((location: any) => {
             return {
               delonuid: Number(location.delonuid),
               delolati: Number(location.delolati),
               delolong: Number(location.delolong),
+              delodire: location.delodire,
               delospee: location.delospee,
               delotime: location.delotime,
               delofesi: location.delofesi
