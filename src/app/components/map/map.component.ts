@@ -44,7 +44,7 @@ import { DeviceService } from '@services';
 })
 export class MapComponent implements OnInit, AfterViewChecked {
     displayedColumns: string[] = ['select', 'imei', 'plate'];
-    
+    maxDate: string = '';
     devicesTable: Device[]=[];
     proFilterDevices: LocationData[] = [];
     dataSource = new MatTableDataSource<Device>([]);
@@ -75,7 +75,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
         private _map: MapService, 
         private _classifier: ClassifierService,
         private _device: DeviceService, 
-        private _utilsService: UtilsService,
+        private _utils: UtilsService,
         public dialog: MatDialog,
         private datePipe: DatePipe
     ) {}
@@ -117,6 +117,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
             // Establecer la bandera de recarga en el almacenamiento de sesión
             localStorage.setItem('pageReloaded', 'true');
         }
+
+        this.maxDate = this._utils.getCurrentDateTime();
     }
 
     ngAfterViewChecked(): void {
@@ -175,6 +177,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
             locations: {
                 delolati: data.deviloca.map((loc: any) => loc.delolati),
                 delolong: data.deviloca.map((loc: any) => loc.delolong),
+                delodire: data.deviloca.map((loc: any) => loc.delodire),
+                delobarri: data.deviloca.map((loc: any) => loc.delobarri),
                 delofesi: data.deviloca.map((loc: any) => loc.delofesi),
                 delotime: data.deviloca.map((loc: any) => loc.delotime),
                 delospee: data.deviloca.map((loc: any) => loc.delospee)
@@ -192,14 +196,14 @@ export class MapComponent implements OnInit, AfterViewChecked {
                     PLACA: row.carrlice,
                     "TIPO VEHICULO": row.carrtype,
                     LATITUD: lat,
-                    DIRECCION: '',
-                    BARRIO: '',
                     LONGITUD: locations.delolong[index],
+                    DIRECCION: locations.delodire[index],
+                    BARRIO: locations.delobarri[index],
                     EVENTO: '',
                     "FECHA SISTEMA": locations.delofesi[index],
                     "FECHA REGISTRO": this.formatTimestamp(locations.delotime[index]),
                     VELOCIDAD: locations.delospee[index],
-                })
+                });
             });
         });
         return newArray;  
@@ -279,7 +283,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
       
     // Exportar .csv
     saveDataInCSV(name: string, data: Array<any>): void {
-        let csvContent = this._utilsService.saveDataInCSV(data);
+        let csvContent = this._utils.saveDataInCSV(data);
     
         var hiddenElement = document.createElement('a');
         hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);

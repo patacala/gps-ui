@@ -5,11 +5,11 @@
   
   <mat-form-field appearance="fill" class="w-full" [formGroup]="formDates">
       <mat-label>Rango de fecha</mat-label>
-      <mat-date-range-input [rangePicker]="picker">
-        <input matStartDate formControlName="startDate" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
+      <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
+        <input matStartDate formControlName="startDate" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off" >
         <input matEndDate formControlName="endDate" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
       </mat-date-range-input>
-      <!-- <mat-hint>{{formFilter.value.startDateOnly | date}} - {{formFilter.value.endDateOnly | date}}</mat-hint> -->
+      <mat-hint>{{formDates.value.startDate | date}} - {{formDates.value.endDate | date}}</mat-hint>
       <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
   </mat-form-field>

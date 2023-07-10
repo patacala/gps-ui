@@ -21,7 +21,7 @@
                         <div class="p-2">
                             <mat-form-field appearance="fill" class="w-full">
                                 <mat-label>Rango de fecha</mat-label>
-                                <mat-date-range-input [rangePicker]="picker">
+                                <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
                                   <input matStartDate formControlName="startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
                                   <input matEndDate formControlName="endDateOnly" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
                                 </mat-date-range-input>
@@ -167,7 +167,7 @@
                                 </div>
                                 <div class="value p-1 pl-2">
                                     <b class="sup-title">Barrio:</b>
-                                    <small class="sub-title"></small>
+                                    <small class="sub-title">{{ device.deviloca[0].delobarri }}</small>
                                 </div>
                             </div>
                             <div class="dt-vh-citem">

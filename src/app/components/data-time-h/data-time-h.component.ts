@@ -9,6 +9,7 @@ import { ButtonComponent } from '../button/button.component';
 import { ClassifierService } from 'src/app/services/classifiers/classifiers.service';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DeviceService } from '@services';
+import { UtilsService } from 'src/app/services/utils/utils.service';
 
 @Component({
   selector: 'app-data-time-h',
@@ -24,6 +25,7 @@ import { DeviceService } from '@services';
   styleUrls: ['./data-time-h.component.scss']
 })
 export class DataTimeHComponent implements OnInit {
+  maxDate: string = '';
   formDates = new FormGroup({
      startDate: new FormControl<Date | null>(null, Validators.required),
      endDate: new FormControl<Date | null>(null, Validators.required),
@@ -34,9 +36,12 @@ export class DataTimeHComponent implements OnInit {
     public dialogRef: MatDialogRef<DataTimeHComponent>,
     private _device: DeviceService,
     private _classifier: ClassifierService, 
+    private _utils: UtilsService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.maxDate = this._utils.getCurrentDateTime();
+  }
 
   searchHistoryDv() {
     if (typeof(this.data.deviceId) !== undefined) {
