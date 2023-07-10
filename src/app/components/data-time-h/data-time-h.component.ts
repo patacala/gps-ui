@@ -10,6 +10,7 @@ import { ClassifierService } from 'src/app/services/classifiers/classifiers.serv
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DeviceService } from '@services';
 import { UtilsService } from 'src/app/services/utils/utils.service';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 
 @Component({
   selector: 'app-data-time-h',
@@ -19,18 +20,20 @@ import { UtilsService } from 'src/app/services/utils/utils.service';
     MatNativeDateModule, FormsModule, 
     ReactiveFormsModule, DatePipe, 
     MatIconModule, ButtonComponent,
-    MatDialogModule, NgIf
+    MatDialogModule, NgIf, NgxMaterialTimepickerModule
   ],
   templateUrl: './data-time-h.component.html',
   styleUrls: ['./data-time-h.component.scss']
 })
 export class DataTimeHComponent implements OnInit {
+  formDates = {
+    startDate: new Date(),
+    endDate: new Date(),
+    startTime: '1:00 PM',
+    endTime: '3:00 PM'
+  };
   maxDate: string = '';
-  formDates = new FormGroup({
-     startDate: new FormControl<Date | null>(null, Validators.required),
-     endDate: new FormControl<Date | null>(null, Validators.required),
- });
- 
+  
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<DataTimeHComponent>,
@@ -44,14 +47,15 @@ export class DataTimeHComponent implements OnInit {
   }
 
   searchHistoryDv() {
+    console.log(this.formDates);
     if (typeof(this.data.deviceId) !== undefined) {
       const deviceId = this.data.deviceId;
       const filterDataDv = {
         classifiers: [],
         deviceIds: [deviceId],
         date: {
-          startDate: this.formDates.value.startDate?.toISOString().slice(0, 10),
-          endDate: this.formDates.value.endDate?.toISOString().slice(0, 10)
+          startDate: this.formDates.startDate?.toISOString().slice(0, 10),
+          endDate: this.formDates.endDate?.toISOString().slice(0, 10)
         },
         isAlarm: false 
       }; 

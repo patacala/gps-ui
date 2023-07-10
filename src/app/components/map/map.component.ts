@@ -294,6 +294,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
     openDialogHistory(deviceId: number) {
         this.dialog.open(DataTimeHComponent, {
+            width:'330px',
             data: {
               deviceId
             },

@@ -3,21 +3,25 @@
     <h2 class="h2">Seleccione un rango:</h2>
   </header>
   
-  <mat-form-field appearance="fill" class="w-full" [formGroup]="formDates">
+  <mat-form-field appearance="fill" class="w-full">
       <mat-label>Rango de fecha</mat-label>
       <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
-        <input matStartDate formControlName="startDate" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off" >
-        <input matEndDate formControlName="endDate" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
+        <input matStartDate [(ngModel)]="formDates.startDate" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off" >
+        <input matEndDate [(ngModel)]="formDates.endDate" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
       </mat-date-range-input>
-      <mat-hint>{{formDates.value.startDate | date}} - {{formDates.value.endDate | date}}</mat-hint>
+      <mat-hint>{{formDates.startDate | date}} - {{formDates.endDate | date}}</mat-hint>
       <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
   </mat-form-field>
+
+  <div class="timeFields">
+    <ngx-timepicker-field [(ngModel)]="formDates.startTime" [controlOnly]="true"></ngx-timepicker-field>
+    <ngx-timepicker-field [(ngModel)]="formDates.endTime" [controlOnly]="true"></ngx-timepicker-field>
+  </div>
   
   <div class="flex justify-center">
     <app-button 
       (click)="searchHistoryDv()"
-      [disabled]="formDates.invalid"
       text="Buscar" type="blue" 
       width="160px" icon="search">
     </app-button>
