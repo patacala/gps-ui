@@ -63,7 +63,7 @@ export class DataTimeHComponent implements OnInit {
 
       this._classifier.filterByClassifier(filterDataDv).subscribe((histoyDevice: any) => {
           if (typeof(histoyDevice.response) !== undefined) {
-            if (histoyDevice.response?.length > 0 && histoyDevice.response[0]?.locations?.length > 0) {
+            if (histoyDevice.response?.length > 0 && histoyDevice.response[0]?.deviloca?.length > 0) {
               this.dialogRef.close();
               this._device.setHistoryLoc(deviceId, histoyDevice.response);
             } else {
