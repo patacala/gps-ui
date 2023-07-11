@@ -15,8 +15,14 @@
   </mat-form-field>
 
   <div class="timeFields">
-    <ngx-timepicker-field [(ngModel)]="formDates.startTime" [controlOnly]="true"></ngx-timepicker-field>
-    <ngx-timepicker-field [(ngModel)]="formDates.endTime" [controlOnly]="true"></ngx-timepicker-field>
+    <div class="timeField">
+      <label class="timeFTitle">Tiempo inicial</label>
+      <ngx-timepicker-field [(ngModel)]="formDates.startTime" [controlOnly]="true"></ngx-timepicker-field>
+    </div>
+    <div class="timeField">
+      <label class="timeFTitle">Tiempo final</label>
+      <ngx-timepicker-field [(ngModel)]="formDates.endTime" [controlOnly]="true"></ngx-timepicker-field>
+    </div>
   </div>
   
   <div class="flex justify-center">
