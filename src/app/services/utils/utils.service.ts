@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UtilsService {
 
-  constructor() {}
+  constructor(
+    private _snackBar: MatSnackBar
+  ) {}
   
   saveDataInCSV(objects: any[]): string {
     if (objects.length === 0) {
@@ -76,5 +79,12 @@ export class UtilsService {
 
     const formattedTime = `${hour.toString().padStart(2, '0')}:${minutes}:00`;
     return formattedTime;
+  }
+
+  matSnackBar(message: string, action: string) {
+    const snackBarRef = this._snackBar.open(message, action);
+    setTimeout(() => {
+      snackBarRef.dismiss();
+    }, 2000);
   }
 }

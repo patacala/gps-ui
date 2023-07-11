@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { DatePipe, NgIf } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,6 +11,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { DeviceService } from '@services';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+
 
 @Component({
   selector: 'app-data-time-h',
@@ -65,6 +66,8 @@ export class DataTimeHComponent implements OnInit {
             if (histoyDevice.response?.length > 0 && histoyDevice.response[0]?.locations?.length > 0) {
               this.dialogRef.close();
               this._device.setHistoryLoc(deviceId, histoyDevice.response);
+            } else {
+              this._utils.matSnackBar('Sin resultados', 'ok');
             }
           }
       });
