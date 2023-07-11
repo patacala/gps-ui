@@ -3,7 +3,8 @@
     <h2 class="h2">Seleccione un rango:</h2>
   </header>
   
-  <mat-form-field appearance="fill" class="w-full">
+  <div class="timeFields">
+    <mat-form-field appearance="fill">
       <mat-label>Rango de fecha</mat-label>
       <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
         <input matStartDate [(ngModel)]="formDates.startDate" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off" >
@@ -12,9 +13,8 @@
       <mat-hint>{{formDates.startDate | date}} - {{formDates.endDate | date}}</mat-hint>
       <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
-  </mat-form-field>
+    </mat-form-field>
 
-  <div class="timeFields">
     <div class="timeField">
       <label class="timeFTitle">Tiempo inicial</label>
       <ngx-timepicker-field [(ngModel)]="formDates.startTime" [controlOnly]="true"></ngx-timepicker-field>

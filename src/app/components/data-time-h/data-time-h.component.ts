@@ -29,8 +29,8 @@ export class DataTimeHComponent implements OnInit {
   formDates = {
     startDate: new Date(),
     endDate: new Date(),
-    startTime: '1:00 PM',
-    endTime: '3:00 PM'
+    startTime: '12:00 AM',
+    endTime: ''
   };
   maxDate: string = '';
   
@@ -43,31 +43,37 @@ export class DataTimeHComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.formDates.endTime = this._utils.getCurrentTimeShort();
     this.maxDate = this._utils.getCurrentDateTime();
   }
 
   searchHistoryDv() {
-    console.log(this.formDates);
     if (typeof(this.data.deviceId) !== undefined) {
       const deviceId = this.data.deviceId;
       const filterDataDv = {
         classifiers: [],
         deviceIds: [deviceId],
         date: {
-          startDate: this.formDates.startDate?.toISOString().slice(0, 10),
-          endDate: this.formDates.endDate?.toISOString().slice(0, 10)
+          startDate: this.applyTimeDate(this.formDates.startDate, this.formDates.startTime),
+          endDate: this.applyTimeDate(this.formDates.endDate, this.formDates.endTime)
         },
         isAlarm: false 
       }; 
 
       this._classifier.filterByClassifier(filterDataDv).subscribe((histoyDevice: any) => {
           if (typeof(histoyDevice.response) !== undefined) {
-            if (histoyDevice.response.length > 0) {
+            if (histoyDevice.response?.length > 0 && histoyDevice.response[0]?.locations?.length > 0) {
               this.dialogRef.close();
               this._device.setHistoryLoc(deviceId, histoyDevice.response);
             }
           }
       });
     }
+  }
+
+  applyTimeDate(date: Date, time: string) {
+    const dateOnly = date.toISOString().slice(0, 10);
+    const timeOnly = this._utils.getTransformTime(time);
+    return dateOnly.concat(' ', timeOnly);
   }
 }

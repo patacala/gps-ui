@@ -54,4 +54,27 @@ export class UtilsService {
     return `${currentDateOnly}T${timeEnd}`;
   }
   
+  getCurrentTimeShort() {
+    const currentDate = new Date();
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const amPm = hours >= 12 ? 'PM' : 'AM';
+    const formattedTime = `${(hours % 12) || 12}:${minutes.toString().padStart(2, '0')} ${amPm}`;
+    return formattedTime; // Ejemplo de salida: '3:00 PM'
+  }
+
+  getTransformTime(timeString: string) {
+    const [timePart, amPmPart] = timeString.split(' ');
+    const [hours, minutes] = timePart.split(':');
+
+    let hour = parseInt(hours, 10);
+    if (amPmPart === 'PM' && hour < 12) {
+      hour += 12;
+    } else if (amPmPart === 'AM' && hour === 12) {
+      hour = 0;
+    }
+
+    const formattedTime = `${hour.toString().padStart(2, '0')}:${minutes}:00`;
+    return formattedTime;
+  }
 }
