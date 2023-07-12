@@ -165,9 +165,12 @@ export class MapService {
                 this.rmOpenInfoId(id);
             });
 
-            this.openInfoLocIds.push(id);
-            this.openInfoLoc$.next(this.openInfoLocIds);
-            infoWindow.open(this.map, marker);
+            const opInfoIndex = this.openInfoLocIds.findIndex(opInfLoc => opInfLoc === id);
+            if (opInfoIndex === -1) {
+                this.openInfoLocIds.push(id);
+                this.openInfoLoc$.next(this.openInfoLocIds);
+                infoWindow.open(this.map, marker);
+            }
           }
         }
     }
