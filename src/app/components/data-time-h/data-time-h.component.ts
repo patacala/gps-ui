@@ -30,7 +30,7 @@ export class DataTimeHComponent implements OnInit {
   formDates = {
     startDate: new Date(),
     endDate: new Date(),
-    startTime: '12:00 AM',
+    startTime: '',
     endTime: ''
   };
   maxDate: string = '';
@@ -44,6 +44,7 @@ export class DataTimeHComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.formDates.startTime = this._utils.getDelayedShortTmNow(60);
     this.formDates.endTime = this._utils.getCurrentTimeShort();
     this.maxDate = this._utils.getCurrentDateTime();
   }

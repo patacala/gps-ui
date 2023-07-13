@@ -66,6 +66,17 @@ export class UtilsService {
     return formattedTime; // Ejemplo de salida: '3:00 PM'
   }
 
+  getDelayedShortTmNow(delayMinutes: number) {
+      const currentDate = new Date();
+      currentDate.setMinutes(currentDate.getMinutes() - delayMinutes);
+    
+      const hours = currentDate.getHours();
+      const minutes = currentDate.getMinutes();
+      const amPm = hours >= 12 ? 'PM' : 'AM';
+      const formattedTime = `${(hours % 12) || 12}:${minutes.toString().padStart(2, '0')} ${amPm}`;
+      return formattedTime; // Ejemplo de salida: '3:00 PM'
+  }
+  
   getTransformTime(timeString: string) {
     const [timePart, amPmPart] = timeString.split(' ');
     const [hours, minutes] = timePart.split(':');

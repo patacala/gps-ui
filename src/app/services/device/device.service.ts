@@ -4,7 +4,6 @@ import { environment } from 'src/environments/environment';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { IDeviceCreate, IDeviceResponse } from './device.interface';
 import { MapService } from '../map/map.service';
-import { HistoryLoc } from 'src/app/components/table-history/table-history.model';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceService {
@@ -82,7 +81,6 @@ export class DeviceService {
     }
 
     public setHistoryLoc(deviceId: number, locations: any) {
-        console.log(locations);
         if (locations && locations.length > 0 && locations[0].deviloca) {
           const historyLocs = locations[0].deviloca.map((location: any) => {
             return {
@@ -112,9 +110,10 @@ export class DeviceService {
     }
     
     public validHistoryLoc() {
-        const dataHLoc: HistoryLoc[] = this.historyLoc$.getValue();
-        if (typeof(dataHLoc) !== undefined) {
-            if (dataHLoc.length) return true;
+        const dataHLoc: any = this.historyLoc$.getValue();
+
+        if (typeof(dataHLoc?.historyLocs) !== undefined) {
+            if (dataHLoc?.historyLocs?.length) return true;
         }
         return false;
     }

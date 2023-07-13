@@ -19,3 +19,20 @@
         }
     }
 }
+
+.items-right {
+    display: flex;
+    justify-content: flex-end;
+
+    .dt-vh-close {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        background-color:#E5E7E9;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+}

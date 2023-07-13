@@ -192,6 +192,11 @@ export class MapService {
         this.openInfoLocIds.splice(opInfoIndex);
         this.openInfoLoc$.next(this.openInfoLocIds);
     }
+
+    clearOpenInfoLoc() {
+        this.openInfoLocIds = [];
+        this.openInfoLoc$.next(this.openInfoLocIds);
+    }
       
     getOpenInfoLocIds() {
         return this.openInfoLoc$.asObservable();

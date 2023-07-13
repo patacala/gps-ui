@@ -302,11 +302,13 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     clearMapHistory(key: string) {
+        this._map.clearOpenInfoLoc();
         this._device.clearHistoryLoc();
         this._map.clearMapHistory(key);
     }
 
     closeToggle(key: string) {
+        this._map.clearOpenInfoLoc();
         this._device.clearHistoryLoc();
         this._map.clearMapHistory(key);
         this.details.close();
