@@ -117,6 +117,9 @@ export class MapService {
             let marker = new google.maps.Marker();
             const locId = point.delonuid;
 
+            const currentPoint = point;
+            const prevPoint = points[index + 1];
+
             if (index == 0) {
                 point.typeOfTour = 'Ultima ubicación.';
                 marker = this.drawColorTag(locId.toString(), point, 'yellow');
@@ -125,7 +128,16 @@ export class MapService {
                 marker = this.drawColorTag(locId.toString(), point, 'red');
             } else {
                 point.typeOfTour = 'Ubicación';
-                marker = this.drawSymbolTag(locId.toString(), point, '#3498DB');
+  
+                // Calcular la dirección de la flecha
+                if (currentPoint && prevPoint && currentPoint.delolong && prevPoint.delolong) {
+                    const arrowDirection = Math.atan2(
+                        currentPoint.delolong - prevPoint.delolong,
+                        currentPoint.delolati - prevPoint.delolati
+                    ) * (180 / Math.PI);
+
+                    marker = this.drawSymbolTag(locId.toString(), point, arrowDirection, '#3498DB');
+                }
             }
             
             marker.addListener('click', () => {
@@ -204,17 +216,18 @@ export class MapService {
         return marker;
     }
 
-    drawSymbolTag(id: string, position: any, color: string) {
+    drawSymbolTag(id: string, position: any, arrowDirection: number, color: string) {
         const wayPoint = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
         const marker = new google.maps.Marker({
             position: wayPoint,
             map: this.map,
             icon: {
-                path: google.maps.SymbolPath.CIRCLE,  // Aplicar icono
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,  // Aplicar icono img
                 fillColor: color,
                 fillOpacity: 1.0,
                 strokeWeight: 0,
-                scale: 6  // Tamaño del icono
+                scale: 3,  // Tamaño del icono
+                rotation: arrowDirection
             }
         });
 
