@@ -103,7 +103,7 @@
             </mat-drawer-content>
             
             <mat-drawer #detailsVehicule mode="side" position="end">
-                <aside class="details-vehicle mt-2 ml-2 mr-2" *ngIf="deviceSelected$ | async as device">
+                <aside class="details-vehicle mt-2 ml-2 mr-2" *ngIf="(deviceSelected$ | async) as device">
                     <div class="flex justify-end p-1">
                         <div class="dt-vh-close" (click)="closeToggle(device.devinuid)">
                             <mat-icon>close</mat-icon>
@@ -140,6 +140,15 @@
                                 <div class="value p-1 pl-2">
                                     <b class="sup-title">Marca:</b>
                                     <small class="sub-title">{{device.devimark}}</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>fingerprint</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Clasificadores:</b>
+                                    <small class="sub-title">{{listClassifiers(device?.clasdevi)}}</small>
                                 </div>
                             </div>
                             <div class="dt-vh-citem">
@@ -194,7 +203,7 @@
                                 </div>
                                 <div class="value p-1 pl-2">
                                     <b class="sup-title">Kilometraje:</b>
-                                    <small class="sub-title">0 KM</small>
+                                    <small class="sub-title">{{device?.kmdevi[0]?.kmcapt}} KM / {{device?.kmdevi[0]?.kmdiacapt}}</small>
                                 </div>
                             </div>
                             <div class="dt-vh-citem">

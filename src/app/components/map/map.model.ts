@@ -20,3 +20,5 @@ export interface LocationData {
     "FECHA REGISTRO": string;
     VELOCIDAD: string
 }
+
+  

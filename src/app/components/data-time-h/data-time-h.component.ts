@@ -80,4 +80,8 @@ export class DataTimeHComponent implements OnInit {
     const timeOnly = this._utils.getTransformTime(time);
     return dateOnly.concat(' ', timeOnly);
   }
+
+  dialogClose() {
+    this.dialogRef.close();
+  }
 }

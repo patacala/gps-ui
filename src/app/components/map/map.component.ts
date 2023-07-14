@@ -261,6 +261,21 @@ export class MapComponent implements OnInit, AfterViewChecked {
         event.target.value = uppercase;
     }
 
+    listClassifiers(data: any) {
+        const classifiers: string[] = [];
+        if(data && typeof(data) != undefined) {
+            
+            data.forEach((element: any) => {
+                const clvadesc = element?.classvalue?.clvadesc;
+                if (clvadesc) {
+                    classifiers.push(clvadesc);
+                }
+            });
+        }
+
+        return classifiers.join(', ');
+    }
+
     // Metodo utilizado para obtener los datos de lista devices
     rowsDeviceTable(devices: Array<any>): { devinuid: number; deviimei: string; carrlice: string; }[] {
         const devicesTable: { devinuid: number; deviimei: string; carrlice: string; }[] = [];
