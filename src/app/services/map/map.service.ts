@@ -142,8 +142,8 @@ export class MapService {
         const markers = [];
         
         // Colocar icono en cada punto de ubicación
-        let marker = new google.maps.Marker();
         for (const [index, point] of points.entries()) {
+            let marker = new google.maps.Marker();
             const locId = point.delonuid;
 
             const currentPoint = point;
