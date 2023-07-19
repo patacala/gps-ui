@@ -332,6 +332,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
         this._map.clearOpenInfoLoc();
         this._device.clearHistoryLoc();
         this._map.clearMapHistory(key);
+        this.currentDvId = -1;
+        this.subscription?.unsubscribe();
+        this._map.drawDvsMainLoc(this.devicesFound);
         this.details.close();
     }
 
