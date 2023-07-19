@@ -98,12 +98,13 @@
             </mat-drawer>
 
             <mat-drawer-content>
-                <app-button id="filters" (click)="drawer.toggle()" text="Filtros" type="blue" width="100px" icon="filter_list"></app-button>
+                <app-button *ngIf="devicesFound?.length && currentDvId == -1" 
+                id="filters" (click)="drawer.toggle()" text="Filtros" type="blue" width="100px" icon="filter_list"></app-button>
                 <div id="map" class="h-full w-full"></div>
             </mat-drawer-content>
             
             <mat-drawer #detailsVehicule mode="side" position="end">
-                <aside class="details-vehicle mt-2 ml-2 mr-2" *ngIf="(deviceSelected$ | async) as device">
+                <aside class="details-vehicle mt-2 ml-2 mr-2" *ngIf="deviceSelected$ | async as device">
                     <div class="flex justify-end p-1">
                         <div class="dt-vh-close" (click)="closeToggle(device.devinuid)">
                             <mat-icon>close</mat-icon>

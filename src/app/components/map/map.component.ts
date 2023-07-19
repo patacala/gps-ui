@@ -2,8 +2,8 @@ import { AfterViewChecked, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
-import { from, interval, mergeMap, Observable, pipe, Subject, Subscription } from 'rxjs';
-import { concatMap, filter, map, tap, toArray } from 'rxjs/operators';
+import { interval, Observable, pipe, Subject, Subscription } from 'rxjs';
+import { filter, map, pairwise, tap } from 'rxjs/operators';
 import { AsyncPipe, DatePipe, JsonPipe, NgIf } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -47,6 +47,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     maxDate: string = '';
     devicesTable: Device[]=[];
     proFilterDevices: LocationData[] = [];
+    subscription: Subscription | undefined;
     dataSource = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true, []);
     color: ThemePalette = 'accent';
@@ -54,15 +55,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
     devices!: Array<any>;
+    devicesFound!: Array<any>;
     deviceSelected$: Subject<any> = new Subject();
+    currentDvId: number = -1;
     classifiers!: any;
-    imitationRealTime$ = interval(20000).pipe(
-        concatMap(v => this._map.getLocationDevices()),
-        mergeMap((devices: any) => from(devices.response.rows)),
-        this.getDevicesLocation(false),
-        toArray(),
-        tap(devices => this.devices = devices),
-    );
     subscriptions: Subscription[] = [];
     formFilter = new FormGroup({
        /*  plate: new FormControl<String | null>(null), */
@@ -82,43 +78,43 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
     ngOnInit(): void {
         this._map.drawMap('map');
-        setTimeout(() => {
-            let locationSub$ = this._map.getLocationDevices().pipe(
-                mergeMap((devices: any) => from(devices.response.rows)),
-                this.getDevicesLocation(false),
-                toArray(),
-                tap(devices => this.devices = devices),
-            ).subscribe((devices) => {
-                // Obtener información de los dispositivos
-                this.devicesTable = this.rowsDeviceTable(devices);
-                this.dataSource.data = this.devicesTable;
-            });
 
-            this.subscriptions.push(locationSub$)
+        setTimeout(() => {
+            this.initialMapDevsLoc();
         }, 100);
 
-        this._map.getVehiculeObs().pipe(
-            map(id => this.devices.find(({ devinuid }) => devinuid == id)),
-            tap((device) => this.deviceSelected$.next(device)),
-            map((device) => {
-                let posicion = device.deviloca.filter((p: any) => new Date(p.delofesi).toDateString() === new Date().toDateString());
-                this.clearMapHistory(device.devinuid);
-                this._map.getLocationWithGap(posicion, device);
-            }),
-            tap(() => this.details.toggle()),
-            concatMap(() => this.imitationRealTime$),
-        ).subscribe()
-        // this.subscriptions.push(clickSubs$)
+        this._map.getDeviceObs().subscribe((selectedDeviceId: number) => {
+            if (this.currentDvId !== selectedDeviceId) {
+                this.currentDvId = selectedDeviceId;
+                const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == selectedDeviceId);
+                this.deviceSelected$.next(this.devicesFound[indexDv]);
+                this._map.drawDvsMainLoc([this.devicesFound[indexDv]]);
+                this.suscriptRealTime();
+                this.details.open();
+            } else {
+                if (this.subscription && !this.subscription.closed) {
+                    this.subscription.unsubscribe(); // Pausar la suscripción
+                }
+                this.currentDvId = -1;
+                this._map.drawDvsMainLoc(this.devicesFound);
+                this.details.close();
+            }
+        });
 
-        // Verificar si la página fue recargada previamente
-        if (!localStorage.getItem('pageReloaded')) {
-            // Realizar la recarga de la página
-            window.location.reload();
-            // Establecer la bandera de recarga en el almacenamiento de sesión
-            localStorage.setItem('pageReloaded', 'true');
-        }
-
+        this.deviceSelected$.pipe(
+            pairwise(),
+            filter(([previousValue, currentValue]) => previousValue?.deviloca[0]?.delofesi !== currentValue?.deviloca[0]?.delofesi)
+        ).subscribe(([, currentValue]) => {
+            this._map.drawDvsMainLoc([currentValue]);
+        });
+          
         this.maxDate = this._utils.getCurrentDateTime();
+    }
+
+    suscriptRealTime() {
+        this.subscription = interval(2000).subscribe(() => {
+            this.initialMapDevsLoc();
+        });
     }
 
     ngAfterViewChecked(): void {
@@ -128,8 +124,18 @@ export class MapComponent implements OnInit, AfterViewChecked {
         })
     }
 
-    ngOnDestroy(): void {
-        localStorage.removeItem('pageReloaded');
+    initialMapDevsLoc() {
+        this._map.getLocationDevices().subscribe((data: any) => {
+            if (data && data?.response?.rows) {
+                const rowDevice = data.response.rows;
+                this.devicesFound = rowDevice;
+                const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == this.currentDvId);
+                if (indexDv == -1) this._map.drawDvsMainLoc(rowDevice);
+                else if (indexDv != -1) this.deviceSelected$.next(rowDevice[indexDv]);
+                this.devicesTable = this.rowsDeviceTable(rowDevice);
+                this.dataSource.data = this.devicesTable;
+            }
+        });
     }
 
     saveClassifiers(event: any) {

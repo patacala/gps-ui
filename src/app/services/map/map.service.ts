@@ -9,11 +9,13 @@ import { Subject } from 'rxjs';
 export class MapService {
     map!: google.maps.Map;
     private vehicule$: Subject<any> = new Subject();
+    private openDetailsLoc$: Subject<any> = new Subject<any>();
     private openInfoLoc$: Subject<any> = new Subject<any>();
     private openInfoLocIds: any[]=[];
     private root: string = `${environment.apiUrl}`;
     private entityId: string = !!localStorage.getItem('entity') ? JSON.parse(localStorage.getItem('entity') as string).entinuid : null;
     private mapDevices: Map<string, google.maps.Marker> = new Map();
+    private mapDevs: Map<string, google.maps.Marker[]> = new Map();
     private routeOfMarkers: Map<string, google.maps.Marker[]> = new Map();
     private rtOfLineH: Map<string, google.maps.Polyline[]> = new Map(); 
     private rtOfMarkersH: Map<string, google.maps.Marker[]> = new Map(); 
@@ -101,6 +103,33 @@ export class MapService {
         })
     }
     
+    drawDvsMainLoc(devices: Array<any>) {
+        const stringKey = this.entityId.toString();
+
+        // Resetear mapa
+        this.clearMapHistory(stringKey);
+
+        // Colocar icono en cada punto de ubicación de su dispositivo
+        const markers: google.maps.Marker[] = [];
+    
+        devices.forEach(element => {
+            let marker = new google.maps.Marker();
+            const locId = element?.devinuid;
+            const location = element?.deviloca[0];
+            
+            if (location && locId) {
+                marker = this.drawColorTag(locId.toString(), location, 'green');
+                marker.addListener('click', () => {
+                    const markerId = marker.get('id');
+                    this.openDetailsLoc$.next(markerId);
+                });
+                markers.push(marker);
+            }
+        });
+
+        this.mapDevs.set(stringKey, markers);
+    }
+
     drawRoute(key: string, points: Array<any>) {
         const stringKey = key.toString();
 
@@ -113,8 +142,8 @@ export class MapService {
         const markers = [];
         
         // Colocar icono en cada punto de ubicación
+        let marker = new google.maps.Marker();
         for (const [index, point] of points.entries()) {
-            let marker = new google.maps.Marker();
             const locId = point.delonuid;
 
             const currentPoint = point;
@@ -146,9 +175,9 @@ export class MapService {
             });
               
             markers.push(marker);
-            this.rtOfMarkersH.set(stringKey, markers);
         }
 
+        this.rtOfMarkersH.set(stringKey, markers);
         this.adjustZoom(points);
     }
 
@@ -231,7 +260,7 @@ export class MapService {
                 fillColor: color,
                 fillOpacity: 1.0,
                 strokeWeight: 0,
-                scale: 3,  // Tamaño del icono
+                scale: 4,  // Tamaño del icono
                 rotation: arrowDirection
             }
         });
@@ -304,6 +333,14 @@ export class MapService {
     clearMapHistory(key: string) {
         const stringKey = key.toString();
 
+        const mapDevsToDelete = this.mapDevs.get(stringKey);
+        if (mapDevsToDelete) {
+            for (const polyline of mapDevsToDelete) {
+                polyline.setMap(null); // Eliminar la polyline del mapa
+            }
+            this.mapDevs.delete(stringKey); // Eliminar la polyline del Map
+        }
+
         const polylineToDelete = this.rtOfLineH.get(stringKey);
         if (polylineToDelete) {
             for (const polyline of polylineToDelete) {
@@ -335,6 +372,10 @@ export class MapService {
 
     getVehiculeObs() {
         return this.vehicule$.asObservable();
+    }
+
+    getDeviceObs() {
+        return this.openDetailsLoc$.asObservable();
     }
 
     getLocationWithGap(positions: any, device: any) {
