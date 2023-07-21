@@ -51,6 +51,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     dataSource = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true, []);
     color: ThemePalette = 'accent';
+    onOffDevice: boolean = true;
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
@@ -112,7 +113,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     suscriptRealTime() {
-        this.subscription = interval(2000).subscribe(() => {
+        this.subscription = interval(1000).subscribe(() => {
             this.initialMapDevsLoc();
         });
     }

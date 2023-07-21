@@ -116,9 +116,9 @@ export class MapService {
             let marker = new google.maps.Marker();
             const locId = element?.devinuid;
             const location = element?.deviloca[0];
-            
+        
             if (location && locId) {
-                marker = this.drawColorTag(locId.toString(), location, 'green');
+                marker = this.drawIconTag(locId.toString(), 'carro-green.png', 375, 469, location);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
@@ -151,10 +151,10 @@ export class MapService {
 
             if (index == 0) {
                 point.typeOfTour = 'Ultima ubicación.';
-                marker = this.drawColorTag(locId.toString(), point, 'yellow');
+                marker = this.drawIconTag(locId.toString(), 'carro-yellow.png', 375, 469, point);
             } else if (index == points.length - 1) {
                 point.typeOfTour = 'Primera ubicación.';
-                marker = this.drawColorTag(locId.toString(), point, 'red');
+                marker = this.drawIconTag(locId.toString(), 'carro-red.png', 375, 469, point);
             } else {
                 point.typeOfTour = 'Ubicación';
   
@@ -178,7 +178,7 @@ export class MapService {
         }
 
         this.rtOfMarkersH.set(stringKey, markers);
-        this.adjustZoom(points);
+        this.adjustZoom(2, points);
     }
 
     openInfoWdById(stringKey: string, id: string) {
@@ -250,6 +250,28 @@ export class MapService {
         return marker;
     }
 
+    drawIconTag(id: string, nameIcon: string, width: number, height: number, position: any) {
+        const wayPoint = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
+        const desiredWidth = 25;
+        const aspectRatio = width / height;
+        const desiredHeight = desiredWidth / aspectRatio;
+        
+        const marker = new google.maps.Marker({
+            position: wayPoint,
+            map: this.map,
+            icon: {
+                url: `../../assets/${nameIcon}`,
+                scaledSize: new google.maps.Size(desiredWidth, desiredHeight),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(desiredWidth / 2, desiredHeight)
+            },
+        });
+
+        marker.set('id', id);
+        marker.set('point', position);
+        return marker;
+    }
+
     drawSymbolTag(id: string, position: any, arrowDirection: number, color: string) {
         const wayPoint = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
         const marker = new google.maps.Marker({
@@ -292,8 +314,9 @@ export class MapService {
         this.rtOfLineH.set(stringKey, [polyline]);
     }
 
-    adjustZoom(points: Array<any>) {
+    adjustZoom(zoomFactor: number, points: any) {
         let waypoints = [];
+        console.log(points);
         for (let position of points) {
             let wayp = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
             waypoints.push(wayp);
@@ -309,7 +332,6 @@ export class MapService {
         this.map.fitBounds(bounds);
 
         // Aplicar factor de ampliación al límite
-        const zoomFactor = 2; // Factor de ampliación
         const extendedBounds = this.applyZoomFactorToBounds(bounds, zoomFactor);
 
         // Ajustar el zoom para mostrar la ruta y los marcadores
