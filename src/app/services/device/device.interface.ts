@@ -16,3 +16,9 @@ export interface IDeviceCreate {
     "model": string,
     "phoneNumber": string
 }
+
+export interface ExecuteParamDv {
+    "stepExec": number,
+    "deviExec": number,
+    "execParam": number,
+}

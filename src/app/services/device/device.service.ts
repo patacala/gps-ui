@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { environment } from 'src/environments/environment';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
-import { IDeviceCreate, IDeviceResponse } from './device.interface';
+import { ExecuteParamDv, IDeviceCreate, IDeviceResponse } from './device.interface';
 import { MapService } from '../map/map.service';
 
 @Injectable({ providedIn: 'root' })
@@ -116,5 +116,9 @@ export class DeviceService {
             if (dataHLoc?.historyLocs?.length) return true;
         }
         return false;
+    }
+
+    public executeParamDevice(executeParamDv: ExecuteParamDv) {
+        return this.http.post<ExecuteParamDv>(`${this.root}/command`, executeParamDv);
     }
 }

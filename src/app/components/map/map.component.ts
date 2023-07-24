@@ -18,7 +18,7 @@ import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 import { Device, LocationData } from './map.model';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
 import { ItemDtDvComponent } from '../item-dt-dv/item-dt-dv.component';
@@ -51,7 +51,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
     dataSource = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true, []);
     color: ThemePalette = 'accent';
-    onOffDevice: boolean = true;
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
@@ -113,7 +112,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     suscriptRealTime() {
-        this.subscription = interval(1000).subscribe(() => {
+        this.subscription = interval(10000).subscribe(() => {
             this.initialMapDevsLoc();
         });
     }
@@ -355,5 +354,15 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
     validBtnDelHLoc() {
         return this._device.validHistoryLoc();
+    }
+
+    changeOffOnDv() {
+        this._device.executeParamDevice({
+            stepExec: 1,
+            deviExec: parseInt(this.currentDvId.toString()),
+            execParam: 0
+        }).subscribe((data: any) => {
+            console.log(data);
+        });
     }
 }
