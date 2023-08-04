@@ -18,7 +18,7 @@ export interface IDeviceCreate {
 }
 
 export interface ExecuteParamDv {
-    "stepExec": number,
-    "deviExec": number,
-    "execParam": number,
+    "stepexec": number,
+    "deviexec": number,
+    "execparam": null,
 }

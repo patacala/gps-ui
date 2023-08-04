@@ -99,6 +99,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
                 this._map.drawDvsMainLoc(this.devicesFound);
                 this.details.close();
             }
+
+            this._map.clearMapHistory(selectedDeviceId.toString());
         });
 
         this.deviceSelected$.pipe(
@@ -357,10 +359,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     changeOffOnDv() {
-        this._device.executeParamDevice({
-            stepExec: 1,
-            deviExec: parseInt(this.currentDvId.toString()),
-            execParam: 0
+       this._device.executeParamDevice({
+            stepexec: 1,
+            deviexec: parseInt(this.currentDvId.toString()),
+            execparam: null
         }).subscribe((data: any) => {
             console.log(data);
         });
