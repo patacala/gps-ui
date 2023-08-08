@@ -1,9 +1,9 @@
-import { AfterViewChecked, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
-import { interval, Observable, pipe, Subject, Subscription } from 'rxjs';
-import { filter, map, pairwise, tap } from 'rxjs/operators';
+import { interval, Subject, Subscription } from 'rxjs';
+import { filter, map, pairwise } from 'rxjs/operators';
 import { AsyncPipe, DatePipe, JsonPipe, NgIf } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -18,7 +18,7 @@ import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 import { Device, LocationData } from './map.model';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
 import { ItemDtDvComponent } from '../item-dt-dv/item-dt-dv.component';
@@ -42,14 +42,15 @@ import { DeviceService } from '@services';
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit, AfterViewChecked {
+export class MapComponent implements OnInit {
     displayedColumns: string[] = ['select', 'imei', 'plate'];
     maxDate: string = '';
     devicesTable: Device[]=[];
-    proFilterDevices: LocationData[] = [];
+    devicesFilter: LocationData[]=[];
+    
     subscription: Subscription | undefined;
     dataSource = new MatTableDataSource<Device>([]);
-    checksDevices = new SelectionModel<Device>(true, []);
+    checksDevices = new SelectionModel<Device>(true,[]);
     color: ThemePalette = 'accent';
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
@@ -119,13 +120,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
         });
     }
 
-    ngAfterViewChecked(): void {
-        this.details.closedStart.subscribe(() => {
-            this.subscriptions.map(s => s.unsubscribe());
-            this._map.resetMapToInitial()
-        })
-    }
-
     initialMapDevsLoc() {
         this._map.getLocationDevices().subscribe((data: any) => {
             if (data && data?.response?.rows) {
@@ -140,19 +134,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
         });
     }
 
-    saveClassifiers(event: any) {
-        this.classifiers = event
-    }
-
-    validDisabledArray(...arrays: Array<any>[]): boolean {
-        for (const array of arrays) {
-          if (Array.isArray(array) && array.length > 0) {
-            return false;
-          }
-        }
-        return true;
-    }
-      
     filterDevices() {
         const filterDataDvs = {
             classifiers: this.classifiers?.flat() ?? [],
@@ -166,16 +147,16 @@ export class MapComponent implements OnInit, AfterViewChecked {
         };
 
         this._classifier.filterByClassifier(filterDataDvs).pipe(
-            map((devices: any) => devices.response),
-            this.getDevicesLocation(true)
+            map((devices: any) => devices.response)
         ).subscribe((devices: any) => {
-            this.proFilterDevices = this.processFilterData(devices);
+            this._map.drawDvsFilter(devices);
+            this.devicesFilter = this.processFilterData(devices);
         });
     }
 
     processFilterData(datas: any) {
         const newArray: LocationData[] = [];
-        const mappedArray = datas.map((data:any) => ({
+        const mappedArray = datas?.map((data:any) => ({
             deviimei: data.deviimei,
             devimark: data.devimark,
             devimode: data.devimode,
@@ -193,7 +174,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
             }
         }));  
 
-        mappedArray.forEach((row: any) => {
+        mappedArray?.forEach((row: any) => {
             const locations = row.locations;
             locations.delolati.forEach((lat: any, index: number) => {
                 newArray.push({
@@ -217,23 +198,17 @@ export class MapComponent implements OnInit, AfterViewChecked {
         return newArray;  
     }
 
-    getDevicesLocation(isFilter: boolean) {
-        let mapService = this._map;
+    saveClassifiers(event: any) {
+        this.classifiers = event
+    }
 
-        return function <T>(source: Observable<T>) {
-            return source.pipe(
-                !isFilter
-                    ?
-                    pipe(
-                        filter((devices: any) => devices.deviloca.length > 0),
-                        tap((device: any) => mapService.drawMarker({ lat: Number(device?.deviloca[0].delolati), lng: Number(device.deviloca[0].delolong), id: device.devinuid.toString() }))
-                    )
-                    :
-                    (
-                        tap((devices: any) => mapService.filterMarkers(devices))
-                    )
-            )
+    validDisabledArray(...arrays: Array<any>[]): boolean {
+        for (const array of arrays) {
+          if (Array.isArray(array) && array.length > 0) {
+            return false;
+          }
         }
+        return true;
     }
 
     isAllSelected() {

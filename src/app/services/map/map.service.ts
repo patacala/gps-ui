@@ -14,9 +14,8 @@ export class MapService {
     private openInfoLocIds: any[]=[];
     private root: string = `${environment.apiUrl}`;
     private entityId: string = !!localStorage.getItem('entity') ? JSON.parse(localStorage.getItem('entity') as string).entinuid : null;
-    private mapDevices: Map<string, google.maps.Marker> = new Map();
+    private mapDevsFilter: Map<string, google.maps.Marker[]> = new Map();
     private mapDevs: Map<string, google.maps.Marker[]> = new Map();
-    private routeOfMarkers: Map<string, google.maps.Marker[]> = new Map();
     private rtOfLineH: Map<string, google.maps.Polyline[]> = new Map(); 
     private rtOfMarkersH: Map<string, google.maps.Marker[]> = new Map(); 
     constructor(private http: HttpClient) {}
@@ -29,78 +28,6 @@ export class MapService {
             disableDefaultUI: true,
             gestureHandling: 'greedy',
         });
-    }
-
-    drawMarker({ lat, lng, id }: { lat: number, lng: number, id: string }): void {
-        let referenceSubj = this.vehicule$;
-
-        // Verificar si ya existe un marcador para el mismo id
-        if (this.mapDevices.has(id)) {
-            const existingMarker = this.mapDevices.get(id);
-            // Verificar si el marcador actual tiene la misma posición
-            if (existingMarker && existingMarker.getPosition()?.lat() === lat && existingMarker.getPosition()?.lng() === lng) {
-            // El mismo elemento ya ha sido seleccionado, no se realiza ninguna acción adicional
-            return;
-            }
-            // Actualizar la posición del marcador existente
-            existingMarker?.setPosition(new google.maps.LatLng(lat, lng));
-            return;
-        }
-
-        let marker = new google.maps.Marker({
-            map: this.map,
-            position: new google.maps.LatLng(lat, lng),
-            icon: {
-                url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-                scaledSize: new google.maps.Size(40, 40),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(20, 40)
-            }
-        })
-
-        marker.set('id', id);
-        marker.addListener('click', () => {
-            const markerId = marker.get('id');
-            referenceSubj.next(markerId);
-        });
-
-        this.mapDevices.set(id, marker);
-        this.centerMapOnMarkers();
-    }
-
-    resetMapToInitial() {
-        for(let key of this.routeOfMarkers.keys()){
-            this.routeOfMarkers.get(key)?.map(m => m.setMap(null))
-        }
-
-        this.mapDevices.forEach(m => {
-            m.setMap(this.map)
-        })
-    }
-
-    drawALotOfMarkers(positions: Array<any>, id: string) {
-        let markers: any[] = [];
-
-        positions.map(p => {
-            let marker = new google.maps.Marker({
-                map: this.map,
-                position: p
-            })
-            markers.push(marker)
-        })
-
-        this.routeOfMarkers.set(id, markers)
-        this.centerMapOnMarkers();
-    }
-    
-    filterMarkers(devices: any[]) {
-        this.mapDevices.forEach(m => {
-            m.setMap(null)
-        });
-
-        devices.map(device => {
-            this.mapDevices.get(device.devinuid.toString())?.setMap(this.map)
-        })
     }
     
     drawDvsMainLoc(devices: Array<any>) {
@@ -128,6 +55,33 @@ export class MapService {
         });
 
         this.mapDevs.set(stringKey, markers);
+    }
+
+    drawDvsFilter(devices: Array<any>) {
+        const stringKey = this.entityId.toString();
+
+        // Resetear mapa
+        this.clearMapHistory(stringKey);
+
+        // Colocar icono en cada punto de ubicación de su dispositivo
+        const markers: google.maps.Marker[] = [];
+
+        devices.forEach(element => {
+            let marker = new google.maps.Marker();
+            const locId = element?.devinuid;
+            const location = element?.deviloca[0];
+        
+            if (location && locId) {
+                marker = this.drawIconTag(locId.toString(), 'carro-green.png', 375, 469, location);
+                marker.addListener('click', () => {
+                    const markerId = marker.get('id');
+                    this.openDetailsLoc$.next(markerId);
+                });
+                markers.push(marker);
+            }
+        });
+
+        this.mapDevsFilter.set(stringKey, markers);
     }
 
     drawRoute(key: string, points: Array<any>) {
@@ -357,10 +311,18 @@ export class MapService {
 
         const mapDevsToDelete = this.mapDevs.get(stringKey);
         if (mapDevsToDelete) {
-            for (const polyline of mapDevsToDelete) {
-                polyline.setMap(null); // Eliminar la polyline del mapa
+            for (const marker of mapDevsToDelete) {
+                marker.setMap(null); // Eliminar el marcador del mapa
             }
-            this.mapDevs.delete(stringKey); // Eliminar la polyline del Map
+            this.mapDevs.delete(stringKey); // Eliminar tags
+        }
+
+        const mapDevsFtDelete = this.mapDevsFilter.get(stringKey);
+        if (mapDevsFtDelete) {
+            for (const marker of mapDevsFtDelete) {
+                marker.setMap(null); // Eliminar el marcador del mapa
+            }
+            this.mapDevsFilter.delete(stringKey); // Eliminar tags
         }
 
         const polylineToDelete = this.rtOfLineH.get(stringKey);
@@ -380,14 +342,6 @@ export class MapService {
         }
     }
 
-    centerMapOnMarkers() {
-        let bounds = new google.maps.LatLngBounds();
-        this.mapDevices.forEach(marker => {
-            bounds.extend(marker.getPosition() as google.maps.LatLng);
-        })
-        this.map.fitBounds(bounds);
-    }
-
     getLocationDevices() {
         return this.http.get(`${this.root}/device/entity/${this.entityId}`);
     }
@@ -398,23 +352,6 @@ export class MapService {
 
     getDeviceObs() {
         return this.openDetailsLoc$.asObservable();
-    }
-
-    getLocationWithGap(positions: any, device: any) {
-        if(!positions.length) return; // Pasar esta logica al pipe del obs
-
-        this.filterMarkers([device]);
-
-        let coordinates: google.maps.LatLng[] = [];
-
-        positions.reduce((prevPosition: any, newPosition: any, currentIndex: number) => {
-            let x = this.getDistanceFromLatLonInKm({ prev: positions[currentIndex - 1], new: newPosition });
-            if (x > 0.8) {
-                coordinates.push(new google.maps.LatLng(parseFloat(newPosition.delolati), parseFloat(newPosition.delolong)));
-            }
-        });
-
-        this.drawALotOfMarkers(coordinates, device.devinuid.toString())
     }
 
     getDistanceFromLatLonInKm(positions: any) {
