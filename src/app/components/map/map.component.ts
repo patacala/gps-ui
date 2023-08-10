@@ -18,7 +18,7 @@ import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 import { Device, LocationData } from './map.model';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
 import { ItemDtDvComponent } from '../item-dt-dv/item-dt-dv.component';
@@ -47,6 +47,8 @@ export class MapComponent implements OnInit {
     maxDate: string = '';
     devicesTable: Device[]=[];
     devicesFilter: LocationData[]=[];
+    divicesFilterId: any[]=[];
+    switchOnOff: boolean=true;
     
     subscription: Subscription | undefined;
     dataSource = new MatTableDataSource<Device>([]);
@@ -124,6 +126,7 @@ export class MapComponent implements OnInit {
         this._map.getLocationDevices().subscribe((data: any) => {
             if (data && data?.response?.rows) {
                 const rowDevice = data.response.rows;
+                console.log(rowDevice);
                 this.devicesFound = rowDevice;
                 const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == this.currentDvId);
                 if (indexDv == -1) this._map.drawDvsMainLoc(rowDevice);
@@ -149,8 +152,19 @@ export class MapComponent implements OnInit {
         this._classifier.filterByClassifier(filterDataDvs).pipe(
             map((devices: any) => devices.response)
         ).subscribe((devices: any) => {
-            this._map.drawDvsFilter(devices);
+            if (devices) {
+                this._map.drawDvsFilter(devices);
+                this.processFilterId(devices);
+            }
+
+            this.divicesFilterId = [];
             this.devicesFilter = this.processFilterData(devices);
+        });
+    }
+
+    processFilterId(datas: any) {
+        datas?.forEach((element: any) => {
+            this.divicesFilterId.push(element?.devinuid)
         });
     }
 
@@ -333,9 +347,10 @@ export class MapComponent implements OnInit {
         return this._device.validHistoryLoc();
     }
 
-    changeOffOnDv() {
+    changeOffOnDv(event: MatSlideToggleChange) {
+       const stepexec = event.source.checked ? 5:1;
        this._device.executeParamDevice({
-            stepexec: 1,
+            stepexec,
             deviexec: parseInt(this.currentDvId.toString()),
             execparam: null
         }).subscribe((data: any) => {

@@ -107,9 +107,10 @@
                 <aside class="details-vehicle mt-2 ml-2 mr-2" *ngIf="deviceSelected$ | async as device">
                     <div class="flex justify-between p-1">
                         <mat-slide-toggle
-                            (change)="changeOffOnDv()">
+                            [(ngModel)]="device.deviestacomma"
+                            (change)="changeOffOnDv($event)">
                         </mat-slide-toggle>
-                        <div class="dt-vh-close" (click)="closeToggle(device.devinuid)">
+                        <div class="dt-vh-close" (click)="closeToggle(device?.devinuid)">
                             <mat-icon>close</mat-icon>
                         </div>
                     </div>
