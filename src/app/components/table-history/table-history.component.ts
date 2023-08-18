@@ -30,14 +30,15 @@ export class TableHistoryComponent implements OnInit {
     private datePipe: DatePipe,
     private matPaginatorIntl: MatPaginatorIntl,
     private changeDetectorRef: ChangeDetectorRef,
-  ) {}
+  ) {
+    this.matPaginatorIntl.itemsPerPageLabel = 'Ubicaciones por página';
+    this.paginator = new MatPaginator(this.matPaginatorIntl, this.changeDetectorRef);
+  }
 
   ngOnInit(): void {
     this._device.getHistoryLoc().subscribe((data: { deviceId: number, historyLocs: HistoryLoc[] }) => {
       this.deviceId = data.deviceId;
       this.dataSrcHistory.data = data.historyLocs;
-      /* this.matPaginatorIntl.itemsPerPageLabel = 'Ubicaciones por página';
-      this.paginator = new MatPaginator(this.matPaginatorIntl, this.changeDetectorRef); */
       this.dataSrcHistory.paginator = this.paginator;
       this.dataSrcHistory.sort = this.sort;
     });
