@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { DatePipe, NgIf } from '@angular/common';
@@ -11,7 +11,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { DeviceService } from '@services';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
-
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-data-time-h',
@@ -21,7 +21,8 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
     MatNativeDateModule, FormsModule, 
     ReactiveFormsModule, DatePipe, 
     MatIconModule, ButtonComponent,
-    MatDialogModule, NgIf, NgxMaterialTimepickerModule
+    MatDialogModule, NgIf, NgxMaterialTimepickerModule,
+    MatSlideToggleModule
   ],
   templateUrl: './data-time-h.component.html',
   styleUrls: ['./data-time-h.component.scss']
@@ -33,7 +34,13 @@ export class DataTimeHComponent implements OnInit {
     startTime: '',
     endTime: ''
   };
+  slideToggle = {
+    isLocation: true,
+    isEvent: false, 
+  };
+
   maxDate: string = '';
+  color: ThemePalette = 'primary';
   
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -59,14 +66,18 @@ export class DataTimeHComponent implements OnInit {
           startDate: this.applyTimeDate(this.formDates.startDate, this.formDates.startTime),
           endDate: this.applyTimeDate(this.formDates.endDate, this.formDates.endTime)
         },
-        isAlarm: false 
+        isAlarm: false,
+        isLocation: this.slideToggle.isLocation,
+        isEvent: this.slideToggle.isEvent
       }; 
 
       this._classifier.filterByClassifier(filterDataDv).subscribe((histoyDevice: any) => {
-          if (typeof(histoyDevice.response) !== undefined) {
-            if (histoyDevice.response?.length > 0 && histoyDevice.response[0]?.deviloca?.length > 0) {
+          const resultHistoryDevs = histoyDevice?.response;
+    
+          if (typeof(resultHistoryDevs) !== undefined) {
+            if (resultHistoryDevs?.length > 0) {
+              this._device.setHistoryLoc(deviceId, resultHistoryDevs);
               this.dialogRef.close();
-              this._device.setHistoryLoc(deviceId, histoyDevice.response);
             } else {
               this._utils.matSnackBar('Sin resultados', 'ok');
             }

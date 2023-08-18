@@ -30,6 +30,19 @@
       <ngx-timepicker-field [(ngModel)]="formDates.endTime" [controlOnly]="true"></ngx-timepicker-field>
     </div>
   </div>
+
+  <div class="slideToggle">
+    <mat-slide-toggle
+      [(ngModel)]="slideToggle.isLocation"
+      [color]="color">
+        POSICIONES
+    </mat-slide-toggle>
+    <mat-slide-toggle
+      [(ngModel)]="slideToggle.isEvent"
+      [color]="color">
+        EVENTOS
+    </mat-slide-toggle>
+  </div>
   
   <div class="flex justify-center">
     <app-button 

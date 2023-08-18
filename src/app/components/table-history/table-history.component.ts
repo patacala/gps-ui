@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { HistoryLoc } from './table-history.model';
 import { DeviceService, MapService } from '@services';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { DatePipe, NgIf } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,23 +19,27 @@ export class TableHistoryComponent implements OnInit {
   deviceId: number = -1;
   devicesTable: HistoryLoc[]=[];
   openInfoLoc: []=[];
-  dataSource = new MatTableDataSource<HistoryLoc>([]);
-  displayedColumns: string[] = ['dloclati', 'dloclong', 'daddress', 'dneighbh', 'devent', 'dspeed', 'delotime', 'delofesi', 'action'];
+  dataSrcHistory = new MatTableDataSource<HistoryLoc>([]);
+  columnsHistory: string[] = ['dloclati', 'dloclong', 'daddress', 'dneighbh', 'devent', 'dspeed', 'delotime', 'delofesi', 'action'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   
   constructor(
     private _device: DeviceService,
     private _map: MapService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private matPaginatorIntl: MatPaginatorIntl,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this._device.getHistoryLoc().subscribe((data: { deviceId: number, historyLocs: HistoryLoc[] }) => {
       this.deviceId = data.deviceId;
-      this.dataSource.data = data.historyLocs;
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+      this.dataSrcHistory.data = data.historyLocs;
+      /* this.matPaginatorIntl.itemsPerPageLabel = 'Ubicaciones por página';
+      this.paginator = new MatPaginator(this.matPaginatorIntl, this.changeDetectorRef); */
+      this.dataSrcHistory.paginator = this.paginator;
+      this.dataSrcHistory.sort = this.sort;
     });
 
     this.openInfoLocIds();
@@ -60,8 +64,8 @@ export class TableHistoryComponent implements OnInit {
   }
 
   openInfoLocIds() {
-    this._map.getOpenInfoLocIds().subscribe((data: any) => {
-      this.openInfoLoc = data;
+    this._map.getOpenInfoLocIds().subscribe((result: any) => {
+      this.openInfoLoc = result;
     });
   }
 

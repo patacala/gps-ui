@@ -81,16 +81,19 @@ export class DeviceService {
     }
 
     public setHistoryLoc(deviceId: number, locations: any) {
-        if (locations && locations.length > 0 && locations[0].deviloca) {
-          const historyLocs = locations[0].deviloca.map((location: any) => {
+        if (locations && locations.length > 0) {
+          const historyLocs = locations.map((location: any) => {
             return {
               delonuid: Number(location.delonuid),
               delolati: Number(location.delolati),
               delolong: Number(location.delolong),
               delodire: location.delodire,
+              delobarri: location.delobarri,
               delospee: location.delospee,
               delotime: location.delotime,
-              delofesi: location.delofesi
+              delofesi: location.delofesi,
+              keytypenomb: location.keywords.keytypenomb, 
+              keywfunc: location.keywords.keywfunc
             };
           });
 

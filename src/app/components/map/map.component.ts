@@ -53,7 +53,7 @@ export class MapComponent implements OnInit {
     subscription: Subscription | undefined;
     dataSource = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true,[]);
-    color: ThemePalette = 'accent';
+    color: ThemePalette = 'primary';
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
@@ -126,7 +126,7 @@ export class MapComponent implements OnInit {
         this._map.getLocationDevices().subscribe((data: any) => {
             if (data && data?.response?.rows) {
                 const rowDevice = data.response.rows;
-                console.log(rowDevice);
+                //console.log(rowDevice);
                 this.devicesFound = rowDevice;
                 const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == this.currentDvId);
                 if (indexDv == -1) this._map.drawDvsMainLoc(rowDevice);

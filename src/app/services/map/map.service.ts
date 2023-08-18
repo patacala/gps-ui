@@ -270,7 +270,6 @@ export class MapService {
 
     adjustZoom(zoomFactor: number, points: any) {
         let waypoints = [];
-        console.log(points);
         for (let position of points) {
             let wayp = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
             waypoints.push(wayp);

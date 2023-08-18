@@ -108,6 +108,7 @@
                     <div class="flex justify-between p-1">
                         <mat-slide-toggle
                             [(ngModel)]="device.deviestacomma"
+                            [color]="color"
                             (change)="changeOffOnDv($event)">
                         </mat-slide-toggle>
                         <div class="dt-vh-close" (click)="closeToggle(device?.devinuid)">

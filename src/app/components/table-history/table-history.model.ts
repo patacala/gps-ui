@@ -7,4 +7,5 @@ export interface HistoryLoc {
     delospee: string;
     delotime: string;
     delofesi: string;
+    keywfunc: string;
 }
