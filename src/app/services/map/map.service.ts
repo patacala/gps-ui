@@ -45,7 +45,7 @@ export class MapService {
             const location = element?.deviloca[0];
         
             if (location && locId) {
-                marker = this.drawIconTag(locId.toString(), 'carro-green.png', 375, 469, location);
+                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
@@ -70,9 +70,10 @@ export class MapService {
             let marker = new google.maps.Marker();
             const locId = element?.devinuid;
             const location = element?.deviloca[0];
-        
+            const keyIconRoute = element?.keywords?.keyicoroute;
+            
             if (location && locId) {
-                marker = this.drawIconTag(locId.toString(), 'carro-green.png', 375, 469, location);
+                marker = this.drawIconTag(locId.toString(), keyIconRoute, 'location-current.png', 375, 469, location);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
@@ -84,51 +85,90 @@ export class MapService {
         this.mapDevsFilter.set(stringKey, markers);
     }
 
-    drawRoute(key: string, points: Array<any>) {
+    drawRoute(key: string, filterDataDv: any, points: Array<any>) {
         const stringKey = key.toString();
-
+        const isLocation = filterDataDv?.isLocation;
+        const isEvent = filterDataDv?.isEvent;
+        const isLocEvent = isLocation && isEvent ? true:false;
+        
         // Resetear mapa
         this.clearMapHistory(stringKey);
 
-        // Aplicar lineas
-        this.drawColorLine(stringKey, points, '#3498DB');
-
+        if (isLocEvent) {
+            // Aplicar lineas
+            this.drawColorLine(stringKey, points, '#3498DB');
+        }
+       
         const markers = [];
         
         // Colocar icono en cada punto de ubicación
         for (const [index, point] of points.entries()) {
-            let marker = new google.maps.Marker();
-            const locId = point.delonuid;
+            let markerLoc = new google.maps.Marker();
+            let markerEvent = new google.maps.Marker();
 
+            let locId = point.delonuid;
+            const keyTypeName = point.keytypenomb;
+            const keywFunc = point.keywfunc;
+            const keyIconRoute = point.keyicoroute;
+            const keyIconName = point.keyiconame;
+            
             const currentPoint = point;
             const prevPoint = points[index + 1];
 
             if (index == 0) {
                 point.typeOfTour = 'Ultima ubicación.';
-                marker = this.drawIconTag(locId.toString(), 'carro-yellow.png', 375, 469, point);
+                if (isLocEvent) {
+                    markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-end.png', 375, 469, point);
+                }
+                if (keyTypeName === 'event') {
+                    point.typeOfTour = keywFunc;
+                    markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point);
+                }
             } else if (index == points.length - 1) {
                 point.typeOfTour = 'Primera ubicación.';
-                marker = this.drawIconTag(locId.toString(), 'carro-red.png', 375, 469, point);
+
+                if (isLocEvent) {
+                    markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-start.png', 375, 469, point);
+                }
+                if (keyTypeName === 'event') {
+                    point.typeOfTour = keywFunc;
+                    markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point);
+                }
             } else {
                 point.typeOfTour = 'Ubicación';
-  
-                // Calcular la dirección de la flecha
-                if (currentPoint && prevPoint && currentPoint.delolong && prevPoint.delolong) {
-                    const arrowDirection = Math.atan2(
-                        currentPoint.delolong - prevPoint.delolong,
-                        currentPoint.delolati - prevPoint.delolati
-                    ) * (180 / Math.PI);
+                
+                if (isLocEvent) {
+                    // Calcular la dirección de la flecha
+                    if (currentPoint && prevPoint && currentPoint.delolong && prevPoint.delolong) {
+                        const arrowDirection = Math.atan2(
+                            currentPoint.delolong - prevPoint.delolong,
+                            currentPoint.delolati - prevPoint.delolati
+                        ) * (180 / Math.PI);
 
-                    marker = this.drawSymbolTag(locId.toString(), point, arrowDirection, '#3498DB');
+                        markerLoc = this.drawSymbolTag(locId.toString(), point, arrowDirection, '#3498DB');
+                    }
+                }
+                
+                if (keyTypeName === 'event') {
+                    point.typeOfTour = keywFunc;
+                    markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point);
                 }
             }
             
-            marker.addListener('click', () => {
-                const markerId = marker.get('id');
+            markerLoc.addListener('click', () => {
+                const markerId = markerLoc.get('id');
+                this.openInfoWdById(stringKey, markerId);
+            });
+
+            markerEvent.addListener('click', () => {
+                const markerId = markerEvent.get('id');
                 this.openInfoWdById(stringKey, markerId);
             });
               
-            markers.push(marker);
+            markers.push(markerLoc);
+            if (keyTypeName === 'event') {   
+                markers.push(markerEvent);
+            }
         }
 
         this.rtOfMarkersH.set(stringKey, markers);
@@ -204,7 +244,7 @@ export class MapService {
         return marker;
     }
 
-    drawIconTag(id: string, nameIcon: string, width: number, height: number, position: any) {
+    drawIconTag(id: string, nameRoute: string, nameIcon: string, width: number, height: number, position: any) {
         const wayPoint = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
         const desiredWidth = 25;
         const aspectRatio = width / height;
@@ -214,7 +254,7 @@ export class MapService {
             position: wayPoint,
             map: this.map,
             icon: {
-                url: `../../assets/${nameIcon}`,
+                url: `../../${nameRoute}${nameIcon}`,
                 scaledSize: new google.maps.Size(desiredWidth, desiredHeight),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(desiredWidth / 2, desiredHeight)

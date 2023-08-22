@@ -76,7 +76,7 @@ export class DataTimeHComponent implements OnInit {
     
           if (typeof(resultHistoryDevs) !== undefined) {
             if (resultHistoryDevs?.length > 0) {
-              this._device.setHistoryLoc(deviceId, resultHistoryDevs);
+              this._device.setHistoryLoc(deviceId, filterDataDv, resultHistoryDevs);
               this.dialogRef.close();
             } else {
               this._utils.matSnackBar('Sin resultados', 'ok');

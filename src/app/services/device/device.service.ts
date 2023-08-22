@@ -80,8 +80,9 @@ export class DeviceService {
         this.device$.next({ ...list, rows: newList });
     }
 
-    public setHistoryLoc(deviceId: number, locations: any) {
+    public setHistoryLoc(deviceId: number, filterDataDv: any, locations: any) {
         if (locations && locations.length > 0) {
+            
           const historyLocs = locations.map((location: any) => {
             return {
               delonuid: Number(location.delonuid),
@@ -93,12 +94,14 @@ export class DeviceService {
               delotime: location.delotime,
               delofesi: location.delofesi,
               keytypenomb: location.keywords.keytypenomb, 
-              keywfunc: location.keywords.keywfunc
+              keywfunc: location.keywords.keywfunc,
+              keyiconame: location.keywords.keyiconame,
+              keyicoroute: location.keywords.keyicoroute
             };
           });
 
           const dvStringId = deviceId.toString();
-          this._map.drawRoute(dvStringId, historyLocs);
+          this._map.drawRoute(dvStringId, filterDataDv, historyLocs);
 
           this.historyLoc$.next({deviceId, historyLocs});
         }
