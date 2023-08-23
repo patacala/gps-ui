@@ -155,10 +155,9 @@ export class MapComponent implements OnInit {
             if (devices) {
                 this._map.drawDvsFilter(devices);
                 this.processFilterId(devices);
+                this.divicesFilterId = [];
+                this.devicesFilter = this.processFilterData(devices);
             }
-
-            this.divicesFilterId = [];
-            this.devicesFilter = this.processFilterData(devices);
         });
     }
 
@@ -178,13 +177,13 @@ export class MapComponent implements OnInit {
             carrlice: data.carrdevi?.carrier?.carrlice,
             carrtype: data.carrdevi?.carrier?.carrtype,
             locations: {
-                delolati: data.deviloca.map((loc: any) => loc.delolati),
-                delolong: data.deviloca.map((loc: any) => loc.delolong),
-                delodire: data.deviloca.map((loc: any) => loc.delodire),
-                delobarri: data.deviloca.map((loc: any) => loc.delobarri),
-                delofesi: data.deviloca.map((loc: any) => loc.delofesi),
-                delotime: data.deviloca.map((loc: any) => loc.delotime),
-                delospee: data.deviloca.map((loc: any) => loc.delospee)
+                delolati: data.locations.map((loc: any) => loc.delolati),
+                delolong: data.locations.map((loc: any) => loc.delolong),
+                delodire: data.locations.map((loc: any) => loc.delodire),
+                delobarri: data.locations.map((loc: any) => loc.delobarri),
+                delofesi: data.locations.map((loc: any) => loc.delofesi),
+                delotime: data.locations.map((loc: any) => loc.delotime),
+                delospee: data.locations.map((loc: any) => loc.delospee)
             }
         }));  
 

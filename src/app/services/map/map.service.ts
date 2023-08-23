@@ -65,15 +65,14 @@ export class MapService {
 
         // Colocar icono en cada punto de ubicación de su dispositivo
         const markers: google.maps.Marker[] = [];
-
+        
         devices.forEach(element => {
             let marker = new google.maps.Marker();
             const locId = element?.devinuid;
-            const location = element?.deviloca[0];
-            const keyIconRoute = element?.keywords?.keyicoroute;
+            const location = element?.locations[0];
             
             if (location && locId) {
-                marker = this.drawIconTag(locId.toString(), keyIconRoute, 'location-current.png', 375, 469, location);
+                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
@@ -94,7 +93,7 @@ export class MapService {
         // Resetear mapa
         this.clearMapHistory(stringKey);
 
-        if (isLocEvent) {
+        if (isLocation || isLocEvent) {
             // Aplicar lineas
             this.drawColorLine(stringKey, points, '#3498DB');
         }
@@ -117,7 +116,7 @@ export class MapService {
 
             if (index == 0) {
                 point.typeOfTour = 'Ultima ubicación.';
-                if (isLocEvent) {
+                if (keyTypeName === 'position' || isLocEvent) {
                     markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-end.png', 375, 469, point);
                 }
                 if (keyTypeName === 'event') {
@@ -127,7 +126,7 @@ export class MapService {
             } else if (index == points.length - 1) {
                 point.typeOfTour = 'Primera ubicación.';
 
-                if (isLocEvent) {
+                if (keyTypeName === 'position' || isLocEvent) {
                     markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-start.png', 375, 469, point);
                 }
                 if (keyTypeName === 'event') {
@@ -137,7 +136,7 @@ export class MapService {
             } else {
                 point.typeOfTour = 'Ubicación';
                 
-                if (isLocEvent) {
+                if (isLocation || isLocEvent) {
                     // Calcular la dirección de la flecha
                     if (currentPoint && prevPoint && currentPoint.delolong && prevPoint.delolong) {
                         const arrowDirection = Math.atan2(

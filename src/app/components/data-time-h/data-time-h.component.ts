@@ -70,9 +70,9 @@ export class DataTimeHComponent implements OnInit {
         isLocation: this.slideToggle.isLocation,
         isEvent: this.slideToggle.isEvent
       }; 
-
+      
       this._classifier.filterByClassifier(filterDataDv).subscribe((histoyDevice: any) => {
-          const resultHistoryDevs = histoyDevice?.response;
+          const resultHistoryDevs = histoyDevice?.response[0]?.locations;
     
           if (typeof(resultHistoryDevs) !== undefined) {
             if (resultHistoryDevs?.length > 0) {
