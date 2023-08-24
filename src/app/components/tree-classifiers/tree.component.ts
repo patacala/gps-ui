@@ -286,12 +286,9 @@ export class TreeComponent {
         this.classifiers2.has(name) ? this.classifiers2.get(name)?.delete((node.item as any).clvanuid) : null;
     }
 
-
-
     /* Checks all the parents when a leaf node is selected/unselected */
     checkAllParentsSelection(node: TodoItemFlatNode): void {
         let parent: TodoItemFlatNode | null = this.getParentNode(node);
-
 
         while (parent) {
             this.checkRootNodeSelection(parent);

@@ -66,11 +66,11 @@ export class DataTimeHComponent implements OnInit {
           startDate: this.applyTimeDate(this.formDates.startDate, this.formDates.startTime),
           endDate: this.applyTimeDate(this.formDates.endDate, this.formDates.endTime)
         },
-        isAlarm: false,
+        isAlarm: this.slideToggle.isEvent,
         isLocation: this.slideToggle.isLocation,
         isEvent: this.slideToggle.isEvent
       }; 
-      
+
       this._classifier.filterByClassifier(filterDataDv).subscribe((histoyDevice: any) => {
           const resultHistoryDevs = histoyDevice?.response[0]?.locations;
     

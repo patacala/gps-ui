@@ -115,29 +115,25 @@ export class MapService {
             const prevPoint = points[index + 1];
 
             if (index == 0) {
-                point.typeOfTour = 'Ultima ubicación.';
-                if (keyTypeName === 'position' || isLocEvent) {
+                if (keyTypeName === 'position') {
+                    point.typeOfTour = 'Ultima ubicación.';
                     markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-end.png', 375, 469, point);
-                }
-                if (keyTypeName === 'event') {
+                }else if (keyTypeName === 'event' || keyTypeName === 'alarm') {
                     point.typeOfTour = keywFunc;
                     markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point);
                 }
             } else if (index == points.length - 1) {
-                point.typeOfTour = 'Primera ubicación.';
-
-                if (keyTypeName === 'position' || isLocEvent) {
+                if (keyTypeName === 'position') {
+                    point.typeOfTour = 'Primera ubicación.';
                     markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-start.png', 375, 469, point);
-                }
-                if (keyTypeName === 'event') {
+                } else if (keyTypeName === 'event' || keyTypeName === 'alarm') {
                     point.typeOfTour = keywFunc;
                     markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point);
                 }
             } else {
-                point.typeOfTour = 'Ubicación';
-                
-                if (isLocation || isLocEvent) {
+                if (keyTypeName === 'position') {
                     // Calcular la dirección de la flecha
+                    point.typeOfTour = keywFunc;
                     if (currentPoint && prevPoint && currentPoint.delolong && prevPoint.delolong) {
                         const arrowDirection = Math.atan2(
                             currentPoint.delolong - prevPoint.delolong,
@@ -148,7 +144,7 @@ export class MapService {
                     }
                 }
                 
-                if (keyTypeName === 'event') {
+                if (keyTypeName === 'event' || keyTypeName === 'alarm') {
                     point.typeOfTour = keywFunc;
                     markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point);
                 }
@@ -165,7 +161,7 @@ export class MapService {
             });
               
             markers.push(markerLoc);
-            if (keyTypeName === 'event') {   
+            if (keyTypeName === 'event' || keyTypeName === 'alarm') {   
                 markers.push(markerEvent);
             }
         }

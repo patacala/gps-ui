@@ -18,7 +18,7 @@
                             <b>Dispositivos</b>
                         </header>
                         <hr>
-                        <div class="p-2">
+                        <div class="p-3">
                             <mat-form-field appearance="fill" class="w-full">
                                 <mat-label>Rango de fecha</mat-label>
                                 <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
@@ -30,9 +30,15 @@
                                 <mat-date-range-picker #picker></mat-date-range-picker>
                             </mat-form-field>
                             <mat-slide-toggle
-                                formControlName="withAlert"
+                                class="mr-2"
+                                formControlName="isLocation"
                                 [color]="color">
-                                ALERTAS
+                                POSICIONES
+                            </mat-slide-toggle>
+                            <mat-slide-toggle
+                                formControlName="isEvent"
+                                [color]="color">
+                                EVENTOS
                             </mat-slide-toggle>
                         </div>
                         
@@ -93,6 +99,9 @@
                             width="110px" icon="cloud_download" 
                             [disabled]="validDisabledArray(devicesFilter)">
                         </app-button>
+                        <mat-icon class="clear-filter" 
+                        [style.visibility]="validDisabledArray(devicesFilter)? 'hidden':'visible'"
+                        (click)="clearFilter()">delete_sweep</mat-icon>
                     </div>
                 </aside>
             </mat-drawer>
@@ -185,7 +194,7 @@
                                     <small class="sub-title">{{ device.deviloca[0].delobarri }}</small>
                                 </div>
                             </div>
-                            <div class="dt-vh-citem">
+                            <!-- <div class="dt-vh-citem">
                                 <div class="icon p-1">
                                     <mat-icon>near_me</mat-icon>
                                 </div>
@@ -193,7 +202,7 @@
                                     <b class="sup-title">Evento:</b>
                                     <small class="sub-title"></small>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="dt-vh-citem">
                                 <div class="icon p-1">
                                     <mat-icon>trip_origin</mat-icon>

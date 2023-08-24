@@ -27,7 +27,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError(({ error }) => {
         this.snackAlert.showError(error.message)
-        return throwError(() => new Error(error.err.message))
+        return throwError(() => new Error(error?.message))
       }),
     )
   }

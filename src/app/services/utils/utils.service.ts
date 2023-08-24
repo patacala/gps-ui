@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -16,15 +16,17 @@ export class UtilsService {
     }
   
     const propertyNames = Object.keys(objects[0]);
-    const headerRow = propertyNames.join(',') + '\n';
-  
-    const rows = objects.map(obj => {
-      const values = propertyNames.map(prop => {
+    const headerRow = propertyNames.join(';') + '\n';
+    
+    let rows = '';
+    objects.forEach(obj => {
+      let row = '';
+
+      propertyNames.forEach(prop => {
         let value = obj[prop];
-  
-        // Convertir el valor al tipo de dato correcto
+        
         if (typeof value === 'string') {
-          value = '"' + value + '"';
+          value = '"' +value.replace(/[#]/g, 'N°')+ '"';
         } else if (typeof value === 'boolean') {
           value = value ? 'true' : 'false';
         } else if (value instanceof Date) {
@@ -32,14 +34,15 @@ export class UtilsService {
         } else if (value === null || value === undefined) {
           value = '';
         }
-  
-        return value;
+        
+        row = row.concat(value, ';');
       });
-  
-      return values.join(',');
+
+      rows += row.concat('\n');
     });
-  
-    return headerRow + rows.join('\n');
+    
+    const bom = '\uFEFF';
+    return bom + headerRow + rows.concat('\n');
   }   
 
   getCurrentDateTime() {

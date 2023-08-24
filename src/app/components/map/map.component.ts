@@ -65,8 +65,10 @@ export class MapComponent implements OnInit {
     subscriptions: Subscription[] = [];
     formFilter = new FormGroup({
        /*  plate: new FormControl<String | null>(null), */
-        startDateOnly: new FormControl<Date | null>(null, Validators.required),
-        endDateOnly: new FormControl<Date | null>(null, Validators.required),
+        startDateOnly: new FormControl<Date | null>(new Date(), Validators.required),
+        endDateOnly: new FormControl<Date | null>(new Date(), Validators.required),
+        isLocation: new FormControl<Boolean | true>(true),
+        isEvent: new FormControl<Boolean | false>(false),
         withAlert: new FormControl<Boolean | false>(false)
     });
     
@@ -139,10 +141,12 @@ export class MapComponent implements OnInit {
 
     filterDevices() {
         const filterDataDvs = {
-            classifiers: this.classifiers?.flat() ?? [],
+            classifiers: this.classifiers?.flat().filter((item: any) => item != null) ?? [],
             /* plate: this.formFilter.value.plate, */
             deviceIds: this.checksDevices.selected.map(device => device.devinuid),
-            isAlarm: this.formFilter.value.withAlert,
+            isLocation: this.formFilter.value.isLocation,
+            isEvent: this.formFilter.value.isEvent,
+            isAlarm: this.formFilter.value.isEvent,
             date: {
                 startDate: this.formFilter.value.startDateOnly?.toISOString().slice(0, 10),
                 endDate: this.formFilter.value.endDateOnly?.toISOString().slice(0, 10)
@@ -183,7 +187,8 @@ export class MapComponent implements OnInit {
                 delobarri: data.locations.map((loc: any) => loc.delobarri),
                 delofesi: data.locations.map((loc: any) => loc.delofesi),
                 delotime: data.locations.map((loc: any) => loc.delotime),
-                delospee: data.locations.map((loc: any) => loc.delospee)
+                delospee: data.locations.map((loc: any) => loc.delospee),
+                keywfunc: data.locations.map((loc: any) => loc.keywords.keywfunc),
             }
         }));  
 
@@ -201,7 +206,7 @@ export class MapComponent implements OnInit {
                     LONGITUD: locations.delolong[index],
                     DIRECCION: locations.delodire[index],
                     BARRIO: locations.delobarri[index],
-                    EVENTO: '',
+                    EVENTO: locations.keywfunc[index],
                     "FECHA SISTEMA": locations.delofesi[index],
                     "FECHA REGISTRO": this.formatTimestamp(locations.delotime[index]),
                     VELOCIDAD: locations.delospee[index],
@@ -355,5 +360,18 @@ export class MapComponent implements OnInit {
         }).subscribe((data: any) => {
             console.log(data);
         });
+    }
+
+    clearFilter() {
+        this.formFilter.reset();
+        this.devicesFilter = [];
+        this.formFilter.reset({
+            startDateOnly: new Date(),
+            endDateOnly: new Date(),
+            isLocation: true,
+            isEvent: false,
+            withAlert: false
+        });          
+        this.initialMapDevsLoc();
     }
 }
