@@ -124,6 +124,10 @@ export class DeviceService {
         return false;
     }
 
+    public getfoundAvaCommands() {
+        return this.http.get<ExecuteParamDv>(`${this.root}/command/available`);
+    }
+
     public executeParamDevice(executeParamDv: ExecuteParamDv) {
         return this.http.post<ExecuteParamDv>(`${this.root}/command`, executeParamDv);
     }

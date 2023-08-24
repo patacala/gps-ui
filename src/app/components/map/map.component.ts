@@ -12,6 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { InputComponent } from '../input/input.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
@@ -23,6 +24,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
 import { ItemDtDvComponent } from '../item-dt-dv/item-dt-dv.component';
 import { DeviceService } from '@services';
+import { NgForOf } from '@angular/common';
 
 @Component({
     selector: 'app-map',
@@ -34,9 +36,10 @@ import { DeviceService } from '@services';
         ButtonComponent, MatFormFieldModule, 
         MatDatepickerModule, MatNativeDateModule,
         FormsModule, ReactiveFormsModule,
-        JsonPipe, DatePipe, MatInputModule,
+        MatSelectModule, MatInputModule,
         MatIconModule, MatSlideToggleModule,
-        MatDialogModule, ItemDtDvComponent
+        MatDialogModule, ItemDtDvComponent,
+        JsonPipe, DatePipe, NgForOf
     ],
     providers: [DatePipe],
     templateUrl: './map.component.html',
@@ -48,6 +51,7 @@ export class MapComponent implements OnInit {
     devicesTable: Device[]=[];
     devicesFilter: LocationData[]=[];
     divicesFilterId: any[]=[];
+    AvaCommands: any[]=[];
     switchOnOff: boolean=true;
     
     subscription: Subscription | undefined;
@@ -116,6 +120,7 @@ export class MapComponent implements OnInit {
         });
           
         this.maxDate = this._utils.getCurrentDateTime();
+        this.foundAvaCommands();
     }
 
     suscriptRealTime() {
@@ -138,6 +143,16 @@ export class MapComponent implements OnInit {
             }
         });
     }
+
+    foundAvaCommands() {
+        this._device.getfoundAvaCommands().subscribe((data: any) => {
+            if (data) {
+                console.log(data);
+                this.AvaCommands = data;
+            }
+        });
+    }
+    
 
     filterDevices() {
         const filterDataDvs = {
@@ -220,15 +235,6 @@ export class MapComponent implements OnInit {
         this.classifiers = event
     }
 
-    validDisabledArray(...arrays: Array<any>[]): boolean {
-        for (const array of arrays) {
-          if (Array.isArray(array) && array.length > 0) {
-            return false;
-          }
-        }
-        return true;
-    }
-
     isAllSelected() {
         const numSelected = this.checksDevices.selected.length;
         const numRows = this.dataSource.data.length;
@@ -244,11 +250,25 @@ export class MapComponent implements OnInit {
         this.checksDevices.select(...this.dataSource.data);
     }
 
+    clearClassifiers() {
+        this.checksDevices.clear();
+        this._classifier.clearCheckboxes.emit();
+    }
+
     checkboxLabel(row?: Device): string {
         if (!row) {
           return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
         }
         return `${this.checksDevices.isSelected(row) ? 'deselect' : 'select'} row ${row.devinuid + 1}`;
+    }
+
+    validDisabledArray(...arrays: Array<any>[]): boolean {
+        for (const array of arrays) {
+          if (Array.isArray(array) && array.length > 0) {
+            return false;
+          }
+        }
+        return true;
     }
 
     applyFilter(event: Event) {
@@ -363,7 +383,7 @@ export class MapComponent implements OnInit {
     }
 
     clearFilter() {
-        this.formFilter.reset();
+        this.clearClassifiers();
         this.devicesFilter = [];
         this.formFilter.reset({
             startDateOnly: new Date(),

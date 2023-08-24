@@ -120,6 +120,14 @@
                             [color]="color"
                             (change)="changeOffOnDv($event)">
                         </mat-slide-toggle>
+                        <mat-form-field>
+                            <mat-label>Comandos</mat-label>
+                            <mat-select 
+                            [(ngModel)]="device.deviestacomma">
+                              <mat-option *ngFor="let avaCommand of AvaCommands;" [value]="avaCommand?.stepexec">{{avaCommand?.stepdesc}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
                         <div class="dt-vh-close" (click)="closeToggle(device?.devinuid)">
                             <mat-icon>close</mat-icon>
                         </div>
@@ -239,7 +247,7 @@
                                     <small class="sub-title">{{device.deviloca[0].delofesi | date:'medium' }}</small>
                                 </div>
                             </div>
-                            <div class="dt-vh-citem">
+                            <!-- <div class="dt-vh-citem">
                                 <div class="icon p-1">
                                     <mat-icon>notification_important</mat-icon>
                                 </div>
@@ -247,7 +255,7 @@
                                     <b class="sup-title">Alertas:</b>
                                     <small class="pr-1">No presenta</small>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </article>
 

@@ -120,8 +120,12 @@ export class TreeComponent {
     classifiers2: Map<string, Set<number>> = new Map();
 
     @Output() sendClassifiers: EventEmitter<any> = new EventEmitter();
+    @Output() clear: EventEmitter<any> = new EventEmitter();
 
-    constructor(private _database: ChecklistDatabase) {
+    constructor(
+        private _database: ChecklistDatabase,
+        private _classifier: ClassifierService
+    ) {
         this.treeFlattener = new MatTreeFlattener(
             this.transformer,
             this.getLevel,
@@ -135,6 +139,12 @@ export class TreeComponent {
             if (data) this.dataSource.data = data;
 
             if (this.treeControl.dataNodes && this.activeClassifier) this.checkNodesSelected();
+        });
+    }
+    
+    ngOnInit() {
+        this._classifier.clearCheckboxes.subscribe(() => {
+            this.checklistSelection.clear(); // Desmarca todos los checkboxes
         });
     }
 
@@ -343,4 +353,6 @@ export class TreeComponent {
 
         this.sendClassifiers.emit(arrIds)
     }
+
+    clearClassifiers() {}
 }

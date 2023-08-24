@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { environment } from 'src/environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -10,6 +10,8 @@ export class ClassifierService {
     private classifier$: BehaviorSubject<any> = new BehaviorSubject([]);
     private childs$: BehaviorSubject<any> = new BehaviorSubject([]);
     private entityId: string = !!localStorage.getItem('entity') ? JSON.parse(localStorage.getItem('entity') as string).entinuid : null;
+    // Define un EventEmitter para enviar la señal de desmarcar los checkboxes
+    public clearCheckboxes: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(private http: HttpClient) { }
 
