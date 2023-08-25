@@ -52,7 +52,6 @@ export class MapComponent implements OnInit {
     devicesTable: Device[]=[];
     devicesFilter: LocationData[]=[];
     divicesFilterId: any[]=[];
-    AvaCommands: any[]=[];
     switchOnOff: boolean=true;
     
     subscription: Subscription | undefined;
@@ -106,8 +105,7 @@ export class MapComponent implements OnInit {
                     this.subscription.unsubscribe(); // Pausar la suscripción
                 }
                 this.currentDvId = -1;
-                this._map.drawDvsMainLoc(this.devicesFound);
-                this.details.close();
+                this.closeToggle(selectedDeviceId.toString());
             }
 
             this._map.clearMapHistory(selectedDeviceId.toString());
@@ -121,7 +119,6 @@ export class MapComponent implements OnInit {
         });
           
         this.maxDate = this._utils.getCurrentDateTime();
-        this.foundAvaCommands();
     }
 
     suscriptRealTime() {
@@ -134,21 +131,12 @@ export class MapComponent implements OnInit {
         this._map.getLocationDevices().subscribe((data: any) => {
             if (data && data?.response?.rows) {
                 const rowDevice = data.response.rows;
-                //console.log(rowDevice);
                 this.devicesFound = rowDevice;
                 const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == this.currentDvId);
                 if (indexDv == -1) this._map.drawDvsMainLoc(rowDevice);
                 else if (indexDv != -1) this.deviceSelected$.next(rowDevice[indexDv]);
                 this.devicesTable = this.rowsDeviceTable(rowDevice);
                 this.dataSource.data = this.devicesTable;
-            }
-        });
-    }
-
-    foundAvaCommands() {
-        this._device.getfoundAvaCommands().subscribe((data: any) => {
-            if (data) {
-                this.AvaCommands = data;
             }
         });
     }
