@@ -1,0 +1,32 @@
+.dialogCommands {
+    position: relative;
+    text-align: center;
+
+    .items-right {
+        position: absolute;
+        top: -16px;
+        right: -16px;
+    
+        .dt-vh-close {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            background-color:#E5E7E9;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    }
+
+    mat-form-field {
+        width: 100%;
+    }
+    
+    .commandCenter {
+        display: flex;
+        justify-content: center;
+        padding-top: 20px;
+    }
+}

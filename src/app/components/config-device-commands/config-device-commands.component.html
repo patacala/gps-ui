@@ -1,0 +1,29 @@
+<div class="dialogCommands">
+    <div class="items-right" (click)="dialogClose()">
+        <div class="dt-vh-close">
+          <mat-icon>close</mat-icon>
+        </div>
+    </div>
+    
+    <h2>Ejecutar comando</h2>
+    <mat-form-field>
+        <mat-label>Comandos</mat-label>
+        <mat-select [(ngModel)]="propSendCommand.stepExec" (selectionChange)="selectCommand($event.value)">
+          <mat-option 
+          *ngFor="let avaCommand of AvaCommands;" [value]="avaCommand?.stepexec">
+          {{avaCommand?.stepdesc}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="paramTextActive">
+        <mat-label>Parametro</mat-label>
+        <input matInput [(ngModel)]="propSendCommand.execparam">
+    </mat-form-field>
+
+    <div class="commandCenter">
+        <app-button 
+        (click)="sendCommandDevice()"
+        text="Ejecutar" type="blue"
+        width="120px" icon="settings_remote">
+        </app-button>
+    </div>
+</div>

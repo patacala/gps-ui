@@ -115,19 +115,22 @@
             <mat-drawer #detailsVehicule mode="side" position="end">
                 <aside class="details-vehicle mt-2 ml-2 mr-2" *ngIf="deviceSelected$ | async as device">
                     <div class="flex justify-between p-1">
-                        <mat-slide-toggle
+                        <mat-icon 
+                            class="config-commands"
+                            (click)="openDialogConfigCommans(device?.devinuid)"
+                        >settings</mat-icon>
+                        <!-- <mat-slide-toggle
                             [(ngModel)]="device.deviestacomma"
                             [color]="color"
                             (change)="changeOffOnDv($event)">
-                        </mat-slide-toggle>
-                        <mat-form-field>
+                        </mat-slide-toggle> -->
+                        <!-- <mat-form-field>
                             <mat-label>Comandos</mat-label>
                             <mat-select 
                             [(ngModel)]="device.deviestacomma">
                               <mat-option *ngFor="let avaCommand of AvaCommands;" [value]="avaCommand?.stepexec">{{avaCommand?.stepdesc}}</mat-option>
                             </mat-select>
-                        </mat-form-field>
-
+                        </mat-form-field> -->
                         <div class="dt-vh-close" (click)="closeToggle(device?.devinuid)">
                             <mat-icon>close</mat-icon>
                         </div>
@@ -163,6 +166,15 @@
                                 <div class="value p-1 pl-2">
                                     <b class="sup-title">Marca:</b>
                                     <small class="sub-title">{{device.devimark}}</small>
+                                </div>
+                            </div>
+                            <div class="dt-vh-citem">
+                                <div class="icon p-1">
+                                    <mat-icon>settings_input_antenna</mat-icon>
+                                </div>
+                                <div class="value p-1 pl-2">
+                                    <b class="sup-title">Estado:</b>
+                                    <small class="sub-title">{{device.deviestacomma}}</small>
                                 </div>
                             </div>
                             <div class="dt-vh-citem">

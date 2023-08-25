@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MapComponent, StatisticComponent, UserAddedComponent } from '@components'
 import { UserService, VehiculeService } from '@services'
-import { forkJoin, Observable } from 'rxjs';
-import { map, mergeMap, tap} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { TableHistoryComponent } from '../components/table-history/table-history.component';
+import { ConfigDeviceCommandsComponent } from '../components/config-device-commands/config-device-commands.component';
+
 @Component({
   selector: 'app-dashboard-admin',
   templateUrl: './dashboard-admin.component.html',
@@ -12,7 +14,7 @@ import { TableHistoryComponent } from '../components/table-history/table-history
   imports: [
     CommonModule, MapComponent, 
     StatisticComponent, UserAddedComponent, 
-    TableHistoryComponent
+    TableHistoryComponent, ConfigDeviceCommandsComponent
   ]
 })
 export class DashboardAdminComponent implements OnInit {

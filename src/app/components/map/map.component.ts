@@ -25,6 +25,7 @@ import { DataTimeHComponent } from '../data-time-h/data-time-h.component';
 import { ItemDtDvComponent } from '../item-dt-dv/item-dt-dv.component';
 import { DeviceService } from '@services';
 import { NgForOf } from '@angular/common';
+import { ConfigDeviceCommandsComponent } from '../config-device-commands/config-device-commands.component';
 
 @Component({
     selector: 'app-map',
@@ -152,7 +153,6 @@ export class MapComponent implements OnInit {
             }
         });
     }
-    
 
     filterDevices() {
         const filterDataDvs = {
@@ -331,6 +331,15 @@ export class MapComponent implements OnInit {
     openDialogHistory(deviceId: number) {
         this.dialog.open(DataTimeHComponent, {
             width:'360px',
+            data: {
+              deviceId
+            },
+        });
+    }
+
+    openDialogConfigCommans(deviceId: number) {
+        this.dialog.open(ConfigDeviceCommandsComponent, {
+            width:'270px',
             data: {
               deviceId
             },
