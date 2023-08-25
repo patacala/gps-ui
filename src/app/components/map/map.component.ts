@@ -148,7 +148,6 @@ export class MapComponent implements OnInit {
     foundAvaCommands() {
         this._device.getfoundAvaCommands().subscribe((data: any) => {
             if (data) {
-                console.log(data);
                 this.AvaCommands = data;
             }
         });
