@@ -75,4 +75,8 @@ export class TableHistoryComponent implements OnInit {
     if (openInfId === -1) return true;
     return false;
   }
+
+  locationOn() {
+    
+  }
 }
