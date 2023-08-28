@@ -137,6 +137,7 @@ export class MapComponent implements OnInit {
                 else if (indexDv != -1) this.deviceSelected$.next(rowDevice[indexDv]);
                 this.devicesTable = this.rowsDeviceTable(rowDevice);
                 this.dataSource.data = this.devicesTable;
+                console.log(rowDevice);
             }
         });
     }
