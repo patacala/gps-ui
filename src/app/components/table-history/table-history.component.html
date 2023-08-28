@@ -1,6 +1,13 @@
 <!-- <mat-icon (click)="locationOn()">location_on</mat-icon> -->
+<div class="pagiCsv">
+    <app-button 
+        (click)="saveDataInCSV('Historial de dispositivo', deviceFilter)" *ngIf="dataSrcHistoSta" 
+        text="Csv" type="green" class="csv-download"
+        width="100px" icon="cloud_download">
+    </app-button>
+    <mat-paginator [pageSizeOptions]="[10, 30, 50, 100]" [pageSize]="10"></mat-paginator>
+</div>
 
-<mat-paginator [pageSizeOptions]="[10, 30, 50, 100]" [pageSize]="10"></mat-paginator>
 <section class="table-history-section">
     <table mat-table [dataSource]="dataSrcHistory" class="table-history">
         <!-- Dloclati Column -->

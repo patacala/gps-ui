@@ -9,3 +9,14 @@ export interface HistoryLoc {
     delofesi: string;
     keywfunc: string;
 }
+
+export interface HistoryData {
+    LATITUD: string;
+    LONGITUD: string;
+    DIRECCION: string;
+    BARRIO: string;
+    EVENTO: string;
+    "FECHA SISTEMA": string;
+    "FECHA REGISTRO": string;
+    VELOCIDAD: string
+}

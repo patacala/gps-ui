@@ -162,7 +162,7 @@ export class MapComponent implements OnInit {
                 this._map.drawDvsFilter(devices);
                 this.processFilterId(devices);
                 this.divicesFilterId = [];
-                this.devicesFilter = this._utils.processFilterData(devices);
+                this.devicesFilter = this.processFilterData(devices);
             }
         });
     }
@@ -171,6 +171,51 @@ export class MapComponent implements OnInit {
         datas?.forEach((element: any) => {
             this.divicesFilterId.push(element?.devinuid)
         });
+    }
+
+    processFilterData(datas: any) {
+        const newArray: LocationData[] = [];
+        const mappedArray = datas?.map((data:any) => ({
+            deviimei: data.deviimei,
+            devimark: data.devimark,
+            devimode: data.devimode,
+            deviphon: data.deviphon,
+            carrlice: data.carrdevi?.carrier?.carrlice,
+            carrtype: data.carrdevi?.carrier?.carrtype,
+            locations: {
+                delolati: data.locations.map((loc: any) => loc.delolati),
+                delolong: data.locations.map((loc: any) => loc.delolong),
+                delodire: data.locations.map((loc: any) => loc.delodire),
+                delobarri: data.locations.map((loc: any) => loc.delobarri),
+                delofesi: data.locations.map((loc: any) => loc.delofesi),
+                delotime: data.locations.map((loc: any) => loc.delotime),
+                delospee: data.locations.map((loc: any) => loc.delospee),
+                keywfunc: data.locations.map((loc: any) => loc.keywords.keywfunc),
+            }
+        }));  
+
+        mappedArray?.forEach((row: any) => {
+            const locations = row.locations;
+            locations.delolati.forEach((lat: any, index: number) => {
+                newArray.push({
+                    IMEI: row.deviimei,
+                    MARCA: row.devimark,
+                    MODELO: row.devimode,
+                    CELULAR: row.deviphon,
+                    PLACA: row.carrlice,
+                    "TIPO VEHICULO": row.carrtype,
+                    LATITUD: lat,
+                    LONGITUD: locations.delolong[index],
+                    DIRECCION: locations.delodire[index],
+                    BARRIO: locations.delobarri[index],
+                    EVENTO: locations.keywfunc[index],
+                    "FECHA SISTEMA": locations.delofesi[index],
+                    "FECHA REGISTRO": this.formatTimestamp(locations.delotime[index]),
+                    VELOCIDAD: locations.delospee[index],
+                });
+            });
+        });
+        return newArray;  
     }
 
     saveClassifiers(event: any) {
@@ -261,13 +306,7 @@ export class MapComponent implements OnInit {
       
     // Exportar .csv
     saveDataInCSV(name: string, data: Array<any>): void {
-        let csvContent = this._utils.saveDataInCSV(data);
-    
-        var hiddenElement = document.createElement('a');
-        hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
-        hiddenElement.target = '_blank';
-        hiddenElement.download = name + '.csv';
-        hiddenElement.click();
+        this._utils.saveDataInCSV(name, data);
     }
 
     openDialogHistory(deviceId: number) {

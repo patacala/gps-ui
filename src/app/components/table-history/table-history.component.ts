@@ -1,24 +1,27 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { HistoryLoc } from './table-history.model';
+import { HistoryLoc, HistoryData } from './table-history.model';
 import { DeviceService, MapService } from '@services';
 import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { DatePipe, NgIf } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { ButtonComponent } from '../button/button.component';
+import { UtilsService } from 'src/app/services/utils/utils.service';
 
 @Component({
   selector: 'app-table-history',
   standalone: true,
   providers: [DatePipe],
-  imports: [MatTableModule, MatPaginatorModule, DatePipe, MatIconModule, NgIf],
+  imports: [MatTableModule, MatPaginatorModule, DatePipe, MatIconModule, NgIf, ButtonComponent],
   templateUrl: './table-history.component.html',
   styleUrls: ['./table-history.component.scss']
 })
 export class TableHistoryComponent implements OnInit {
   deviceId: number = -1;
-  devicesTable: HistoryLoc[]=[];
   openInfoLoc: []=[];
+  dataSrcHistoSta: boolean = false;
+  deviceFilter: HistoryData[]=[];
   dataSrcHistory = new MatTableDataSource<HistoryLoc>([]);
   columnsHistory: string[] = ['dloclati', 'dloclong', 'daddress', 'dneighbh', 'devent', 'dspeed', 'delotime', 'delofesi', 'action'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -30,6 +33,7 @@ export class TableHistoryComponent implements OnInit {
     private datePipe: DatePipe,
     private matPaginatorIntl: MatPaginatorIntl,
     private changeDetectorRef: ChangeDetectorRef,
+    private _utils: UtilsService
   ) {
     this.matPaginatorIntl.itemsPerPageLabel = 'Ubicaciones por página';
     this.paginator = new MatPaginator(this.matPaginatorIntl, this.changeDetectorRef);
@@ -37,10 +41,14 @@ export class TableHistoryComponent implements OnInit {
 
   ngOnInit(): void {
     this._device.getHistoryLoc().subscribe((data: { deviceId: number, historyLocs: HistoryLoc[] }) => {
-      this.deviceId = data.deviceId;
-      this.dataSrcHistory.data = data.historyLocs;
+      this.deviceId = data?.deviceId;
+      this.dataSrcHistory.data = data?.historyLocs;
       this.dataSrcHistory.paginator = this.paginator;
       this.dataSrcHistory.sort = this.sort;
+      this.dataSrcHistoSta = data?.historyLocs?.length ? true:false;
+      if (this.dataSrcHistoSta) {
+        this.deviceFilter = this.processFilterData(data?.historyLocs);
+      }
     });
 
     this.openInfoLocIds();
@@ -76,7 +84,26 @@ export class TableHistoryComponent implements OnInit {
     return false;
   }
 
-  locationOn() {
-    
+  processFilterData(datas: any) {
+    const newArray: HistoryData[]=[];
+
+    datas?.forEach((location: any) => {
+        newArray.push({
+          LATITUD: location.delolati,
+          LONGITUD: location.delolong,
+          DIRECCION: location.delodire,
+          BARRIO: location.delobarri,
+          EVENTO: location.keywfunc,
+          "FECHA SISTEMA": location.delofesi,
+          "FECHA REGISTRO": this.formatTimestamp(location.delotime),
+          VELOCIDAD: location.delospee,
+      });
+    });
+    return newArray;  
+  }
+
+  // Exportar .csv
+  saveDataInCSV(name: string, data: Array<any>): void {
+    this._utils.saveDataInCSV(name, data);
   }
 }
