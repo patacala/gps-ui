@@ -51,7 +51,55 @@ export class UtilsService {
     hiddenElement.click();
     return;
   }  
+
+  saveDataInCSVWithSheets(name: string, sheets: { name: string, data: any[] }[]) {
+    if (sheets.length === 0) {
+      return '';
+    }
   
+    const bom = '\uFEFF';
+    let result = '';
+  
+    sheets.forEach(sheet => {
+      const objects = sheet.data;
+      const propertyNames = Object.keys(objects[0]);
+      const headerRow = propertyNames.join(';') + '\n';
+  
+      let rows = '';
+      objects.forEach(obj => {
+        let row = '';
+  
+        propertyNames.forEach(prop => {
+          let value = obj[prop];
+  
+          if (typeof value === 'string') {
+            value = '"' + value.replace(/[#]/g, 'N°') + '"';
+          } else if (typeof value === 'boolean') {
+            value = value ? 'true' : 'false';
+          } else if (value instanceof Date) {
+            value = value.toISOString();
+          } else if (value === null || value === undefined) {
+            value = '';
+          }
+  
+          row = row.concat(value, ';');
+        });
+  
+        rows += row.concat('\n');
+      });
+  
+      const sheetContent = headerRow + rows.concat('\n');
+      result += bom + `[Hoja: ${sheet.name}]` + '\n' + sheetContent;
+    });
+  
+    const hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(result);
+    hiddenElement.target = '_blank';
+    hiddenElement.download = `${name}.csv`;
+    hiddenElement.click();
+    return;
+  }
+    
   getCurrentDateTime() {
     const currentDate = new Date();
     const year = currentDate.getFullYear();

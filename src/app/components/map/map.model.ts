@@ -21,4 +21,15 @@ export interface LocationData {
     VELOCIDAD: string
 }
 
+export interface KmTraveled {
+    IMEI: string;
+    MARCA: string;
+    MODELO: string;
+    CELULAR: string;
+    PLACA: string;
+    "TIPO VEHICULO": string;
+    "KM DÍA": string;
+    "KM GENERADO": number;
+}
+
   

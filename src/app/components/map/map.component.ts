@@ -17,7 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
 import { UtilsService } from 'src/app/services/utils/utils.service';
-import { Device, LocationData } from './map.model';
+import { Device, KmTraveled, LocationData } from './map.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -50,7 +50,9 @@ export class MapComponent implements OnInit {
     displayedColumns: string[] = ['select', 'imei', 'plate'];
     maxDate: string = '';
     devicesTable: Device[]=[];
+    devicesRPross: [LocationData[], KmTraveled[]]=[[],[]];
     devicesFilter: LocationData[]=[];
+    kmTraveled: KmTraveled[]=[];
     divicesFilterId: any[]=[];
     switchOnOff: boolean=true;
     
@@ -137,7 +139,6 @@ export class MapComponent implements OnInit {
                 else if (indexDv != -1) this.deviceSelected$.next(rowDevice[indexDv]);
                 this.devicesTable = this.rowsDeviceTable(rowDevice);
                 this.dataSource.data = this.devicesTable;
-                console.log(rowDevice);
             }
         });
     }
@@ -163,7 +164,9 @@ export class MapComponent implements OnInit {
                 this._map.drawDvsFilter(devices);
                 this.processFilterId(devices);
                 this.divicesFilterId = [];
-                this.devicesFilter = this.processFilterData(devices);
+                this.devicesRPross = this.processFilterData(devices); 
+                this.devicesFilter = this.devicesRPross[0];
+                this.kmTraveled = this.devicesRPross[1];
             }
         });
     }
@@ -174,9 +177,11 @@ export class MapComponent implements OnInit {
         });
     }
 
-    processFilterData(datas: any) {
-        const newArray: LocationData[] = [];
-        const mappedArray = datas?.map((data:any) => ({
+    processFilterData(datas: any): [LocationData[], KmTraveled[]] {
+        const newLocData: LocationData[] = [];
+        const newKmTraveled: KmTraveled[] = [];
+
+        const mappedLocData = datas?.map((data:any) => ({
             deviimei: data.deviimei,
             devimark: data.devimark,
             devimode: data.devimode,
@@ -193,12 +198,25 @@ export class MapComponent implements OnInit {
                 delospee: data.locations.map((loc: any) => loc.delospee),
                 keywfunc: data.locations.map((loc: any) => loc.keywords.keywfunc),
             }
-        }));  
+        }));
+        
+        const mappedKmTraveled = datas?.map((data:any) => ({
+            deviimei: data.deviimei,
+            devimark: data.devimark,
+            devimode: data.devimode,
+            deviphon: data.deviphon,
+            carrlice: data.carrdevi?.carrier?.carrlice,
+            carrtype: data.carrdevi?.carrier?.carrtype,
+            kmTraveled: {
+                kmdiacapt: data.kmdevi.map((km: any) => km.kmdiacapt),
+                kmcapt: data.kmdevi.map((km: any) => km.kmcapt)
+            }
+        }));
 
-        mappedArray?.forEach((row: any) => {
+        mappedLocData?.forEach((row: any) => {
             const locations = row.locations;
             locations.delolati.forEach((lat: any, index: number) => {
-                newArray.push({
+                newLocData.push({
                     IMEI: row.deviimei,
                     MARCA: row.devimark,
                     MODELO: row.devimode,
@@ -216,7 +234,24 @@ export class MapComponent implements OnInit {
                 });
             });
         });
-        return newArray;  
+
+        mappedKmTraveled?.forEach((row: any) => {
+            const kmTraveled = row.kmTraveled;
+            kmTraveled.kmdiacapt.forEach((kmDayCapt: any, index: number) => {
+                newKmTraveled.push({
+                    IMEI: row.deviimei,
+                    MARCA: row.devimark,
+                    MODELO: row.devimode,
+                    CELULAR: row.deviphon,
+                    PLACA: row.carrlice,
+                    "TIPO VEHICULO": row.carrtype,
+                    "KM DÍA": kmDayCapt,
+                    "KM GENERADO": kmTraveled.kmcapt[index]
+                });
+            });
+        });
+
+        return [newLocData, newKmTraveled];  
     }
 
     saveClassifiers(event: any) {
@@ -306,8 +341,8 @@ export class MapComponent implements OnInit {
     }
       
     // Exportar .csv
-    saveDataInCSV(name: string, data: Array<any>): void {
-        this._utils.saveDataInCSV(name, data);
+    saveDataInCSV(sheets: { name: string, data: any[] }[]): void {
+        this._utils.saveDataInCSVWithSheets('dispositivos', sheets);
     }
 
     openDialogHistory(deviceId: number) {
