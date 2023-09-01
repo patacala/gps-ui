@@ -350,9 +350,6 @@ export class TreeComponent {
     saveClassifiers() {
         let sets = Object.fromEntries(this.classifiers2)
         let arrIds = Object.keys(sets).map(key => Array.from(sets[key]));
-
         this.sendClassifiers.emit(arrIds)
     }
-
-    clearClassifiers() {}
 }

@@ -22,7 +22,7 @@
                     <b>Clasificadores</b>
                 </header>
                 <hr>
-                <app-tree-classifiers (sendClassifiers)="addClassifier($event)" [activeClassifier]="classifiers$ | async"></app-tree-classifiers>
+                <app-tree-classifiers (sendClassifiers)="addClassifier($event)" [activeClassifier]="[classifiers$ | async]"></app-tree-classifiers>
             </section>
         </section>
     </section>

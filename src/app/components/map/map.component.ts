@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
-import { interval, Subject, Subscription } from 'rxjs';
+import { interval, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, pairwise } from 'rxjs/operators';
 import { AsyncPipe, DatePipe, JsonPipe, NgIf } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
@@ -55,7 +55,6 @@ export class MapComponent implements OnInit {
     kmTraveled: KmTraveled[]=[];
     divicesFilterId: any[]=[];
     switchOnOff: boolean=true;
-    
     subscription: Subscription | undefined;
     dataSource = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true,[]);
@@ -255,7 +254,7 @@ export class MapComponent implements OnInit {
     }
 
     saveClassifiers(event: any) {
-        this.classifiers = event
+        this.classifiers = event;
     }
 
     isAllSelected() {
@@ -274,7 +273,7 @@ export class MapComponent implements OnInit {
     }
 
     clearClassifiers() {
-        this.checksDevices.clear();
+        this.classifiers = [];
         this._classifier.clearCheckboxes.emit();
     }
 
@@ -343,6 +342,7 @@ export class MapComponent implements OnInit {
     // Exportar .csv
     saveDataInCSV(sheets: { name: string, data: any[] }[]): void {
         this._utils.saveDataInCSVWithSheets('dispositivos', sheets);
+       // this.saveDataInCSV('dispositivos', sheets);
     }
 
     openDialogHistory(deviceId: number) {
