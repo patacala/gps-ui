@@ -341,8 +341,8 @@ export class MapComponent implements OnInit {
       
     // Exportar .csv
     saveDataInCSV(sheets: { name: string, data: any[] }[]): void {
-        this._utils.saveDataInCSVWithSheets('dispositivos', sheets);
-       // this.saveDataInCSV('dispositivos', sheets);
+        this._utils.saveDataInCSV(sheets[0].name, sheets[0].data);
+        this._utils.saveDataInCSV(sheets[1].name, sheets[1].data);
     }
 
     openDialogHistory(deviceId: number) {
@@ -410,7 +410,6 @@ export class MapComponent implements OnInit {
 
     clearFilter() {
         this.clearClassifiers();
-        this.devicesFilter = [];
         this.formFilter.reset({
             startDateOnly: new Date(),
             endDateOnly: new Date(),
@@ -418,6 +417,8 @@ export class MapComponent implements OnInit {
             isEvent: false,
             withAlert: false
         });          
+        this.checksDevices.clear();
+        this.devicesFilter = [];
         this.initialMapDevsLoc();
     }
 }
