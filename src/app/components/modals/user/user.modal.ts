@@ -2,18 +2,37 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray } f
 import { MatDividerModule } from '@angular/material/divider';
 import { InputComponent } from '../../input/input.component';
 import { MatIconModule } from '@angular/material/icon';
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import { IFormCreate, TRoles, UserService, VehiculeService } from '@services';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output, ViewChild } from '@angular/core';
+import { DeviceService, MapService, UserService } from '@services';
 import { CommonModule } from '@angular/common';
-import { ButtonComponent, SelectComponent, AssignTable, SnackAlert } from '@components';
+import { ButtonComponent, SelectComponent, SnackAlert } from '@components';
 import { MatSelectModule } from '@angular/material/select';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Device } from '../../map/map.model';
+import { SelectionModel } from '@angular/cdk/collections';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
     selector: 'app-user-modal',
     standalone: true,
-    imports: [MatIconModule, InputComponent, MatDividerModule, ButtonComponent, ReactiveFormsModule, FormsModule, CommonModule, SelectComponent, AssignTable, MatSelectModule],
+    imports: [
+        MatIconModule, 
+        InputComponent, 
+        MatDividerModule, 
+        ButtonComponent, 
+        ReactiveFormsModule, 
+        FormsModule, 
+        CommonModule, 
+        SelectComponent, 
+        MatSelectModule,
+        MatTableModule,
+        MatCheckboxModule,
+        MatPaginatorModule
+    ],
     templateUrl: './user.modal.html'
 })
 export class UserModal implements OnInit {
@@ -22,6 +41,12 @@ export class UserModal implements OnInit {
     vehicules$!: Observable<any>
     showInformation: boolean = false;
     userGroup!: FormGroup;
+    dataSDevices = new MatTableDataSource<Device>([]);
+    checksDevices = new SelectionModel<Device>(true,[]);
+    displayedColumns: string[] = ['select', 'imei', 'plate'];
+    @ViewChild(MatPaginator) paginator!: MatPaginator;
+    @ViewChild(MatSort) sort!: MatSort;
+
     permissions = [
         {
             key: 'entity_get',
@@ -116,8 +141,21 @@ export class UserModal implements OnInit {
             description: 'Listar privilegios'
         }
     ]
-    constructor(private fb: FormBuilder, private _user: UserService, private _vehicule: VehiculeService,
-        @Inject(MAT_DIALOG_DATA) public data: any, private _snack: SnackAlert) { }
+    constructor(
+        private fb: FormBuilder, 
+        private _user: UserService, 
+        //private _vehicule: VehiculeService,
+        @Inject(MAT_DIALOG_DATA) public data: any, 
+        private _snack: SnackAlert,
+        private _map: MapService,
+        private _device: DeviceService, 
+        private matPaginatorIntl: MatPaginatorIntl,
+        private changeDetectorRef: ChangeDetectorRef,
+    ) {
+        this.matPaginatorIntl.itemsPerPageLabel = 'Dispositivos por página';
+        this.paginator = new MatPaginator(this.matPaginatorIntl, this.changeDetectorRef);
+        this.deviceList();
+    }
 
     ngOnInit(): void {
         this.userGroup = this._INIT_FORM;
@@ -129,7 +167,8 @@ export class UserModal implements OnInit {
             this._user.getPrivilegiesByUser(this.data?.usernuid)
             .subscribe((resp: any) => this.userGroup.get('privileges')?.setValue(resp.response))
         }
-        this.vehicules$ = this._vehicule.getVehicules();
+        //this.vehicules$ = this._vehicule.getVehicules();
+
     }
 
     get _INIT_FORM(): FormGroup {
@@ -148,12 +187,47 @@ export class UserModal implements OnInit {
             this.closeModal()
         })
     }
+    
     editUser(userId: string): void {
         this._user.editUser(this.userGroup.getRawValue(), userId).subscribe(() => {
             this._snack.showSuccess('Usuario Editado exitosamente')
             this.closeModal()
         })
     }
+
+    deviceList() {
+        this._map.getLocationDevices().subscribe((data: any) => {
+            if (data && data?.response?.rows) {
+                const rowDevice = data.response.rows;
+                this.dataSDevices.data = this._device.rowsDeviceTable(rowDevice);
+                this.dataSDevices.paginator = this.paginator;
+                this.dataSDevices.sort = this.sort;
+            }
+        });
+    }
+
+    isAllSelected() {
+        const numSelected = this.checksDevices.selected.length;
+        const numRows = this.dataSDevices.data.length;
+        return numSelected === numRows;
+    }
+
+    toggleAllRows() {
+        if (this.isAllSelected()) {
+          this.checksDevices.clear();
+          return;
+        }
+    
+        this.checksDevices.select(...this.dataSDevices.data);
+    }
+
+    checkboxLabel(row?: Device): string {
+        if (!row) {
+          return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+        }
+        return `${this.checksDevices.isSelected(row) ? 'deselect' : 'select'} row ${row.devinuid + 1}`;
+    }
+
     closeModal(): void {
         this.close.emit();
     }

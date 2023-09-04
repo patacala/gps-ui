@@ -24,6 +24,7 @@ export class DeviceService {
 
         return this.device$.asObservable();
     }
+
     getAvailablesDevices() {
         this.http.get(`${this.root}/entity/${this.entityId}?available=true`).pipe(
             map(({ response }: any) => response)
@@ -31,6 +32,27 @@ export class DeviceService {
 
         return this.device$.asObservable();
     }
+
+    // Metodo utilizado para obtener los datos de lista devices
+    rowsDeviceTable(devices: Array<any>): { devinuid: number; deviimei: string; carrlice: string; }[] {
+        const devicesTable: { devinuid: number; deviimei: string; carrlice: string; }[] = [];
+      
+        devices.forEach(device => {
+          let carrdevi = 'Sin Asignar';
+          if (device.carrdevi && device.carrdevi.carrier.carrlice) {
+            carrdevi = device.carrdevi.carrier.carrlice;
+          }
+      
+          devicesTable.push({
+            devinuid: device.devinuid,
+            deviimei: device.deviimei,
+            carrlice: carrdevi
+          });
+        });
+        
+        return devicesTable;
+    }
+
     createDevice(device: IDeviceCreate): Observable<IDeviceResponse> {
         return this.http.post<IDeviceResponse>(`${this.root}/entity/${this.entityId}`, device).pipe(
             tap(({ response }: any) => {
@@ -38,6 +60,7 @@ export class DeviceService {
             })
         )
     }
+
     updateDevice(device: IDeviceCreate, deviceId: string) {
         return this.http.patch(`${this.root}/${deviceId}`, device).pipe(
             tap(console.log),

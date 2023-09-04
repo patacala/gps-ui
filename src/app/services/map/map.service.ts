@@ -42,7 +42,7 @@ export class MapService {
         devices.forEach(element => {
             let marker = new google.maps.Marker();
             const locId = element?.devinuid;
-            const location = element?.deviloca[0];
+            const location = element?.deviloca && element.deviloca.length > 0 ? element?.deviloca[0]:[];
         
             if (location && locId) {
                 marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location);

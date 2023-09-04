@@ -54,9 +54,9 @@ export class MapComponent implements OnInit {
     devicesFilter: LocationData[]=[];
     kmTraveled: KmTraveled[]=[];
     divicesFilterId: any[]=[];
-    switchOnOff: boolean=true;
+    switchOnOff: boolean = true;
     subscription: Subscription | undefined;
-    dataSource = new MatTableDataSource<Device>([]);
+    dataSDevices = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true,[]);
     color: ThemePalette = 'primary';
     
@@ -136,8 +136,8 @@ export class MapComponent implements OnInit {
                 const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == this.currentDvId);
                 if (indexDv == -1) this._map.drawDvsMainLoc(rowDevice);
                 else if (indexDv != -1) this.deviceSelected$.next(rowDevice[indexDv]);
-                this.devicesTable = this.rowsDeviceTable(rowDevice);
-                this.dataSource.data = this.devicesTable;
+                this.devicesTable = this._device.rowsDeviceTable(rowDevice);
+                this.dataSDevices.data = this.devicesTable;
             }
         });
     }
@@ -259,7 +259,7 @@ export class MapComponent implements OnInit {
 
     isAllSelected() {
         const numSelected = this.checksDevices.selected.length;
-        const numRows = this.dataSource.data.length;
+        const numRows = this.dataSDevices.data.length;
         return numSelected === numRows;
     }
 
@@ -269,7 +269,7 @@ export class MapComponent implements OnInit {
           return;
         }
     
-        this.checksDevices.select(...this.dataSource.data);
+        this.checksDevices.select(...this.dataSDevices.data);
     }
 
     clearClassifiers() {
@@ -295,7 +295,7 @@ export class MapComponent implements OnInit {
 
     applyFilter(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;
-        this.dataSource.filter = filterValue.trim().toLowerCase();
+        this.dataSDevices.filter = filterValue.trim().toLowerCase();
     }
 
     upperCase(event: any) {
@@ -318,27 +318,7 @@ export class MapComponent implements OnInit {
 
         return classifiers.join(', ');
     }
-
-    // Metodo utilizado para obtener los datos de lista devices
-    rowsDeviceTable(devices: Array<any>): { devinuid: number; deviimei: string; carrlice: string; }[] {
-        const devicesTable: { devinuid: number; deviimei: string; carrlice: string; }[] = [];
-      
-        devices.forEach(device => {
-          let carrdevi = 'Sin Asignar';
-          if (device.carrdevi && device.carrdevi.carrier.carrlice) {
-            carrdevi = device.carrdevi.carrier.carrlice;
-          }
-      
-          devicesTable.push({
-            devinuid: device.devinuid,
-            deviimei: device.deviimei,
-            carrlice: carrdevi
-          });
-        });
-        
-        return devicesTable;
-    }
-      
+  
     // Exportar .csv
     saveDataInCSV(sheets: { name: string, data: any[] }[]): void {
         this._utils.saveDataInCSV(sheets[0].name, sheets[0].data);
