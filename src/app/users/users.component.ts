@@ -14,7 +14,7 @@ import { ICompany } from '../services/company/company.interfaces';
   standalone: true
 })
 export class UsersComponent implements OnInit {
-  tableContent = [{ key: 'usernuid', name: 'ID' }, { key: 'fullname', name: 'Usuario' }, { key: 'rol', name: 'Roles' }, { key: 'entityUser.enusstat', name: 'Estado' }, { key: 'action', name: 'Acción' }]
+  tableContent = [{ key: 'usernuid', name: 'ID' }, { key: 'fullname', name: 'Usuario' }, /* { key: 'rol', name: 'Roles' }, */ { key: 'entityUser.enusstat', name: 'Estado' }, { key: 'action', name: 'Acción' }]
   users$!: Observable<any>
   constructor(private dialog: MatDialog, private _users: UserService) { }
 

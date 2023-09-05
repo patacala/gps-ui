@@ -2,7 +2,7 @@
     <header class="pb-4">
         <p class="text-xl font-semibold">Dashboard</p>
     </header>
-    <app-map class="block h-3/5"></app-map>
+    <app-map *ngIf="permissions.includes('locations_read')" class="block h-3/5"></app-map>
     <section class="h-2/6 pt-3 flex w-full">
         <section class="flex w-full">
             <section class="flex w-full gap-4" *ngIf="data$ | async as data">

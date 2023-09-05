@@ -51,6 +51,10 @@ export class UserModal implements OnInit {
 
     permissions = [
         {
+            key: 'locations_read',
+            description: 'Ver mapa'
+        },
+        {
             key: 'entity_get',
             description: 'Listar entidades'
         },
@@ -207,8 +211,6 @@ export class UserModal implements OnInit {
         if (!userNuId) userNuId = null;
 
         this._map.getLocationDevices(userNuId).subscribe((data: any) => {
-            console.log(data);
-
             if (data && data?.response?.rows) {
                 const rowDevice = data.response.rows;
                 const resultRowDevs = this._device.rowsDeviceTable(rowDevice);

@@ -16,6 +16,7 @@ export class PermissionDirective implements OnInit {
     ngOnInit(): void {
         if (this.isSuperAdmin) {
             let hasPermission = Array.isArray(this.hasPermission) && this.hasPermission.find(p => p.endsWith('_' + this.el.nativeElement.dataset.action));
+            console.log(hasPermission);
 
             if (hasPermission && !['entity_create', 'entity_update', 'entity_delete'].includes(hasPermission) || !['entity_get'].includes(this.hasPermission as string) && !hasPermission) {
                 this.el.nativeElement.style.display = 'none';
