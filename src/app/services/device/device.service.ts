@@ -18,7 +18,7 @@ export class DeviceService {
     ) {}
 
     getDevice(skip: number = 0) {
-        this.http.get(`${this.root}/entity/${this.entityId}?limit=10&offset=${skip}`).pipe(map(({ response }: any) => response)).subscribe(value => {
+        this.http.get(`${this.root}/entity/${this.entityId}/null?limit=10&offset=${skip}`).pipe(map(({ response }: any) => response)).subscribe(value => {
             this.device$.next(value)
         });
 
