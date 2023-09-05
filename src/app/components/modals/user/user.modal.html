@@ -43,6 +43,8 @@
                     </mat-option>
                 </mat-select>
             </label>
+
+            <app-input label="Contraseña" class="w-80" [value]="data.userpassshow" *ngIf="data"></app-input>
         </section>
     </section>
 </ng-template>
@@ -50,7 +52,7 @@
     <!-- <app-assign-table [columns]="tableContent" [resorce]="vehicules$|async"></app-assign-table> -->
     <div class="table-devices-regis">
         <mat-paginator [pageSizeOptions]="[5, 10, 30, 50, 100]" [pageSize]="5"></mat-paginator>
-        <table mat-table [dataSource]="dataSDevices" class="w-full">
+        <table mat-table [dataSource]="dataSDevices" class="w-full" matSort>
             <!-- Checkbox Column -->
             <ng-container matColumnDef="select">
               <th mat-header-cell *matHeaderCellDef>
@@ -86,6 +88,10 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"
                 (click)="checksDevices.toggle(row)">
+            </tr>
+
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="4">Sin resultados.</td>
             </tr>
           </table>
     </div>

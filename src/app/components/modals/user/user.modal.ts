@@ -11,7 +11,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { Device } from '../../map/map.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -29,8 +29,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         CommonModule, 
         SelectComponent, 
         MatSelectModule,
-        MatTableModule,
         MatCheckboxModule,
+        MatTableModule,
+        MatSortModule,
         MatPaginatorModule
     ],
     templateUrl: './user.modal.html'
@@ -41,11 +42,12 @@ export class UserModal implements OnInit {
     vehicules$!: Observable<any>
     showInformation: boolean = false;
     userGroup!: FormGroup;
-    dataSDevices = new MatTableDataSource<Device>([]);
-    checksDevices = new SelectionModel<Device>(true,[]);
+    dataSDevices: MatTableDataSource<any>;
     displayedColumns: string[] = ['select', 'imei', 'plate'];
-    @ViewChild(MatPaginator) paginator!: MatPaginator;
-    @ViewChild(MatSort) sort!: MatSort;
+    checksDevices = new SelectionModel<Device>(true,[]);
+    
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
 
     permissions = [
         {
@@ -144,7 +146,6 @@ export class UserModal implements OnInit {
     constructor(
         private fb: FormBuilder, 
         private _user: UserService, 
-        //private _vehicule: VehiculeService,
         @Inject(MAT_DIALOG_DATA) public data: any, 
         private _snack: SnackAlert,
         private _map: MapService,
@@ -152,8 +153,10 @@ export class UserModal implements OnInit {
         private matPaginatorIntl: MatPaginatorIntl,
         private changeDetectorRef: ChangeDetectorRef,
     ) {
-        this.matPaginatorIntl.itemsPerPageLabel = 'Dispositivos por página';
+        this.dataSDevices = new MatTableDataSource<Device>();
+        this.matPaginatorIntl.itemsPerPageLabel = 'Dispositivos por página:';
         this.paginator = new MatPaginator(this.matPaginatorIntl, this.changeDetectorRef);
+        this.sort = new MatSort();
         this.deviceList();
     }
 
@@ -162,26 +165,27 @@ export class UserModal implements OnInit {
         if (this.data) {
             this.userGroup.patchValue({
                 name: this.data.fullname,
-                email: this.data.username,
+                email: this.data.username
             })
             this._user.getPrivilegiesByUser(this.data?.usernuid)
             .subscribe((resp: any) => this.userGroup.get('privileges')?.setValue(resp.response))
         }
-        //this.vehicules$ = this._vehicule.getVehicules();
-
     }
 
     get _INIT_FORM(): FormGroup {
         return this.fb.group({
             name: this.fb.nonNullable.control(''),
             email: this.fb.nonNullable.control(''),
-            privileges: this.fb.control('')
+            privileges: this.fb.control(''),
+            deviceSelected: this.fb.control([]),
         })
     }
 
     createUser(): void {
+        this.userGroup.get('deviceSelected')?.setValue(
+            this.checksDevices.selected.map((device) => device.devinuid)
+        );
         const userCreated = this.userGroup.getRawValue();
-
         this._user.createUser(userCreated).subscribe(() => {
             this._snack.showSuccess('Usuario Creado exitosamente')
             this.closeModal()
@@ -189,6 +193,9 @@ export class UserModal implements OnInit {
     }
     
     editUser(userId: string): void {
+        this.userGroup.get('deviceSelected')?.setValue(
+            this.checksDevices.selected.map((device) => device.devinuid)
+        );
         this._user.editUser(this.userGroup.getRawValue(), userId).subscribe(() => {
             this._snack.showSuccess('Usuario Editado exitosamente')
             this.closeModal()
@@ -196,16 +203,26 @@ export class UserModal implements OnInit {
     }
 
     deviceList() {
-        this._map.getLocationDevices().subscribe((data: any) => {
+        let userNuId = this.data?.usernuid;
+        if (!userNuId) userNuId = null;
+
+        this._map.getLocationDevices(userNuId).subscribe((data: any) => {
+            console.log(data);
+
             if (data && data?.response?.rows) {
                 const rowDevice = data.response.rows;
-                this.dataSDevices.data = this._device.rowsDeviceTable(rowDevice);
-                this.dataSDevices.paginator = this.paginator;
-                this.dataSDevices.sort = this.sort;
+                const resultRowDevs = this._device.rowsDeviceTable(rowDevice);
+                
+                if (resultRowDevs) {
+                    this.dataSDevices.data = resultRowDevs;
+                    this.dataSDevices.paginator = this.paginator;
+                    this.dataSDevices.sort = this.sort;
+                    this.isSelecteds();
+                }
             }
         });
     }
-
+    
     isAllSelected() {
         const numSelected = this.checksDevices.selected.length;
         const numRows = this.dataSDevices.data.length;
@@ -219,6 +236,11 @@ export class UserModal implements OnInit {
         }
     
         this.checksDevices.select(...this.dataSDevices.data);
+    }
+
+    isSelecteds() {
+        const devicesSelected = this.dataSDevices.data.filter(device => device.check == true); 
+        this.checksDevices.select(...devicesSelected);
     }
 
     checkboxLabel(row?: Device): string {

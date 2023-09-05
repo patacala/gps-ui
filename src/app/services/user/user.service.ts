@@ -29,7 +29,6 @@ export class UserService {
     getUsers() {
         this.http.get(`${this.root}?entityId=${this.entityId}`).pipe(
             map(({ response }: any) => response),
-            tap(response => console.log(response)),
             tap(response => this.users$.next({ count: response.length, rows: response }))
         ).subscribe()
 

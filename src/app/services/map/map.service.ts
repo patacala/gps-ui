@@ -376,8 +376,8 @@ export class MapService {
         }
     }
 
-    getLocationDevices() {
-        return this.http.get(`${this.root}/device/entity/${this.entityId}`);
+    getLocationDevices(userSelectedId: any) {
+        return this.http.get(`${this.root}/device/entity/${this.entityId}/${userSelectedId}`);
     }
 
     getVehiculeObs() {

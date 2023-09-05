@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
-import { interval, Observable, Subject, Subscription } from 'rxjs';
+import { interval, Subject, Subscription } from 'rxjs';
 import { filter, map, pairwise } from 'rxjs/operators';
 import { AsyncPipe, DatePipe, JsonPipe, NgIf } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
@@ -129,7 +129,7 @@ export class MapComponent implements OnInit {
     }
 
     initialMapDevsLoc() {
-        this._map.getLocationDevices().subscribe((data: any) => {
+        this._map.getLocationDevices(null).subscribe((data: any) => {
             if (data && data?.response?.rows) {
                 const rowDevice = data.response.rows;
                 this.devicesFound = rowDevice;
