@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { TableHistoryComponent } from '../components/table-history/table-history.component';
 import { ConfigDeviceCommandsComponent } from '../components/config-device-commands/config-device-commands.component';
-import { PermissionDirective } from '../directives/permission.directive';
 
 @Component({
   selector: 'app-dashboard-admin',
@@ -16,7 +15,6 @@ import { PermissionDirective } from '../directives/permission.directive';
     CommonModule, MapComponent, 
     StatisticComponent, UserAddedComponent, 
     TableHistoryComponent, ConfigDeviceCommandsComponent,
-    PermissionDirective
   ]
 })
 export class DashboardAdminComponent implements OnInit {
