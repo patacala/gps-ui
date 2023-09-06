@@ -39,7 +39,7 @@
                 Permisos
                 <mat-select multiple formControlName="privileges"
                     class="p-1 mt-3 border-1 placeholder-pl-4 border-gps-gray-black rounded-md">
-                    <mat-option *ngFor="let permiso of permissions" [value]="permiso?.key">{{permiso?.description}}
+                    <mat-option *ngFor="let permission of permissions" [value]="permission">{{permission}}
                     </mat-option>
                 </mat-select>
             </label>

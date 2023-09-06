@@ -88,7 +88,8 @@ export class MapComponent implements OnInit {
 
     ngOnInit(): void {
         this._map.drawMap('map');
-
+        this.resetFormFilter();
+    
         setTimeout(() => {
             this.initialMapDevsLoc();
         }, 100);
@@ -388,15 +389,19 @@ export class MapComponent implements OnInit {
         });
     }
 
-    clearFilter() {
-        this.clearClassifiers();
+    resetFormFilter() {
         this.formFilter.reset({
-            startDateOnly: new Date(),
-            endDateOnly: new Date(),
+            startDateOnly: this._utils.currentDate(),
+            endDateOnly: this._utils.currentDate(),
             isLocation: true,
             isEvent: false,
             withAlert: false
-        });          
+        });
+    }
+
+    clearFilter() {
+        this.clearClassifiers();
+        this.resetFormFilter();         
         this.checksDevices.clear();
         this.devicesFilter = [];
         this.initialMapDevsLoc();

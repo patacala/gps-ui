@@ -26,7 +26,7 @@ export class DeviceService {
     }
 
     getAvailablesDevices() {
-        this.http.get(`${this.root}/entity/${this.entityId}?available=true`).pipe(
+        this.http.get(`${this.root}/entity/${this.entityId}/null?available=true`).pipe(
             map(({ response }: any) => response)
         ).subscribe((res) => this.device$.next(res))
 

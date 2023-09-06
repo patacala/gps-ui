@@ -10,6 +10,13 @@ export class UtilsService {
     private _snackBar: MatSnackBar,
   ) {}
   
+ currentDate() {
+    const now = new Date();
+    let newDate = new Date(now.getTime() - now.getTimezoneOffset() * 60 * 1000);
+    newDate.setHours(0, 0, 0);
+    return newDate;
+ }
+
   saveDataInCSV(name: string, objects: any[]) {
     if (objects.length === 0) {
       return '';

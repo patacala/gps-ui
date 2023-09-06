@@ -49,12 +49,12 @@ export class UserModal implements OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
-    permissions = [
-        {
+    permissions: any[
+        /*{
             key: 'locations_read',
             description: 'Ver mapa'
         },
-        {
+       {
             key: 'entity_get',
             description: 'Listar entidades'
         },
@@ -145,8 +145,8 @@ export class UserModal implements OnInit {
         {
             key: 'privileges_get',
             description: 'Listar privilegios'
-        }
-    ]
+        }*/
+    ] = [];
     constructor(
         private fb: FormBuilder, 
         private _user: UserService, 
@@ -170,9 +170,15 @@ export class UserModal implements OnInit {
             this.userGroup.patchValue({
                 name: this.data.fullname,
                 email: this.data.username
-            })
+            });
+
+            const userSysId = this._user.userSysId;
+            this._user.getPrivilegiesByUser(userSysId)
+            .subscribe((resp: any) => this.permissions = resp.response );
+            
+            
             this._user.getPrivilegiesByUser(this.data?.usernuid)
-            .subscribe((resp: any) => this.userGroup.get('privileges')?.setValue(resp.response))
+            .subscribe((resp: any) => this.userGroup.get('privileges')?.setValue(resp.response));
         }
     }
 
