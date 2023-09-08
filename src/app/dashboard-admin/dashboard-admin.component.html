@@ -1,7 +1,7 @@
 <section>
-    <header class="">
+    <!-- <header class="">
         <p class="text-xl font-semibold">Dashboard</p>
-    </header>
+    </header> -->
     <app-map *ngIf="permissions.includes('locations_read')"></app-map>
     <section class="h-2/6 pt-3 flex w-full">
         <section class="flex w-full">
@@ -12,7 +12,7 @@
             <!-- <section class="w-3/5 rounded-lg">
                 <app-user-added></app-user-added>
             </section> -->
-            <!-- <app-table-history class="w-full"></app-table-history> -->
+            <app-table-history class="w-full"></app-table-history>
         </section>
     </section>
 </section>

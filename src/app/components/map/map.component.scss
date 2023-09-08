@@ -9,8 +9,7 @@
 }
 
 .main-map {
-    min-height: 500px;
-    height: 85vh;
+    height: 65vh;
     background-color:#FFF;
 
     .mat-drw-content {
@@ -39,10 +38,13 @@
             
             .classifirs-content {
                 overflow: hidden;
+                background-color:green;
         
                 .list-tree-regis {
-                    height: 695px;
+                    //height: 695px;
+                    height: 509px;
                     overflow-y: auto;
+                    background-color:red;
 
                     &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
                         width: 5px; 
@@ -76,10 +78,13 @@
                 position: relative;
                 border-left: 1px solid #D0D3D4;
                 max-width: 330px;
+                background-color:purple;
         
                 .table-devices-regis {
-                    height: 537px;
+                    //height: 537px;
+                    height: 351px;
                     overflow-y: auto;
+                    background-color:fuchsia;
 
                     &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
                         width: 5px; 
@@ -135,7 +140,8 @@
         
             .dt-vh-info {
                 width: 300px;
-                height: 650px;
+                //height: 650px;
+                height: 465px;
                 overflow: hidden;
                 overflow-y: auto;
 
@@ -216,25 +222,30 @@
                 }
             }
         }
+    }
 
-        @media only screen and (max-height: 768px) {
-            .aside-map-left .classifirs-content .list-tree-regis {
-                height: 430px;
-            }
+    @media only screen and (max-height: 768px) {
+        height: 60vh;
 
-            .aside-map-left {
-                .table-devices {
-                    max-width: 280px;
+        .mat-drw-content .aside-map-left .classifirs-content .list-tree-regis {
+            //height: 300px;
+            height: 275px;
+        }
 
-                    .table-devices-regis {
-                        height: 272px;
-                    }
+        .mat-drw-content .aside-map-left {
+            .table-devices {
+                max-width: 280px;
+
+                .table-devices-regis {
+                    //height: 272px;
+                    height: 117px;
                 }
             }
-
-            .details-vehicle .dt-vh-info {
-                height: 385px;
-            } 
         }
+
+        .mat-drw-content .details-vehicle .dt-vh-info {
+            //height: 385px;
+            height: 232px;
+        } 
     }
 }

@@ -9,8 +9,8 @@
 }
 
 .table-history-section {
-    width: 1000px;
-    height: 245px;
+    width: 100%;
+    height: 225px;
     overflow: hidden;
     overflow-y: auto;
 
@@ -24,5 +24,9 @@
       .mat-cell {
         padding: 10px;
       }
+    }
+  
+    @media only screen and (max-height: 768px) {
+      height: 150px;
     }
 }
