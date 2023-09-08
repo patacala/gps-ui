@@ -8,204 +8,233 @@
     padding: 0.7em 1.3em;
 }
 
-.clear-filter {
-    cursor: pointer;
-}
+.main-map {
+    min-height: 500px;
+    height: 85vh;
+    background-color:#FFF;
 
-.btn-filter {
-    display: flex;
-    justify-content: center;
-}
+    .mat-drw-content {
+        height: 100%;
 
-.config-commands {
-    cursor: pointer;
-}
-
-.aside-map-left {
-    display: flex;
-    position: relative;
-    width: auto;
-    height: 100%;
-    overflow: hidden;
-    z-index: 1;
-    
-    .classifirs-content {
-        overflow: hidden;
-
-        .list-tree-regis {
-            height: 420px;
-            overflow-y: auto;
-
-            &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
-                width: 5px; 
-                height: 2px;
-                border-radius: 4px;
-                background-color:#D7DBDD;
-            }
-              
-            &:-moz-scrollbar {/* Firefox */
-                width: 5px; 
-                height: 5px;
-                border-radius: 4px;
-                background-color:#D7DBDD;
-            }
-            
-            &::-ms-scrollbar {/* Internet Explorer, Edge */
-                width: 5px; 
-                height: 5px;
-                border-radius: 4px;
-                background-color:#D7DBDD;
-            }
-        }
-    }
-
-    .table-devices,
-    .form-search {
-        border-left: 1px solid #D0D3D4;
-    }
-
-    .table-devices {
-        position: relative;
-        border-left: 1px solid #D0D3D4;
-        max-width: 330px;
-
-        .table-devices-regis {
-            width: 100%;
-            height: 270px;
-            overflow-y: auto;
-
-            &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
-                width: 5px; 
-                height: 2px;
-                border-radius: 4px;
-                background-color:#D7DBDD;
-            }
-              
-            &:-moz-scrollbar {/* Firefox */
-                width: 5px; 
-                height: 5px;
-                border-radius: 4px;
-                background-color:#D7DBDD;
-            }
-            
-            &::-ms-scrollbar {/* Internet Explorer, Edge */
-                width: 5px; 
-                height: 5px;
-                border-radius: 4px;
-                background-color:#D7DBDD;
-            }
-        }
-    }
-
-    .bts-bottom {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      grid-gap: 10px;
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 50px;
-      background-color:#FFF;
-    }
-}
-
-.details-vehicle {
-    $E5E7E9: #E5E7E9;
-    overflow: hidden;
-
-    .dt-vh-close {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        background-color:$E5E7E9;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        cursor: pointer;
-    }
-
-    .dt-vh-info {
-        width: 300px;
-        height: 380px;
-        overflow: hidden;
-        overflow-y: auto;
-
-        &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
-            width: 5px; 
-            height: 2px;
-            border-radius: 4px;
-            background-color:#D7DBDD;
-        }
-          
-        &:-moz-scrollbar {/* Firefox */
-            width: 5px; 
-            height: 5px;
-            border-radius: 4px;
-            background-color:#D7DBDD;
+        .clear-filter {
+            cursor: pointer;
         }
         
-        &::-ms-scrollbar {/* Internet Explorer, Edge */
-            width: 5px; 
-            height: 5px;
-            border-radius: 4px;
-            background-color:#D7DBDD;
+        .btn-filter {
+            display: flex;
+            justify-content: center;
         }
+        
+        .config-commands {
+            cursor: pointer;
+        }
+        
+        .aside-map-left {
+            display: flex;
+            position: relative;
+            width: auto;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            
+            .classifirs-content {
+                overflow: hidden;
+        
+                .list-tree-regis {
+                    height: 695px;
+                    overflow-y: auto;
 
-        .dt-vh-content {
-            .dt-vh-citem {
-                display: grid;
-                grid-template-columns: 15% 85%;
-                padding: 0.70em;
-                border-bottom: 1px solid #E5E7Eb;
-
-                .icon,
-                .value {
-                    display: flex;
-                    align-items: center;
-                }
-
-                .icon {
-                    position: relative;
-                    justify-content: center;
-
-                    mat-icon {
-                        position: relative;
-                        top: -2px;
-                        transform: scale(1.1);
+                    &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
+                        width: 5px; 
+                        height: 2px;
+                        border-radius: 4px;
+                        background-color:#D7DBDD;
                     }
-                }
-                .value {
-                    position: relative;
-                    font-size: 1.2em;
-
-                    .sup-title {
-                        position: absolute;
-                        top: -7px;
-                        left: 0px;
-                        font-size: 0.75rem;
-                        font-weight: bold;
+                      
+                    &:-moz-scrollbar {/* Firefox */
+                        width: 5px; 
+                        height: 5px;
+                        border-radius: 4px;
+                        background-color:#D7DBDD;
                     }
-
-                    .sub-title {
-                        padding-top: 10px;
-                        font-weight: 500;
+                    
+                    &::-ms-scrollbar {/* Internet Explorer, Edge */
+                        width: 5px; 
+                        height: 5px;
+                        border-radius: 4px;
+                        background-color:#D7DBDD;
                     }
                 }
             }
+        
+            .table-devices,
+            .form-search {
+                border-left: 1px solid #D0D3D4;
+            }
+        
+            .table-devices {
+                position: relative;
+                border-left: 1px solid #D0D3D4;
+                max-width: 330px;
+        
+                .table-devices-regis {
+                    height: 537px;
+                    overflow-y: auto;
+
+                    &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
+                        width: 5px; 
+                        height: 2px;
+                        border-radius: 4px;
+                        background-color:#D7DBDD;
+                    }
+                      
+                    &:-moz-scrollbar {/* Firefox */
+                        width: 5px; 
+                        height: 5px;
+                        border-radius: 4px;
+                        background-color:#D7DBDD;
+                    }
+                    
+                    &::-ms-scrollbar {/* Internet Explorer, Edge */
+                        width: 5px; 
+                        height: 5px;
+                        border-radius: 4px;
+                        background-color:#D7DBDD;
+                    }
+                }
+            }
+        
+            .bts-bottom {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              grid-gap: 10px;
+              position: absolute;
+              bottom: 0;
+              width: 100%;
+              height: 50px;
+              background-color: #FFF;
+            }
         }
-    }
+        
+        .details-vehicle {
+            $E5E7E9: #E5E7E9;
+            overflow: hidden;
+        
+            .dt-vh-close {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                background-color:$E5E7E9;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+        
+            .dt-vh-info {
+                width: 300px;
+                height: 650px;
+                overflow: hidden;
+                overflow-y: auto;
 
-    .btn-history {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        grid-gap: 10px;
-        height: 45px;
+                &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
+                    width: 5px; 
+                    height: 2px;
+                    border-radius: 4px;
+                    background-color:#D7DBDD;
+                }
+                  
+                &:-moz-scrollbar {/* Firefox */
+                    width: 5px; 
+                    height: 5px;
+                    border-radius: 4px;
+                    background-color:#D7DBDD;
+                }
+                
+                &::-ms-scrollbar {/* Internet Explorer, Edge */
+                    width: 5px; 
+                    height: 5px;
+                    border-radius: 4px;
+                    background-color:#D7DBDD;
+                }
+        
+                .dt-vh-content {
+                    .dt-vh-citem {
+                        display: grid;
+                        grid-template-columns: 15% 85%;
+                        padding: 0.70em;
+                        border-bottom: 1px solid #E5E7Eb;
+        
+                        .icon,
+                        .value {
+                            display: flex;
+                            align-items: center;
+                        }
+        
+                        .icon {
+                            position: relative;
+                            justify-content: center;
+        
+                            mat-icon {
+                                position: relative;
+                                top: -2px;
+                                transform: scale(1.1);
+                            }
+                        }
+                        .value {
+                            position: relative;
+                            font-size: 1.2em;
+        
+                            .sup-title {
+                                position: absolute;
+                                top: -7px;
+                                left: 0px;
+                                font-size: 0.75rem;
+                                font-weight: bold;
+                            }
+        
+                            .sub-title {
+                                padding-top: 10px;
+                                font-weight: 500;
+                            }
+                        }
+                    }
+                }
+            }
+        
+            .btn-history {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                grid-gap: 10px;
+                height: 45px;
+        
+                .clear-history {
+                    cursor: pointer;
+                }
+            }
+        }
 
-        .clear-history {
-            cursor: pointer;
+        @media only screen and (max-height: 768px) {
+            .aside-map-left .classifirs-content .list-tree-regis {
+                height: 430px;
+            }
+
+            .aside-map-left {
+                .table-devices {
+                    max-width: 280px;
+
+                    .table-devices-regis {
+                        height: 272px;
+                    }
+                }
+            }
+
+            .details-vehicle .dt-vh-info {
+                height: 385px;
+            } 
         }
     }
 }

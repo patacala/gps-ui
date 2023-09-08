@@ -1,306 +1,272 @@
-<section 
-class="flex justify-between gap-1 bg-white shadow-md rounded-lg" 
-style="height: 520px;">
-    <section class="w-full" style="height: 520px;">
-        <mat-drawer-container class="w-full" style="height: 520px;">
-            <mat-drawer #drawer mode="push">
-                <aside class="aside-map-left">
-                    <section class="classifirs-content pb-2">
-                        <header class="flex justify-center items-center p-2">
-                            <b>Clasificadores</b>
-                        </header>
-                        <hr class="pt-2">
-                        <div class="list-tree-regis">
-                            <app-tree-classifiers (sendClassifiers)="saveClassifiers($event)"></app-tree-classifiers>
-                        </div>
-                    </section>
-                    
-                    <section class="table-devices" [formGroup]="formFilter">
-                        <header class="flex justify-center items-center p-2">
-                            <b>Dispositivos</b>
-                        </header>
-                        <hr>
-                        <div class="p-3">
-                            <mat-form-field appearance="fill" class="w-full">
-                                <mat-label>Rango de fecha</mat-label>
-                                <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
-                                  <input matStartDate formControlName="startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
-                                  <input matEndDate formControlName="endDateOnly" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
-                                </mat-date-range-input>
-                                <mat-hint>{{formFilter.value.startDateOnly | date}} - {{formFilter.value.endDateOnly | date}}</mat-hint>
-                                <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
-                                <mat-date-range-picker #picker></mat-date-range-picker>
-                            </mat-form-field>
-                            <mat-slide-toggle
-                                class="mr-2"
-                                formControlName="isLocation"
-                                [color]="color">
-                                POSICIONES
-                            </mat-slide-toggle>
-                            <mat-slide-toggle
-                                formControlName="isEvent"
-                                [color]="color">
-                                EVENTOS
-                            </mat-slide-toggle>
-                        </div>
-                        
-                        <div class="flex justify-center w-full p-2">
-                            <input type="text" placeholder="Buscar por imei, placa"
-                            (keyup)="applyFilter($event)"
-                            class="p-1 ml-3 mr-3 w-full border-1 placeholder-pl-4 border-gps-blue rounded-lg">
-                        </div>
-                        <div class="table-devices-regis">
-                            <table mat-table [dataSource]="dataSDevices" class="w-full">
-                                <!-- Checkbox Column -->
-                                <ng-container matColumnDef="select">
-                                  <th mat-header-cell *matHeaderCellDef>
-                                    <mat-checkbox 
-                                        (change)="$event ? toggleAllRows() : null"
-                                        [checked]="checksDevices.hasValue() && isAllSelected()"
-                                        [indeterminate]="checksDevices.hasValue() && !isAllSelected()"
-                                        [aria-label]="checkboxLabel()">
-                                    </mat-checkbox>
-                                  </th>
-                                  <td mat-cell *matCellDef="let row">
-                                    <mat-checkbox 
-                                    (click)="$event.stopPropagation()"
-                                    (change)="$event ? checksDevices.toggle(row) : null"
-                                    [checked]="checksDevices.isSelected(row)"
-                                    [aria-label]="checkboxLabel(row)">
-                                    </mat-checkbox>
-                                  </td>
-                                </ng-container>
-                              
-                                <!-- Imei Column -->
-                                <ng-container matColumnDef="imei">
-                                  <th mat-header-cell *matHeaderCellDef>IMEI</th>
-                                  <td mat-cell *matCellDef="let element">{{element.deviimei}}</td>
-                                </ng-container>
-                              
-                                <!-- Plate Column -->
-                                <ng-container matColumnDef="plate">
-                                  <th mat-header-cell *matHeaderCellDef>PLACA</th>
-                                  <td mat-cell *matCellDef="let element">{{element.carrlice}}</td>
-                                </ng-container>
-                              
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                    (click)="checksDevices.toggle(row)">
-                                </tr>
-                              </table>
-                        </div>
-                    </section>
-                    <div class="bts-bottom">
-                        <app-button 
-                            (click)="filterDevices()" text="Filtrar" type="blue" 
-                            width="160px" icon="filter_list" 
-                            [disabled]="validDisabledArray(classifiers, checksDevices.selected) && formFilter.invalid">
-                        </app-button>
-                        <app-button 
-                            (click)="saveDataInCSV(
-                                [
-                                    {name:'dispositivos', data: devicesFilter},
-                                    {name:'kilometros recorridos', data: kmTraveled}
-                                ]
-                            )" text="Csv" type="green" 
-                            width="110px" icon="cloud_download" 
-                            [disabled]="validDisabledArray(devicesFilter)">
-                        </app-button>
-                        <mat-icon class="clear-filter" 
-                        [style.visibility]="validDisabledArray(devicesFilter)? 'hidden':'visible'"
-                        (click)="clearFilter()">delete_sweep</mat-icon>
-                    </div>
-                </aside>
-            </mat-drawer>
-
-            <mat-drawer-content>
-                <app-button *ngIf="devicesFound?.length && currentDvId == -1" 
-                id="filters" (click)="drawer.toggle()" text="Filtros" type="blue" width="100px" icon="filter_list"></app-button>
-                <div id="map" class="h-full w-full"></div>
-            </mat-drawer-content>
-            
-            <mat-drawer #detailsVehicule mode="side" position="end">
-                <aside class="details-vehicle mt-2 ml-2 mr-2" *ngIf="deviceSelected$ | async as device">
-                    <div class="flex justify-between p-1">
-                        <mat-icon 
-                            class="config-commands"
-                            (click)="openDialogConfigCommans(device?.devinuid)"
-                        >settings</mat-icon>
-                        <!-- <mat-slide-toggle
-                            [(ngModel)]="device.deviestacomma"
-                            [color]="color"
-                            (change)="changeOffOnDv($event)">
-                        </mat-slide-toggle> -->
-                        <!-- <mat-form-field>
-                            <mat-label>Comandos</mat-label>
-                            <mat-select 
-                            [(ngModel)]="device.deviestacomma">
-                              <mat-option *ngFor="let avaCommand of AvaCommands;" [value]="avaCommand?.stepexec">{{avaCommand?.stepdesc}}</mat-option>
-                            </mat-select>
-                        </mat-form-field> -->
-                        <div class="dt-vh-close" (click)="closeToggle(device?.devinuid)">
-                            <mat-icon>close</mat-icon>
-                        </div>
-                    </div>
-                    <header class="flex justify-center">
-                        <h2 class="h2">Detalle Vehículo</h2>
+<section class="shadow-md main-map">
+    <mat-drawer-container class="mat-drw-content">
+        <mat-drawer #drawer mode="push">
+            <aside class="aside-map-left">
+                <section class="classifirs-content pb-2">
+                    <header class="flex justify-center items-center p-2">
+                        <b>Clasificadores</b>
                     </header>
-
-                    <article class="dt-vh-info">
-                        <div class="dt-vh-content border">
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>money</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Placa:</b>
-                                    <small class="sub-title" *ngIf="device.carrdevi?.carrier">{{device.carrdevi.carrier.carrlice}}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>sim_card</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Imei:</b>
-                                    <small class="sub-title">{{device.deviimei}}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>settings_input_antenna</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Marca:</b>
-                                    <small class="sub-title">{{device.devimark}}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>phone</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Celular:</b>
-                                    <small class="sub-title">{{device.deviphon}}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>settings_remote</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Estado:</b>
-                                    <small class="sub-title">{{device.deviestacomma ? 'Encendido':'Apagado'}}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>fingerprint</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Clasificadores:</b>
-                                    <small class="sub-title">{{listClassifiers(device?.clasdevi)}}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>location_on</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Localización (Latitud - Longitud):</b>
-                                    <small class="pr-1 sub-title">{{device.deviloca[0].delolati}},</small>
-                                    <small class="sub-title">{{device.deviloca[0].delolong}}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>map</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Dirección:</b>
-                                    <small class="sub-title">{{ device.deviloca[0].delodire }}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>my_location</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Barrio:</b>
-                                    <small class="sub-title">{{ device.deviloca[0].delobarri }}</small>
-                                </div>
-                            </div>
-                            <!-- <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>near_me</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Evento:</b>
-                                    <small class="sub-title"></small>
-                                </div>
-                            </div> -->
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>trip_origin</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Velocidad:</b>
-                                    <small class="sub-title">{{device.deviloca[0].delospee}} KM/H</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>swap_calls</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Kilometraje:</b>
-                                    <small class="sub-title">{{device?.kmdevi[0]?.kmcapt}} KM / {{device?.kmdevi[0]?.kmdiacapt}}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>update</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Ultima posicion GPS:</b>
-                                    <small class="sub-title">{{ formatTimestamp(device.deviloca[0].delotime) | date:'medium' }}</small>
-                                </div>
-                            </div>
-                            <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>date_range</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Ultima posicion Fecha sistema:</b>
-                                    <small class="sub-title">{{device.deviloca[0].delofesi | date:'medium' }}</small>
-                                </div>
-                            </div>
-                            <!-- <div class="dt-vh-citem">
-                                <div class="icon p-1">
-                                    <mat-icon>notification_important</mat-icon>
-                                </div>
-                                <div class="value p-1 pl-2">
-                                    <b class="sup-title">Alertas:</b>
-                                    <small class="pr-1">No presenta</small>
-                                </div>
-                            </div> -->
-                        </div>
-                    </article>
-
-                    <div class="btn-history">
-                        <app-button 
-                            (click)="openDialogHistory(device.devinuid)"
-                            text="Historial" type="white" 
-                            width="130px" icon="access_time">
-                        </app-button>
-                        <mat-icon 
-                            (click)="clearMapHistory(device.devinuid)"
-                            *ngIf="validBtnDelHLoc()"
-                            class="clear-history"
-                        >delete_outline</mat-icon>
+                    <hr class="pt-2">
+                    <div class="list-tree-regis">
+                        <app-tree-classifiers (sendClassifiers)="saveClassifiers($event)"></app-tree-classifiers>
                     </div>
-                </aside>
-            </mat-drawer>
-        </mat-drawer-container>
-    </section>
+                </section>
+                
+                <section class="table-devices" [formGroup]="formFilter">
+                    <header class="flex justify-center items-center p-2">
+                        <b>Dispositivos</b>
+                    </header>
+                    <hr>
+                    <div class="p-3">
+                        <mat-form-field appearance="fill" class="w-full">
+                            <mat-label>Rango de fecha</mat-label>
+                            <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
+                              <input matStartDate formControlName="startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
+                              <input matEndDate formControlName="endDateOnly" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
+                            </mat-date-range-input>
+                            <mat-hint>{{formFilter.value.startDateOnly | date}} - {{formFilter.value.endDateOnly | date}}</mat-hint>
+                            <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+                        <mat-slide-toggle
+                            class="mr-2"
+                            formControlName="isLocation"
+                            [color]="color">
+                            POSICIONES
+                        </mat-slide-toggle>
+                        <mat-slide-toggle
+                            formControlName="isEvent"
+                            [color]="color">
+                            EVENTOS
+                        </mat-slide-toggle>
+                    </div>
+                    
+                    <div class="flex justify-center w-full p-2">
+                        <input type="text" placeholder="Buscar por imei, placa"
+                        (keyup)="applyFilter($event)"
+                        class="p-1 ml-3 mr-3 w-full border-1 placeholder-pl-4 border-gps-blue rounded-lg">
+                    </div>
+                    <div class="table-devices-regis">
+                        <table mat-table [dataSource]="dataSDevices" class="w-full">
+                            <!-- Checkbox Column -->
+                            <ng-container matColumnDef="select">
+                              <th mat-header-cell *matHeaderCellDef>
+                                <mat-checkbox 
+                                    (change)="$event ? toggleAllRows() : null"
+                                    [checked]="checksDevices.hasValue() && isAllSelected()"
+                                    [indeterminate]="checksDevices.hasValue() && !isAllSelected()"
+                                    [aria-label]="checkboxLabel()">
+                                </mat-checkbox>
+                              </th>
+                              <td mat-cell *matCellDef="let row">
+                                <mat-checkbox 
+                                (click)="$event.stopPropagation()"
+                                (change)="$event ? checksDevices.toggle(row) : null"
+                                [checked]="checksDevices.isSelected(row)"
+                                [aria-label]="checkboxLabel(row)">
+                                </mat-checkbox>
+                              </td>
+                            </ng-container>
+                          
+                            <!-- Imei Column -->
+                            <ng-container matColumnDef="imei">
+                              <th mat-header-cell *matHeaderCellDef>IMEI</th>
+                              <td mat-cell *matCellDef="let element">{{element.deviimei}}</td>
+                            </ng-container>
+                          
+                            <!-- Plate Column -->
+                            <ng-container matColumnDef="plate">
+                              <th mat-header-cell *matHeaderCellDef>PLACA</th>
+                              <td mat-cell *matCellDef="let element">{{element.carrlice}}</td>
+                            </ng-container>
+                          
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                (click)="checksDevices.toggle(row)">
+                            </tr>
+                          </table>
+                    </div>
+                </section>
+                <div class="bts-bottom">
+                    <app-button 
+                        (click)="filterDevices()" text="Filtrar" type="blue" 
+                        width="160px" icon="filter_list" 
+                        [disabled]="validDisabledArray(classifiers, checksDevices.selected) && formFilter.invalid">
+                    </app-button>
+                    <app-button 
+                        (click)="saveDataInCSV(
+                            [
+                                {name:'dispositivos', data: devicesFilter},
+                                {name:'kilometros recorridos', data: kmTraveled}
+                            ]
+                        )" text="Csv" type="green" 
+                        width="110px" icon="cloud_download" 
+                        [disabled]="validDisabledArray(devicesFilter)">
+                    </app-button>
+                    <mat-icon class="clear-filter" 
+                    [style.visibility]="validDisabledArray(devicesFilter)? 'hidden':'visible'"
+                    (click)="clearFilter()">delete_sweep</mat-icon>
+                </div>
+            </aside>
+        </mat-drawer>
+
+        <mat-drawer-content>
+            <app-button *ngIf="devicesFound?.length && currentDvId == -1" 
+            id="filters" (click)="drawer.toggle()" text="Filtros" type="blue" width="100px" icon="filter_list"></app-button>
+            <div id="map" class="h-full w-full"></div>
+        </mat-drawer-content>
+        
+        <mat-drawer #detailsVehicule mode="side" position="end">
+            <aside class="details-vehicle mt-2 ml-2 mr-2" *ngIf="deviceSelected$ | async as device">
+                <div class="flex justify-between p-1">
+                    <mat-icon 
+                        class="config-commands"
+                        (click)="openDialogConfigCommans(device?.devinuid)"
+                    >settings</mat-icon>
+                    <div class="dt-vh-close" (click)="closeToggle(device?.devinuid)">
+                        <mat-icon>close</mat-icon>
+                    </div>
+                </div>
+                <header class="flex justify-center">
+                    <h2 class="h2">Detalle Vehículo</h2>
+                </header>
+
+                <article class="dt-vh-info">
+                    <div class="dt-vh-content border">
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>money</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Placa:</b>
+                                <small class="sub-title" *ngIf="device.carrdevi?.carrier">{{device.carrdevi.carrier.carrlice}}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>sim_card</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Imei:</b>
+                                <small class="sub-title">{{device.deviimei}}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>settings_remote</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Estado:</b>
+                                <small class="sub-title">{{device.deviestacomma ? 'Encendido':'Apagado'}}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>fingerprint</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Clasificadores:</b>
+                                <small class="sub-title">{{listClassifiers(device?.clasdevi)}}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>location_on</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Localización (Latitud - Longitud):</b>
+                                <small class="pr-1 sub-title">{{device.deviloca[0].delolati}},</small>
+                                <small class="sub-title">{{device.deviloca[0].delolong}}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>map</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Dirección:</b>
+                                <small class="sub-title">{{ device.deviloca[0].delodire }}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>my_location</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Barrio:</b>
+                                <small class="sub-title">{{ device.deviloca[0].delobarri }}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>trip_origin</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Velocidad:</b>
+                                <small class="sub-title">{{device.deviloca[0].delospee}} KM/H</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>swap_calls</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Kilometraje:</b>
+                                <small class="sub-title">{{device?.kmdevi[0]?.kmcapt}} KM / {{device?.kmdevi[0]?.kmdiacapt}}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>update</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Ultima posicion Fecha GPS:</b>
+                                <small class="sub-title">{{ formatTimestamp(device.deviloca[0].delotime) | date:'medium' }}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>date_range</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Ultima posicion Fecha sistema:</b>
+                                <small class="sub-title">{{device.deviloca[0].delofesi | date:'medium' }}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>settings_input_antenna</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Marca:</b>
+                                <small class="sub-title">{{device.devimark}}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>phone</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Celular:</b>
+                                <small class="sub-title">{{device.deviphon}}</small>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <div class="btn-history">
+                    <app-button 
+                        (click)="openDialogHistory(device.devinuid)"
+                        text="Historial" type="white" 
+                        width="130px" icon="access_time">
+                    </app-button>
+                    <mat-icon 
+                        (click)="clearMapHistory(device.devinuid)"
+                        *ngIf="validBtnDelHLoc()"
+                        class="clear-history"
+                    >delete_outline</mat-icon>
+                </div>
+            </aside>
+        </mat-drawer>
+    </mat-drawer-container>
 </section>

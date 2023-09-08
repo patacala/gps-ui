@@ -1,14 +1,8 @@
-<section class="h-full flex">
-    <section id="sidebar" class="shadow bg-gps-blue rounded-r-lg" [ngClass]="{
-       'w-10%': !isCollapseSidebar,
-       'w-3%': isCollapseSidebar 
-    }">
+<section class="main-content" [ngClass]="isCollapseSidebar ? 'mobile':''">
+    <section id="sidebar" class="bg-gps-blue sidebar">
         <app-sidebar (collapse)="isCollapseSidebar = $event"></app-sidebar>
     </section>
-    <section id="content" class="bg-gps-gray h-full p-8" [ngClass]="{
-        'w-11/12': !isCollapseSidebar,
-        'w-97%': isCollapseSidebar 
-     }">
+    <section id="content" class="content">
         <router-outlet></router-outlet>
     </section>
 </section>

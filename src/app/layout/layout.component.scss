@@ -1,0 +1,15 @@
+.main-content {
+    display: grid;
+    grid-template-columns: 200px auto;
+    height: 100vh;
+    overflow: hidden;
+
+    &.mobile {
+        grid-template-columns: 58px auto;
+    }
+
+    .content {
+        padding: 20px;
+        background-color:#E5E7E9;
+    }
+}
