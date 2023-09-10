@@ -1,5 +1,18 @@
 .dashboard-admin {
+    position: relative;
     display: grid;
-    grid-template-rows: 69vh 21vh;
+    height: 100%;
+    grid-template-rows: calc(100% - 205px) 150px;
+    //grid-template-rows: 101.4% 0px;
     grid-gap: 10px;
+    transition: grid-template-rows 0.3s ease;
+
+    &.animate {
+        grid-template-rows: 101.4% 0px;
+    }
+
+    .btn-hidden {
+        position: absolute;
+        z-index: 100;
+    }
 }

@@ -21,6 +21,8 @@ import { ConfigDeviceCommandsComponent } from '../components/config-device-comma
 export class DashboardAdminComponent implements OnInit {
   permissions: any[]=[];
   data$!: Observable<any>
+  hiddenHistoryTable: boolean = false;
+
   constructor(
     private _vehicule: VehiculeService, 
     private _user: UserService
@@ -40,5 +42,9 @@ export class DashboardAdminComponent implements OnInit {
         )
       )
     );
+  }
+
+  testAnimation() {
+    this.hiddenHistoryTable = !this.hiddenHistoryTable;
   }
 }
