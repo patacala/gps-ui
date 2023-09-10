@@ -10,6 +10,7 @@ import { ConfigDeviceCommandsComponent } from '../components/config-device-comma
 @Component({
   selector: 'app-dashboard-admin',
   templateUrl: './dashboard-admin.component.html',
+  styleUrls: ['./dashboard-admin.component.scss'],
   standalone: true,
   imports: [
     CommonModule, MapComponent, 
