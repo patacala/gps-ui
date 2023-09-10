@@ -29,101 +29,108 @@
         }
         
         .aside-map-left {
-            display: flex;
             position: relative;
-            width: auto;
             height: 100%;
+            display: grid;
+            grid-template-rows: calc(100% - 50px) 50px;
             overflow: hidden;
-            z-index: 1;
-            
-            .classifirs-content {
-                overflow: hidden;
-                background-color:purple;
-        
-                .list-tree-regis {
-                    //height: 695px;
-                    height: 508px;
-                    overflow-y: auto;
-                    background-color:red;
-                    
-                    &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
-                        width: 5px; 
-                        height: 2px;
-                        border-radius: 4px;
-                        background-color:#D7DBDD;
-                    }
-                      
-                    &:-moz-scrollbar {/* Firefox */
-                        width: 5px; 
-                        height: 5px;
-                        border-radius: 4px;
-                        background-color:#D7DBDD;
-                    }
-                    
-                    &::-ms-scrollbar {/* Internet Explorer, Edge */
-                        width: 5px; 
-                        height: 5px;
-                        border-radius: 4px;
-                        background-color:#D7DBDD;
-                    }
-                }
-            }
-        
-            .table-devices,
-            .form-search {
-                border-left: 1px solid #D0D3D4;
-            }
-        
-            .table-devices {
-                position: relative;
-                border-left: 1px solid #D0D3D4;
-                max-width: 330px;
-                background-color:blue;
-        
-                .table-devices-regis {
-                    //height: 537px;
-                    height: 350px;
-                    overflow-y: auto;
-                    background-color:aqua;
 
-                    &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
-                        width: 5px; 
-                        height: 2px;
-                        border-radius: 4px;
-                        background-color:#D7DBDD;
+            .map-left-division {
+                display: flex;
+                width: auto;
+                z-index: 1;
+                
+                .classifirs-content {
+                    overflow: hidden;
+                    height: 100%;
+            
+                    .list-tree-regis {
+                        height: calc(100% - 40px);
+                        min-height: auto;
+                        overflow-y: auto;
+                        
+                        &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
+                            width: 5px; 
+                            height: 2px;
+                            border-radius: 4px;
+                            background-color:#D7DBDD;
+                        }
+                          
+                        &:-moz-scrollbar {/* Firefox */
+                            width: 5px; 
+                            height: 5px;
+                            border-radius: 4px;
+                            background-color:#D7DBDD;
+                        }
+                        
+                        &::-ms-scrollbar {/* Internet Explorer, Edge */
+                            width: 5px; 
+                            height: 5px;
+                            border-radius: 4px;
+                            background-color:#D7DBDD;
+                        }
                     }
-                      
-                    &:-moz-scrollbar {/* Firefox */
-                        width: 5px; 
-                        height: 5px;
-                        border-radius: 4px;
-                        background-color:#D7DBDD;
-                    }
-                    
-                    &::-ms-scrollbar {/* Internet Explorer, Edge */
-                        width: 5px; 
-                        height: 5px;
-                        border-radius: 4px;
-                        background-color:#D7DBDD;
+                }
+            
+                .table-devices,
+                .form-search {
+                    border-left: 1px solid #D0D3D4;
+                }
+            
+                .table-devices {
+                    position: relative;
+                    display: grid;
+                    grid-template-rows: 36px 170px auto;
+                    max-width: 330px;
+                    height: 100%;
+                    border-left: 1px solid #D0D3D4;
+                    overflow: hidden;
+            
+                    .table-devices-regis {
+                        overflow-y: auto;
+              
+                        &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */
+                            width: 5px; 
+                            height: 2px;
+                            border-radius: 4px;
+                            background-color:#D7DBDD;
+                        }
+                          
+                        &:-moz-scrollbar {/* Firefox */
+                            width: 5px; 
+                            height: 5px;
+                            border-radius: 4px;
+                            background-color:#D7DBDD;
+                        }
+                        
+                        &::-ms-scrollbar {/* Internet Explorer, Edge */
+                            width: 5px; 
+                            height: 5px;
+                            border-radius: 4px;
+                            background-color:#D7DBDD;
+                        }
                     }
                 }
             }
-        
+
             .bts-bottom {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              grid-gap: 10px;
-              position: absolute;
-              bottom: 0;
-              width: 100%;
-              height: 50px;
-              background-color: #FFF;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                grid-gap: 10px;
+                width: 100%;
+                min-height: 50px;
+                max-height: 50px;
+                background-color:#FFF;
+                z-index: 2;
             }
         }
         
         .details-vehicle {
             $E5E7E9: #E5E7E9;
+            display: grid;
+            grid-template-rows: 70px calc(100% - (70px + 53px)) 45px;
+            height: 100%;
             overflow: hidden;
         
             .dt-vh-close {
@@ -137,10 +144,10 @@
                 border-radius: 50%;
                 cursor: pointer;
             }
-        
+
             .dt-vh-info {
                 width: 300px;
-                height: 53.9vh;
+                min-height: auto;
                 overflow: hidden;
                 overflow-y: auto;
 
@@ -214,37 +221,11 @@
                 justify-content: center;
                 align-items: center;
                 grid-gap: 10px;
-                height: 45px;
         
                 .clear-history {
                     cursor: pointer;
                 }
             }
         }
-    }
-
-    @media (max-height: 768px) {
-        /* height: 68vh; */
-
-        /* .mat-drw-content .aside-map-left .classifirs-content .list-tree-regis {
-            //height: 300px;
-            height: 275px;
-        } */
-
-        /* .mat-drw-content .aside-map-left {
-            .table-devices {
-                max-width: 280px;
-
-                .table-devices-regis {
-                    //height: 272px;
-                    height: 117px;
-                }
-            }
-        } */
-
-        /* .mat-drw-content .details-vehicle .dt-vh-info {
-            //height: 385px;
-            height: 49.5vh;
-        }  */
     }
 }

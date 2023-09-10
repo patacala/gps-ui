@@ -2,91 +2,97 @@
     <mat-drawer-container class="mat-drw-content">
         <mat-drawer #drawer mode="push">
             <aside class="aside-map-left">
-                <section class="classifirs-content pb-2">
-                    <header class="flex justify-center items-center p-2">
-                        <b>Clasificadores</b>
-                    </header>
-                    <hr class="pt-2">
-                    <div class="list-tree-regis">
-                        <app-tree-classifiers (sendClassifiers)="saveClassifiers($event)"></app-tree-classifiers>
-                    </div>
-                </section>
-                
-                <section class="table-devices" [formGroup]="formFilter">
-                    <header class="flex justify-center items-center p-2">
-                        <b>Dispositivos</b>
-                    </header>
-                    <hr>
-                    <div class="p-3">
-                        <mat-form-field appearance="fill" class="w-full">
-                            <mat-label>Rango de fecha</mat-label>
-                            <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
-                              <input matStartDate formControlName="startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
-                              <input matEndDate formControlName="endDateOnly" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
-                            </mat-date-range-input>
-                            <mat-hint>{{formFilter.value.startDateOnly | date}} - {{formFilter.value.endDateOnly | date}}</mat-hint>
-                            <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #picker></mat-date-range-picker>
-                        </mat-form-field>
-                        <mat-slide-toggle
-                            class="mr-2"
-                            formControlName="isLocation"
-                            [color]="color">
-                            POSICIONES
-                        </mat-slide-toggle>
-                        <mat-slide-toggle
-                            formControlName="isEvent"
-                            [color]="color">
-                            EVENTOS
-                        </mat-slide-toggle>
-                    </div>
+                <div class="map-left-division">
+                    <section class="classifirs-content pb-2">
+                        <header class="flex justify-center items-center p-2">
+                            <b>Clasificadores</b>
+                        </header>
+                        <hr class="pt-2">
+                        <div class="list-tree-regis">
+                            <app-tree-classifiers (sendClassifiers)="saveClassifiers($event)"></app-tree-classifiers>
+                        </div>
+                    </section>
                     
-                    <div class="flex justify-center w-full p-2">
-                        <input type="text" placeholder="Buscar por imei, placa"
-                        (keyup)="applyFilter($event)"
-                        class="p-1 ml-3 mr-3 w-full border-1 placeholder-pl-4 border-gps-blue rounded-lg">
-                    </div>
-                    <div class="table-devices-regis">
-                        <table mat-table [dataSource]="dataSDevices" class="w-full">
-                            <!-- Checkbox Column -->
-                            <ng-container matColumnDef="select">
-                              <th mat-header-cell *matHeaderCellDef>
-                                <mat-checkbox 
-                                    (change)="$event ? toggleAllRows() : null"
-                                    [checked]="checksDevices.hasValue() && isAllSelected()"
-                                    [indeterminate]="checksDevices.hasValue() && !isAllSelected()"
-                                    [aria-label]="checkboxLabel()">
-                                </mat-checkbox>
-                              </th>
-                              <td mat-cell *matCellDef="let row">
-                                <mat-checkbox 
-                                (click)="$event.stopPropagation()"
-                                (change)="$event ? checksDevices.toggle(row) : null"
-                                [checked]="checksDevices.isSelected(row)"
-                                [aria-label]="checkboxLabel(row)">
-                                </mat-checkbox>
-                              </td>
-                            </ng-container>
-                          
-                            <!-- Imei Column -->
-                            <ng-container matColumnDef="imei">
-                              <th mat-header-cell *matHeaderCellDef>IMEI</th>
-                              <td mat-cell *matCellDef="let element">{{element.deviimei}}</td>
-                            </ng-container>
-                          
-                            <!-- Plate Column -->
-                            <ng-container matColumnDef="plate">
-                              <th mat-header-cell *matHeaderCellDef>PLACA</th>
-                              <td mat-cell *matCellDef="let element">{{element.carrlice}}</td>
-                            </ng-container>
-                          
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                                (click)="checksDevices.toggle(row)">
-                            </tr>
-                          </table>
-                    </div>
-                </section>
+                    <section class="table-devices" [formGroup]="formFilter">
+                        <header class="flex justify-center items-center p-2">
+                            <b>Dispositivos</b>
+                        </header>
+                        <div>
+                            <hr>
+                            <div class="p-3">
+                                <mat-form-field appearance="fill" class="w-full">
+                                    <mat-label>Rango de fecha</mat-label>
+                                    <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
+                                      <input matStartDate formControlName="startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
+                                      <input matEndDate formControlName="endDateOnly" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
+                                    </mat-date-range-input>
+                                    <mat-hint>{{formFilter.value.startDateOnly | date}} - {{formFilter.value.endDateOnly | date}}</mat-hint>
+                                    <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
+                                    <mat-date-range-picker #picker></mat-date-range-picker>
+                                </mat-form-field>
+                                <mat-slide-toggle
+                                    class="mr-2"
+                                    formControlName="isLocation"
+                                    [color]="color">
+                                    POSICIONES
+                                </mat-slide-toggle>
+                                <mat-slide-toggle
+                                    formControlName="isEvent"
+                                    [color]="color">
+                                    EVENTOS
+                                </mat-slide-toggle>
+                            </div>
+
+                            <div class="flex justify-center w-full p-2">
+                                <input type="text" placeholder="Buscar por imei, placa"
+                                (keyup)="applyFilter($event)"
+                                class="p-1 ml-3 mr-3 w-full border-1 placeholder-pl-4 border-gps-blue rounded-lg">
+                            </div>
+                        </div>
+                        
+                        <div class="table-devices-regis">
+                            <table mat-table [dataSource]="dataSDevices" class="w-full">
+                                <!-- Checkbox Column -->
+                                <ng-container matColumnDef="select">
+                                  <th mat-header-cell *matHeaderCellDef>
+                                    <mat-checkbox 
+                                        (change)="$event ? toggleAllRows() : null"
+                                        [checked]="checksDevices.hasValue() && isAllSelected()"
+                                        [indeterminate]="checksDevices.hasValue() && !isAllSelected()"
+                                        [aria-label]="checkboxLabel()">
+                                    </mat-checkbox>
+                                  </th>
+                                  <td mat-cell *matCellDef="let row">
+                                    <mat-checkbox 
+                                    (click)="$event.stopPropagation()"
+                                    (change)="$event ? checksDevices.toggle(row) : null"
+                                    [checked]="checksDevices.isSelected(row)"
+                                    [aria-label]="checkboxLabel(row)">
+                                    </mat-checkbox>
+                                  </td>
+                                </ng-container>
+                              
+                                <!-- Imei Column -->
+                                <ng-container matColumnDef="imei">
+                                  <th mat-header-cell *matHeaderCellDef>IMEI</th>
+                                  <td mat-cell *matCellDef="let element">{{element.deviimei}}</td>
+                                </ng-container>
+                              
+                                <!-- Plate Column -->
+                                <ng-container matColumnDef="plate">
+                                  <th mat-header-cell *matHeaderCellDef>PLACA</th>
+                                  <td mat-cell *matCellDef="let element">{{element.carrlice}}</td>
+                                </ng-container>
+                              
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                    (click)="checksDevices.toggle(row)">
+                                </tr>
+                              </table>
+                        </div>
+                    </section>
+                </div>
+
                 <div class="bts-bottom">
                     <app-button 
                         (click)="filterDevices()" text="Filtrar" type="blue" 
@@ -118,19 +124,21 @@
         
         <mat-drawer #detailsVehicule mode="side" position="end">
             <aside class="details-vehicle mt-2 ml-2 mr-2" *ngIf="deviceSelected$ | async as device">
-                <div class="flex justify-between p-1">
-                    <mat-icon 
-                        class="config-commands"
-                        (click)="openDialogConfigCommans(device?.devinuid)"
-                    >settings</mat-icon>
-                    <div class="dt-vh-close" (click)="closeToggle(device?.devinuid)">
-                        <mat-icon>close</mat-icon>
+                <div class="dt-vh-header">
+                    <div class="flex justify-between">
+                        <mat-icon
+                            class="config-commands"
+                            (click)="openDialogConfigCommans(device?.devinuid)"
+                        >settings</mat-icon>
+                        <div class="dt-vh-close" (click)="closeToggle(device?.devinuid)">
+                            <mat-icon>close</mat-icon>
+                        </div>
                     </div>
+                    <header class="flex justify-center">
+                        <h2 class="h2">Detalle Vehículo</h2>
+                    </header>
                 </div>
-                <header class="flex justify-center">
-                    <h2 class="h2">Detalle Vehículo</h2>
-                </header>
-
+                
                 <article class="dt-vh-info">
                     <div class="dt-vh-content border">
                         <div class="dt-vh-citem">
@@ -158,15 +166,6 @@
                             <div class="value p-1 pl-2">
                                 <b class="sup-title">Estado:</b>
                                 <small class="sub-title">{{device.deviestacomma ? 'Encendido':'Apagado'}}</small>
-                            </div>
-                        </div>
-                        <div class="dt-vh-citem">
-                            <div class="icon p-1">
-                                <mat-icon>fingerprint</mat-icon>
-                            </div>
-                            <div class="value p-1 pl-2">
-                                <b class="sup-title">Clasificadores:</b>
-                                <small class="sub-title">{{listClassifiers(device?.clasdevi)}}</small>
                             </div>
                         </div>
                         <div class="dt-vh-citem">
@@ -231,6 +230,15 @@
                             <div class="value p-1 pl-2">
                                 <b class="sup-title">Ultima posicion Fecha sistema:</b>
                                 <small class="sub-title">{{device.deviloca[0].delofesi | date:'medium' }}</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
+                                <mat-icon>fingerprint</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Clasificadores:</b>
+                                <small class="sub-title">{{listClassifiers(device?.clasdevi)}}</small>
                             </div>
                         </div>
                         <div class="dt-vh-citem">
