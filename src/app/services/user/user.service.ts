@@ -25,12 +25,18 @@ export class UserService {
         )
     }
 
+    getPrivilsByEntityAll() {
+        return this.http.get(`${this.root}/privilegies/?privilegies=true&entityId=${this.entityId}`);
+    }
+
     getPrivilegiesByEntity(entityId: number) {
-        return this.http.get(`${this.root}?privilegies=true&entityId=${entityId}`)
+        return this.http.get(`${this.root}?privilegies=true&entityId=${entityId}`);
     }
+
     getPrivilegiesByUser(userId: number) {
-        return this.http.get(`${this.root}?privilegies=true&entityId=${this.entityId}&userId=${userId}`)
+        return this.http.get(`${this.root}?privilegies=true&entityId=${this.entityId}&userId=${userId}`);
     }
+
     getUsers() {
         this.http.get(`${this.root}?entityId=${this.entityId}`).pipe(
             map(({ response }: any) => response),

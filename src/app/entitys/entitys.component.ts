@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ButtonComponent, ChipsComponent, SnackAlert, TableComponent } from '@components';
 import { EntityModal } from '@modals';
-import { CompanyService, ICompany, UserService } from '@services'
-import { Observable, tap } from 'rxjs';
+import { CompanyService, ICompany } from '@services'
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-entitys',
   templateUrl: './entitys.component.html',
@@ -12,7 +12,7 @@ import { Observable, tap } from 'rxjs';
   standalone: true
 })
 export class EntitysComponent implements OnInit {
-  tableContent = [{ key: 'entidesc', name: 'Entidad' }, { key: 'entimail', name: 'Email' }, { key: 'car', name: 'Vehículos registrados' }, { key: 'entistat', name: 'Estado' }, { key: 'action', name: 'Acción' }]
+  tableContent = [{ key: 'entidesc', name: 'Entidad' }, { key: 'entimail', name: 'Email' }, /* { key: 'car', name: 'Vehículos registrados' }, */ { key: 'entistat', name: 'Estado' }, { key: 'action', name: 'Acción' }]
   company$!: Observable<any>;
   constructor(private dialog: MatDialog, private _company: CompanyService, private _snack: SnackAlert) { }
 

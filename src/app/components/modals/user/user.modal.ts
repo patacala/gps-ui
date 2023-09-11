@@ -1,4 +1,4 @@
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider';
 import { InputComponent } from '../../input/input.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -49,104 +49,8 @@ export class UserModal implements OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
-    permissions: any[
-        /*{
-            key: 'locations_read',
-            description: 'Ver mapa'
-        },
-       {
-            key: 'entity_get',
-            description: 'Listar entidades'
-        },
-        {
-            key: 'entity_create',
-            description: 'Crear Entidades'
-        },
-        {
-            key: 'entity_update',
-            description: 'Actualizar entidades'
-        },
-        {
-            key: 'entity_delete',
-            description: 'Eliminar entidades'
-        },
-        {
-            key: 'user_get',
-            description: 'Listar usuarios'
-        },
-        {
-            key: 'user_create',
-            description: 'Crear usuario'
-        },
-        {
-            key: 'user_update',
-            description: 'Actualzar usuario'
-        },
-        {
-            key: 'user_delete',
-            description: 'Eliminar user'
-        },
-        {
-            key: 'user_get_privileges',
-            description: 'Obtener Privilegios'
-        },
-        {
-            key: 'device_get',
-            description: 'Listar dispositivos'
-        },
-        {
-            key: 'device_create',
-            description: 'Crear dispositivos'
-        },
-        {
-            key: 'device_update',
-            description: 'Actualizar dispositivos'
-        },
-        {
-            key: 'device_delete',
-            description: 'Elimninar dispositivos'
-        },
-        {
-            key: 'device_unlink',
-            description: 'Desvincular dispositivo de vehiculos'
-        },
-        {
-            key: 'carrier_get',
-            description: 'Listar vehiculos'
-        },
-        {
-            key: 'carrier_create',
-            description: 'Crear vehiculo'
-        },
-        {
-            key: 'carrier_update',
-            description: 'Actualizar vehiculo'
-        },
-        {
-            key: 'carrier_delete',
-            description: 'Eliminar vehiculos'
-        },
-        {
-            key: 'clasifiers_get',
-            description: 'Listar clasificadores'
-        },
-        {
-            key: 'clasifiers_create',
-            description: 'Crear clasificadores'
-        },
-        {
-            key: 'clasifiers_update',
-            description: 'Actualizar clasificadores'
-        },
-        {
-            key: 'clasifiers_delete',
-            description: 'Eliminar clasificadores'
-        },
-        {
-            key: 'privileges_get',
-            description: 'Listar privilegios'
-        }*/
-    ] = [];
+    permissions: any[] = [];
+
     constructor(
         private fb: FormBuilder, 
         private _user: UserService, 
