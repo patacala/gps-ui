@@ -3,12 +3,11 @@
     display: grid;
     height: 100%;
     grid-template-rows: calc(100% - 205px) 150px;
-    //grid-template-rows: 101.4% 0px;
     grid-gap: 10px;
     transition: grid-template-rows 0.3s ease;
 
     &.animate {
-        grid-template-rows: 101.4% 0px;
+        grid-template-rows: 101% 0px;
     }
 
     .btn-hidden {
