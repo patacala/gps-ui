@@ -53,7 +53,8 @@ export class VehiculeModal implements OnInit {
     }
 
     selectID(device: any) {
-        this.vehiculeGroup.get('deviceId')?.setValue(device.devinuid)
+        console.log(device);
+        this.vehiculeGroup.get('selectedDeviceId')?.setValue(device.devinuid)
     }
 
     vehiculeCreate(): void {

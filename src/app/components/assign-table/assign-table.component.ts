@@ -32,6 +32,7 @@ export class AssignTable implements OnInit, AfterViewInit, OnChanges {
             console.log(this.resorce)
         }
     }
+    
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -45,6 +46,7 @@ export class AssignTable implements OnInit, AfterViewInit, OnChanges {
             this.dataSource.paginator.firstPage();
         }
     }
+
     shareElementChecked(event: any, data: any) {
         this.checked.emit(data)
     }
