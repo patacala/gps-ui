@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatRadioModule } from '@angular/material/radio';
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
@@ -10,7 +11,7 @@ import { ObjectValues } from "src/app/pipes/object-values.pipe";
     selector: 'app-assign-table',
     templateUrl: './assign-table.component.html',
     standalone: true,
-    imports: [MatPaginatorModule, MatTableModule, CommonModule, MatCheckboxModule, ObjectValues]
+    imports: [MatPaginatorModule, MatTableModule, CommonModule, MatCheckboxModule, ObjectValues, MatRadioModule]
 })
 export class AssignTable implements OnInit, AfterViewInit, OnChanges {
     @ViewChild(MatPaginator) paginator!: MatPaginator;

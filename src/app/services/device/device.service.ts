@@ -18,15 +18,15 @@ export class DeviceService {
     ) {}
 
     getDevice(skip: number = 0) {
-        this.http.get(`${this.root}/entity/${this.entityId}/null?limit=10&offset=${skip}`).pipe(map(({ response }: any) => response)).subscribe(value => {
+        this.http.get(`${this.root}/entity/${this.entityId}/null/null/?limit=10&offset=${skip}`).pipe(map(({ response }: any) => response)).subscribe(value => {
             this.device$.next(value)
         });
 
         return this.device$.asObservable();
     }
 
-    getAvailablesDevices() {
-        this.http.get(`${this.root}/entity/${this.entityId}/null?available=true`).pipe(
+    getAvailablesDevices(vehicleId: number) {
+        this.http.get(`${this.root}/entity/${this.entityId}/null/${vehicleId}/?available=true`).pipe(
             map(({ response }: any) => response)
         ).subscribe((res) => this.device$.next(res))
 

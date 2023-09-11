@@ -30,6 +30,14 @@
 <ng-template #information>
     <section class="flex flex-col my-6 gap-4" [formGroup]="userGroup">
         <section class="flex gap-6">
+            <mat-slide-toggle
+                class="mr-2"
+                formControlName="status"
+                [color]="color">
+                Estado
+            </mat-slide-toggle>
+        </section>
+        <section class="flex gap-6">
             <app-input label="Nombre completo" class="w-80" formControlName="name"></app-input>
             <app-input label="Email" class="w-80" formControlName="email" [disabled]="!!data"></app-input>
         </section>

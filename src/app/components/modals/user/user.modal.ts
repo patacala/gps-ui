@@ -15,6 +15,8 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { Device } from '../../map/map.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ThemePalette } from '@angular/material/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
     selector: 'app-user-modal',
@@ -32,7 +34,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         MatCheckboxModule,
         MatTableModule,
         MatSortModule,
-        MatPaginatorModule
+        MatPaginatorModule,
+        MatSlideToggleModule
     ],
     templateUrl: './user.modal.html'
 })
@@ -48,7 +51,7 @@ export class UserModal implements OnInit {
     
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-
+    color: ThemePalette = 'primary';
     permissions: any[] = [];
 
     constructor(
@@ -73,10 +76,10 @@ export class UserModal implements OnInit {
         if (this.data) {
             this.userGroup.patchValue({
                 name: this.data.fullname,
-                email: this.data.username
+                email: this.data.username,
+                status: this.data.enusstat,
             });
 
-            const userSysId = this._user.userSysId;
             this._user.getPrivilsByEntityAll()
             .subscribe((resp: any) => this.permissions = resp.response );
             
@@ -90,6 +93,7 @@ export class UserModal implements OnInit {
         return this.fb.group({
             name: this.fb.nonNullable.control(''),
             email: this.fb.nonNullable.control(''),
+            status: this.fb.nonNullable.control(false),
             privileges: this.fb.control(''),
             deviceSelected: this.fb.control([]),
         })

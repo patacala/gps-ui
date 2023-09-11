@@ -24,25 +24,31 @@ export class VehiculeModal implements OnInit {
     tableContent = [{ key: 'select', name: '' }, { key: 'deviimei', name: 'ID' }, { key: 'devimark', name: 'Marca' }, { key: 'devimode', name: 'Modelo' }, { key: 'devistat', name: 'Estado' }]
     constructor(
         private fb: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any,
-        private _vehicule: VehiculeService, private _snack: SnackAlert, private _device: DeviceService) { }
+        private _vehicule: VehiculeService, private _snack: SnackAlert, private _device: DeviceService
+    ) {}
 
     ngOnInit(): void {
         this.vehiculeGroup = this._INIT_FORM
         if (this.data) {
+            const vehicleId = this.data.carrnuid;
             this.vehiculeGroup.patchValue({
-                idNumber: this.data.carrlice,
+                vehicleId,
+                plate: this.data.carrlice,
                 type: this.data.carrtype,
-                deviceId: this.data?.carrdevi?.device?.deviimei
+                currentDeviceImei: this.data?.carrdevi?.device?.deviimei,
+                selectedDeviceId: -1
             })
+            this.devices$ = this._device.getAvailablesDevices(vehicleId);
         }
-        this.devices$ = this._device.getAvailablesDevices();
     }
 
     get _INIT_FORM(): FormGroup {
         return this.fb.group({
-            idNumber: this.fb.nonNullable.control(''),
+            vehicleId: this.fb.nonNullable.control(null),
+            plate: this.fb.nonNullable.control(''),
             type: this.fb.nonNullable.control(''),
-            deviceId: this.fb.nonNullable.control(''),
+            currentDeviceImei: this.fb.nonNullable.control(''),
+            selectedDeviceId: this.fb.nonNullable.control(null)
         })
     }
 
@@ -78,9 +84,9 @@ export class VehiculeModal implements OnInit {
     }
 
     unlinkDevice() {
-        this._device.unlinkDevice(this.vehiculeGroup.get('deviceId')?.value as string).subscribe((res: any) => {
+        this._device.unlinkDevice(this.vehiculeGroup.get('currentDeviceImei')?.value as string).subscribe((res: any) => {
             this._snack.showSuccess(res.message);
-            this.vehiculeGroup.get('deviceId')?.reset();
+            this.vehiculeGroup.get('currentDeviceImei')?.reset();
         })
     }
     closeModal(): void {

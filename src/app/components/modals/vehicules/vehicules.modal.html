@@ -28,11 +28,11 @@
 <ng-template #information>
     <section class="flex flex-col my-6 gap-10" [formGroup]="vehiculeGroup">
         <section class="flex gap-6">
-            <app-input label="Placa" class="w-80" formControlName="idNumber"></app-input>
+            <app-input label="Placa" class="w-80" formControlName="plate"></app-input>
             <app-input label="Descripción" class="w-80" formControlName="type"></app-input>
         </section>
-        <section class="flex items-end gap-3" *ngIf="vehiculeGroup.get('deviceId')?.value">
-            <app-input label="GPS" class="w-80" [disabled]="true" formControlName="deviceId"></app-input>
+        <section class="flex items-end gap-3" *ngIf="vehiculeGroup.get('currentDeviceImei')?.value">
+            <app-input label="GPS" class="w-80" [disabled]="true" formControlName="currentDeviceImei"></app-input>
             <mat-icon class="text-gps-red cursor-pointer mb-2" (click)="unlinkDevice()">
                 close
             </mat-icon>
