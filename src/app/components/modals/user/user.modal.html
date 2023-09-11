@@ -58,49 +58,52 @@
 </ng-template>
 <ng-template #assignVehicle>
     <!-- <app-assign-table [columns]="tableContent" [resorce]="vehicules$|async"></app-assign-table> -->
-    <div class="table-devices-regis">
+    <div class="table-devices-all">
         <mat-paginator [pageSizeOptions]="[5, 10, 30, 50, 100]" [pageSize]="5"></mat-paginator>
-        <table mat-table [dataSource]="dataSDevices" class="w-full" matSort>
-            <!-- Checkbox Column -->
-            <ng-container matColumnDef="select">
-              <th mat-header-cell *matHeaderCellDef>
-                <mat-checkbox 
-                    (change)="$event ? toggleAllRows() : null"
-                    [checked]="checksDevices.hasValue() && isAllSelected()"
-                    [indeterminate]="checksDevices.hasValue() && !isAllSelected()"
-                    [aria-label]="checkboxLabel()">
-                </mat-checkbox>
-              </th>
-              <td mat-cell *matCellDef="let row">
-                <mat-checkbox 
-                (click)="$event.stopPropagation()"
-                (change)="$event ? checksDevices.toggle(row) : null"
-                [checked]="checksDevices.isSelected(row)"
-                [aria-label]="checkboxLabel(row)">
-                </mat-checkbox>
-              </td>
-            </ng-container>
-          
-            <!-- Imei Column -->
-            <ng-container matColumnDef="imei">
-              <th mat-header-cell *matHeaderCellDef>IMEI</th>
-              <td mat-cell *matCellDef="let element">{{element.deviimei}}</td>
-            </ng-container>
-          
-            <!-- Plate Column -->
-            <ng-container matColumnDef="plate">
-              <th mat-header-cell *matHeaderCellDef>PLACA</th>
-              <td mat-cell *matCellDef="let element">{{element.carrlice}}</td>
-            </ng-container>
-          
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                (click)="checksDevices.toggle(row)">
-            </tr>
 
-            <tr class="mat-row" *matNoDataRow>
-                <td class="mat-cell" colspan="4">Sin resultados.</td>
-            </tr>
-          </table>
+        <div class="list-device">
+            <table mat-table [dataSource]="dataSDevices" class="w-full" matSort>
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <mat-checkbox 
+                        (change)="$event ? toggleAllRows() : null"
+                        [checked]="checksDevices.hasValue() && isAllSelected()"
+                        [indeterminate]="checksDevices.hasValue() && !isAllSelected()"
+                        [aria-label]="checkboxLabel()">
+                    </mat-checkbox>
+                  </th>
+                  <td mat-cell *matCellDef="let row">
+                    <mat-checkbox 
+                    (click)="$event.stopPropagation()"
+                    (change)="$event ? checksDevices.toggle(row) : null"
+                    [checked]="checksDevices.isSelected(row)"
+                    [aria-label]="checkboxLabel(row)">
+                    </mat-checkbox>
+                  </td>
+                </ng-container>
+              
+                <!-- Imei Column -->
+                <ng-container matColumnDef="imei">
+                  <th mat-header-cell *matHeaderCellDef>IMEI</th>
+                  <td mat-cell *matCellDef="let element">{{element.deviimei}}</td>
+                </ng-container>
+              
+                <!-- Plate Column -->
+                <ng-container matColumnDef="plate">
+                  <th mat-header-cell *matHeaderCellDef>PLACA</th>
+                  <td mat-cell *matCellDef="let element">{{element.carrlice}}</td>
+                </ng-container>
+              
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                    (click)="checksDevices.toggle(row)">
+                </tr>
+    
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="4">Sin resultados.</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </ng-template>

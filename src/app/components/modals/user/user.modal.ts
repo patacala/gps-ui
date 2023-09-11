@@ -37,7 +37,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
         MatPaginatorModule,
         MatSlideToggleModule
     ],
-    templateUrl: './user.modal.html'
+    templateUrl: './user.modal.html',
+    styleUrls: ['./user.modal.scss']
 })
 export class UserModal implements OnInit {
     @Output('close') close: EventEmitter<void> = new EventEmitter();
