@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ButtonComponent } from '../button/button.component';
 import { ClassifierService } from 'src/app/services/classifiers/classifiers.service';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { DeviceService } from '@services';
+import { DeviceService, MapService } from '@services';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -45,6 +45,7 @@ export class DataTimeHComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<DataTimeHComponent>,
+    private _map: MapService,
     private _device: DeviceService,
     private _classifier: ClassifierService, 
     private _utils: UtilsService
@@ -80,6 +81,8 @@ export class DataTimeHComponent implements OnInit {
           if (typeof(resultHistoryDevs) !== undefined) {
             if (resultHistoryDevs?.length > 0) {
               this._device.setHistoryLoc(deviceId, filterDataDv, resultHistoryDevs);
+              this._map.hiddenIconLHisto(true);
+              this._map.hiddenListHisto(false);
               this.dialogRef.close();
             } else {
               this._utils.matSnackBar('Sin resultados', 'ok');

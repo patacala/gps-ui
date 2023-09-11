@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MapComponent, StatisticComponent, UserAddedComponent } from '@components'
-import { UserService, VehiculeService } from '@services'
+import { MapService, UserService, VehiculeService } from '@services'
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { TableHistoryComponent } from '../components/table-history/table-history.component';
@@ -21,11 +21,12 @@ import { ConfigDeviceCommandsComponent } from '../components/config-device-comma
 export class DashboardAdminComponent implements OnInit {
   permissions: any[]=[];
   data$!: Observable<any>
-  hiddenHistoryTable: boolean = false;
+  hiddenListHisto: boolean = true;
 
   constructor(
     private _vehicule: VehiculeService, 
-    private _user: UserService
+    private _user: UserService,
+    private _map: MapService
   ) { }
 
   ngOnInit(): void {
@@ -42,9 +43,9 @@ export class DashboardAdminComponent implements OnInit {
         )
       )
     );
-  }
-
-  testAnimation() {
-    this.hiddenHistoryTable = !this.hiddenHistoryTable;
+    
+    this._map.getHiddenListHisto().subscribe((val: boolean) => {
+      this.hiddenListHisto = val;
+    });
   }
 }

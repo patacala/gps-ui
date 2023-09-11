@@ -59,6 +59,8 @@ export class MapComponent implements OnInit {
     dataSDevices = new MatTableDataSource<Device>([]);
     checksDevices = new SelectionModel<Device>(true,[]);
     color: ThemePalette = 'primary';
+    hiddenIconLHisto: boolean = false;
+    hiddenListHisto: boolean = false;
     
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
@@ -88,8 +90,10 @@ export class MapComponent implements OnInit {
 
     ngOnInit(): void {
         this._map.drawMap('map');
+        this.getHiddenIconLHisto();
+        this.getHiddenListHisto();
         this.resetFormFilter();
-    
+        
         setTimeout(() => {
             this.initialMapDevsLoc();
         }, 100);
@@ -134,9 +138,11 @@ export class MapComponent implements OnInit {
             if (data && data?.response?.rows) {
                 const rowDevice = data.response.rows;
                 this.devicesFound = rowDevice;
+
                 const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == this.currentDvId);
                 if (indexDv == -1) this._map.drawDvsMainLoc(rowDevice);
                 else if (indexDv != -1) this.deviceSelected$.next(rowDevice[indexDv]);
+
                 this.devicesTable = this._device.rowsDeviceTable(rowDevice);
                 this.dataSDevices.data = this.devicesTable;
             }
@@ -348,12 +354,16 @@ export class MapComponent implements OnInit {
         this._map.clearOpenInfoLoc();
         this._device.clearHistoryLoc();
         this._map.clearMapHistory(key);
+        this._map.hiddenIconLHisto(false);
+        this._map.hiddenListHisto(true);
     }
 
     closeToggle(key: string) {
         this._map.clearOpenInfoLoc();
         this._device.clearHistoryLoc();
         this._map.clearMapHistory(key);
+        this._map.hiddenIconLHisto(false);
+        this._map.hiddenListHisto(true);
         this.currentDvId = -1;
         this.subscription?.unsubscribe();
         this._map.drawDvsMainLoc(this.devicesFound);
@@ -405,5 +415,22 @@ export class MapComponent implements OnInit {
         this.checksDevices.clear();
         this.devicesFilter = [];
         this.initialMapDevsLoc();
+    }
+
+    setHiddenListHisto() {
+        this.hiddenListHisto = !this.hiddenListHisto;
+        this._map.hiddenListHisto(this.hiddenListHisto);
+    }
+
+    getHiddenIconLHisto() {
+        this._map.gethiddenIconLHisto().subscribe((val: boolean) => {
+            this.hiddenIconLHisto = val;
+        });
+    }
+
+    getHiddenListHisto() {
+        this._map.getHiddenListHisto().subscribe((val: boolean) => {
+            this.hiddenListHisto = val;
+        });
     }
 }

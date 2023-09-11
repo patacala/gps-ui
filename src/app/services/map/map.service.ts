@@ -11,6 +11,8 @@ export class MapService {
     private vehicule$: Subject<any> = new Subject();
     private openDetailsLoc$: Subject<any> = new Subject<any>();
     private openInfoLoc$: Subject<any> = new Subject<any>();
+    private hiddenIconLHisto$: Subject<any> = new Subject<any>();
+    private hiddenListHisto$: Subject<any> = new Subject<any>();
     private openInfoLocIds: any[]=[];
     private root: string = `${environment.apiUrl}`;
     private entityId: string = !!localStorage.getItem('entity') ? JSON.parse(localStorage.getItem('entity') as string).entinuid : null;
@@ -404,5 +406,21 @@ export class MapService {
 
     deg2rad(deg: any) {
         return deg * (Math.PI / 180)
+    }
+
+    hiddenIconLHisto(status: boolean) {
+        this.hiddenIconLHisto$.next(status);
+    }
+
+    gethiddenIconLHisto() {
+        return this.hiddenIconLHisto$.asObservable();
+    }
+
+    hiddenListHisto(status: boolean) {
+        this.hiddenListHisto$.next(status);
+    }
+
+    getHiddenListHisto() {
+        return this.hiddenListHisto$.asObservable();
     }
 }

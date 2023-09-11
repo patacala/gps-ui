@@ -117,9 +117,14 @@
         </mat-drawer>
 
         <mat-drawer-content>
-            <app-button *ngIf="devicesFound?.length && currentDvId == -1" 
-            id="filters" (click)="drawer.toggle()" text="Filtros" type="blue" width="100px" icon="filter_list"></app-button>
-            <div id="map" class="h-full w-full"></div>
+            <div class="view-map">
+                <app-button *ngIf="devicesFound?.length && currentDvId == -1" 
+                id="filters" (click)="drawer.toggle()" text="Filtros" type="blue" width="100px" icon="filter_list"></app-button>
+                <div id="map" class="h-full w-full"></div>
+                <div class="op-cls-vlist" *ngIf="hiddenIconLHisto" (click)="setHiddenListHisto()">
+                    <mat-icon>view_list</mat-icon>
+                </div>
+            </div>
         </mat-drawer-content>
         
         <mat-drawer #detailsVehicule mode="side" position="end">
