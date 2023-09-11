@@ -77,7 +77,7 @@ export class UserModal implements OnInit {
             });
 
             const userSysId = this._user.userSysId;
-            this._user.getPrivilegiesByUser(userSysId)
+            this._user.getPrivilsByEntityAll()
             .subscribe((resp: any) => this.permissions = resp.response );
             
             
