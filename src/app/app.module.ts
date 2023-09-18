@@ -7,12 +7,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptorService } from '@services';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { DownloadsCsvComponent } from './components/downloads-csv/downloads-csv.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DownloadsCsvComponent,
   ],
   imports: [
     BrowserModule,

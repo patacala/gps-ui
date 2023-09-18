@@ -61,8 +61,8 @@ export class ClassifierService {
         )
     }
 
-    filterByClassifier(classifiers: {}) {
-        return this.http.post(`${environment.apiUrl}/location/getDevicePositions/entity/${this.entityId}`, classifiers)
+    filterByClassifier(filterDataReport: {}) {
+        return this.http.post(`${environment.apiUrl}/location/getDevicePositions/entity/${this.entityId}`, filterDataReport)
     }
 
     private updatedItem(value: any, which: 'principal' | 'child') {

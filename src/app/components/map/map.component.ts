@@ -1,9 +1,9 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
 import { interval, Subject, Subscription } from 'rxjs';
-import { filter, map, pairwise } from 'rxjs/operators';
+import { filter, pairwise } from 'rxjs/operators';
 import { AsyncPipe, DatePipe, JsonPipe, NgIf } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -460,7 +460,10 @@ export class MapComponent implements OnInit {
     openDialogCsv() {
         this.dialog.open(DownloadsCsvComponent, {
             width:'360px',
-            data: {},
+            data: {
+                devicesFound: this.checksDevices.selected,
+                classifiers: this.classifiers?.flat().filter((item: any) => item != null) ?? []
+            },
         });
     }
 }

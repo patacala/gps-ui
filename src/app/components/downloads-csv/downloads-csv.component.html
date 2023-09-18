@@ -1,1 +1,48 @@
-<p>downloads-csv works!</p>
+<div *ngIf="formFilter" [formGroup]="formFilter" class="formFilter">
+    <div class="title">
+        <h2>Descarga de reportes</h2>
+    </div>
+    <div class="formFRangeDate">
+        <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Rango de fecha</mat-label>
+            <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
+              <input matStartDate formControlName="startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
+              <input matEndDate formControlName="endDateOnly" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
+            </mat-date-range-input>
+            <mat-hint>{{formFilter.value.startDateOnly | date}} - {{formFilter.value.endDateOnly | date}}</mat-hint>
+            <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+    </div>
+    <div class="formFTypeReport">
+        <mat-form-field appearance="fill" *ngIf="typeCsvReports">
+            <mat-label>Tipo de reporte</mat-label>
+            <mat-select (selectionChange)="selectTypeReport($event.value)" formControlName="typeReport">
+              <mat-option *ngFor="let tCsvReport of typeCsvReports" [value]="tCsvReport.tCsvRrtId">
+                {{tCsvReport.tCsvRrtText}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="formFToggles" *ngIf="hiddenSlideToggle">
+        <mat-slide-toggle
+            class="mr-2"
+            formControlName="isLocation"
+            [color]="color">
+            POSICIONES
+        </mat-slide-toggle>
+        <mat-slide-toggle
+            formControlName="isEvent"
+            [color]="color">
+            EVENTOS
+        </mat-slide-toggle>
+    </div>
+    <div class="formFBtns">
+        <app-button 
+            (click)="filterDevsCsv()"
+            [disabled]="!formFilter.valid"
+            text="Descargar CSV" type="green" 
+            width="190px" icon="cloud_download">
+        </app-button>
+    </div>
+</div>

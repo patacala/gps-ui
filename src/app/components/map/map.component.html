@@ -97,7 +97,7 @@
                     <app-button 
                         (click)="filterDevices()" text="Filtrar" type="blue" 
                         width="160px" icon="filter_list" 
-                        [disabled]="validDisabledArray(classifiers, checksDevices.selected) && formFilter.invalid">
+                        [disabled]="validDisabledArray(checksDevices.selected)">
                     </app-button>
                     <!--<app-button 
                         (click)="saveDataInCSV(
@@ -111,6 +111,7 @@
                     </app-button>-->
                     <app-button 
                         (click)="openDialogCsv()" text="Csv" type="green" 
+                        [disabled]="validDisabledArray(checksDevices.selected)"
                         width="110px" icon="cloud_download">
                     </app-button>
                     <mat-icon class="clear-filter" 

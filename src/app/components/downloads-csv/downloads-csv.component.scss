@@ -1,0 +1,29 @@
+.formFilter {
+    display: grid;
+    grid-gap: 10px;
+
+    .title {
+        text-align: center;
+    }
+
+    .formFTypeReport {
+        mat-form-field {
+            width: 100%;
+        }
+    }
+
+    .formFRangeDate {
+        height: 80px;
+    }
+
+    .formFTypeReport {
+        height: 63px;
+    }
+
+    .formFBtns {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        height: 50px;
+    }
+}
