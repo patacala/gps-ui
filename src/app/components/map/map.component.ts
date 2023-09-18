@@ -26,6 +26,7 @@ import { ItemDtDvComponent } from '../item-dt-dv/item-dt-dv.component';
 import { DeviceService } from '@services';
 import { NgForOf } from '@angular/common';
 import { ConfigDeviceCommandsComponent } from '../config-device-commands/config-device-commands.component';
+import { DownloadsCsvComponent } from '../downloads-csv/downloads-csv.component';
 
 @Component({
     selector: 'app-map',
@@ -145,15 +146,18 @@ export class MapComponent implements OnInit {
 
                 this.devicesTable = this._device.rowsDeviceTable(rowDevice);
                 this.dataSDevices.data = this.devicesTable;
+                if (this.dataSDevices.data.length) {
+                    this.toggleAllRows();
+                }
             }
         });
     }
 
-    filterDevices() {
+    /* filterDevices() {
         const filterDataDvs = {
-            classifiers: this.classifiers?.flat().filter((item: any) => item != null) ?? [],
+            classifiers: this.classifiers?.flat().filter((item: any) => item != null) ?? [], */
             /* plate: this.formFilter.value.plate, */
-            deviceIds: this.checksDevices.selected.map(device => device.devinuid),
+           /*  deviceIds: this.checksDevices.selected.map(device => device.devinuid),
             isLocation: this.formFilter.value.isLocation,
             isEvent: this.formFilter.value.isEvent,
             isAlarm: this.formFilter.value.isEvent,
@@ -174,6 +178,24 @@ export class MapComponent implements OnInit {
                 this.devicesFilter = this.devicesRPross[0];
                 this.kmTraveled = this.devicesRPross[1];
             }
+        });
+    } */
+
+    filterDevices() {
+        // Obtener los IDs de los dispositivos seleccionados
+        const selectedDeviceIds = this.checksDevices.selected.map(device => device.devinuid);
+      
+        // Realizar la filtración de dispositivos
+        this._map.getLocationDevices(null).subscribe((data: any) => {
+          if (data && data.response && data.response.rows) {
+            const allDevices = data.response.rows;
+      
+            // Filtrar los dispositivos basados en los IDs seleccionados
+            const filteredDevices = allDevices.filter((device: { devinuid: number; }) => selectedDeviceIds.includes(device.devinuid));
+    
+            this.devicesFound = filteredDevices;
+            this._map.drawDvsMainLoc(this.devicesFound);
+          }
         });
     }
 
@@ -264,7 +286,8 @@ export class MapComponent implements OnInit {
         this.classifiers = event;
     }
 
-    isAllSelected() {
+    // Método para verificar si todas las filas están seleccionadas
+    isAllSelected(): boolean {
         const numSelected = this.checksDevices.selected.length;
         const numRows = this.dataSDevices.data.length;
         return numSelected === numRows;
@@ -431,6 +454,13 @@ export class MapComponent implements OnInit {
     getHiddenListHisto() {
         this._map.getHiddenListHisto().subscribe((val: boolean) => {
             this.hiddenListHisto = val;
+        });
+    }
+
+    openDialogCsv() {
+        this.dialog.open(DownloadsCsvComponent, {
+            width:'360px',
+            data: {},
         });
     }
 }

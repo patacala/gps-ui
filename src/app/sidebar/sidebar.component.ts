@@ -1,13 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { TRoles } from '@services';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
 })
 export class SidebarComponent implements OnInit {
-  @Output('collapse') collapseEmit: EventEmitter<boolean> = new EventEmitter();
+  @Output('collapse') collapseEmit: EventEmitter<boolean> = new EventEmitter(); 
   private options = [
     { name: 'Mapa', icon: 'pie_chart', permission: 'locations_read' },
     { name: 'Entidades', icon: 'work', permission: 'entity_get' },

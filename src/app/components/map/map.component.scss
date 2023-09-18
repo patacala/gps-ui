@@ -80,13 +80,15 @@
                 .table-devices {
                     position: relative;
                     display: grid;
-                    grid-template-rows: 36px 170px auto;
+                    grid-template-rows: 36px 49px auto;
                     max-width: 330px;
                     height: 100%;
                     border-left: 1px solid #D0D3D4;
                     overflow: hidden;
             
                     .table-devices-regis {
+                        width: 100%;
+                        min-width: 300px;
                         overflow-y: auto;
               
                         &::-webkit-scrollbar {/* WebKit (Chrome, Safari, Opera) */

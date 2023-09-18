@@ -19,7 +19,7 @@
                         </header>
                         <div>
                             <hr>
-                            <div class="p-3">
+                              <!-- <div class="p-3">
                                 <mat-form-field appearance="fill" class="w-full">
                                     <mat-label>Rango de fecha</mat-label>
                                     <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
@@ -41,7 +41,7 @@
                                     [color]="color">
                                     EVENTOS
                                 </mat-slide-toggle>
-                            </div>
+                            </div> -->
 
                             <div class="flex justify-center w-full p-2">
                                 <input type="text" placeholder="Buscar por imei, placa"
@@ -99,7 +99,7 @@
                         width="160px" icon="filter_list" 
                         [disabled]="validDisabledArray(classifiers, checksDevices.selected) && formFilter.invalid">
                     </app-button>
-                    <app-button 
+                    <!--<app-button 
                         (click)="saveDataInCSV(
                             [
                                 {name:'dispositivos', data: devicesFilter},
@@ -108,6 +108,10 @@
                         )" text="Csv" type="green" 
                         width="110px" icon="cloud_download" 
                         [disabled]="validDisabledArray(devicesFilter)">
+                    </app-button>-->
+                    <app-button 
+                        (click)="openDialogCsv()" text="Csv" type="green" 
+                        width="110px" icon="cloud_download">
                     </app-button>
                     <mat-icon class="clear-filter" 
                     [style.visibility]="validDisabledArray(devicesFilter)? 'hidden':'visible'"
