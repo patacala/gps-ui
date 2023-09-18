@@ -72,7 +72,8 @@ export class DataTimeHComponent implements OnInit {
         },
         isAlarm: this.slideToggle.isEvent,
         isLocation: this.slideToggle.isLocation,
-        isEvent: this.slideToggle.isEvent
+        isEvent: this.slideToggle.isEvent,
+        typeReport: 3
       }; 
 
       this._classifier.filterByClassifier(filterDataDv).subscribe((histoyDevice: any) => {

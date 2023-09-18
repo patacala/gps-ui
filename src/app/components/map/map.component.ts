@@ -66,7 +66,7 @@ export class MapComponent implements OnInit {
     @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
     devices!: Array<any>;
-    devicesFound!: Array<any>;
+    devicesFound: Array<any> = [];
     deviceSelected$: Subject<any> = new Subject();
     currentDvId: number = -1;
     classifiers!: any;
@@ -136,51 +136,38 @@ export class MapComponent implements OnInit {
 
     initialMapDevsLoc() {
         this._map.getLocationDevices(null).subscribe((data: any) => {
-            if (data && data?.response?.rows) {
-                const rowDevice = data.response.rows;
-                this.devicesFound = rowDevice;
-
-                const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == this.currentDvId);
-                if (indexDv == -1) this._map.drawDvsMainLoc(rowDevice);
-                else if (indexDv != -1) this.deviceSelected$.next(rowDevice[indexDv]);
-
-                this.devicesTable = this._device.rowsDeviceTable(rowDevice);
-                this.dataSDevices.data = this.devicesTable;
-                if (this.dataSDevices.data.length) {
-                    this.toggleAllRows();
-                }
+          if (data && data?.response?.rows) {
+            const rowDevice = data.response.rows;
+      
+            if (this.devicesFound.length === 0) {
+              this.devicesFound = rowDevice;
+            } else {
+                // Filtrar los registros de rowDevice que también están en devicesFound
+                this.devicesFound = rowDevice.filter((rdv: { devinuid: any }) =>
+                    this.devicesFound.some((df: { devinuid: any }) => df.devinuid === rdv.devinuid)
+                );
             }
+
+            const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == this.currentDvId);
+            if (indexDv === -1) {
+              this._map.drawDvsMainLoc(this.devicesFound);
+            } else if (indexDv !== -1) {
+              this.deviceSelected$.next(this.devicesFound[indexDv]);
+            }
+      
+            this.devicesTable = this._device.rowsDeviceTable(rowDevice);
+            this.dataSDevices.data = this.devicesTable;
+            const dataSDevicesLength = this.dataSDevices.data.length;
+
+            if (dataSDevicesLength === this.devicesFound.length) {
+               this.toggleAllRows();
+            } else {
+               this.toggleCurrentRows();
+            }
+          }
         });
     }
-
-    /* filterDevices() {
-        const filterDataDvs = {
-            classifiers: this.classifiers?.flat().filter((item: any) => item != null) ?? [], */
-            /* plate: this.formFilter.value.plate, */
-           /*  deviceIds: this.checksDevices.selected.map(device => device.devinuid),
-            isLocation: this.formFilter.value.isLocation,
-            isEvent: this.formFilter.value.isEvent,
-            isAlarm: this.formFilter.value.isEvent,
-            date: {
-                startDate: this.formFilter.value.startDateOnly?.toISOString().slice(0, 10),
-                endDate: this.formFilter.value.endDateOnly?.toISOString().slice(0, 10)
-            }
-        };
-
-        this._classifier.filterByClassifier(filterDataDvs).pipe(
-            map((devices: any) => devices.response)
-        ).subscribe((devices: any) => {
-            if (devices) {
-                this._map.drawDvsFilter(devices);
-                this.processFilterId(devices);
-                this.divicesFilterId = [];
-                this.devicesRPross = this.processFilterData(devices); 
-                this.devicesFilter = this.devicesRPross[0];
-                this.kmTraveled = this.devicesRPross[1];
-            }
-        });
-    } */
-
+      
     filterDevices() {
         // Obtener los IDs de los dispositivos seleccionados
         const selectedDeviceIds = this.checksDevices.selected.map(device => device.devinuid);
@@ -302,6 +289,19 @@ export class MapComponent implements OnInit {
         this.checksDevices.select(...this.dataSDevices.data);
     }
 
+    toggleCurrentRows() {
+        if (this.isAllSelected()) {
+          this.checksDevices.clear();
+          return;
+        }
+        
+        this.checksDevices.select(...this._device.rowsDeviceTable(this.devicesFound));
+    }
+
+    toggleCurrentRow(row: Device) {
+        this.checksDevices.toggle(row);
+    }
+
     clearClassifiers() {
         this.classifiers = [];
         this._classifier.clearCheckboxes.emit();
@@ -349,12 +349,6 @@ export class MapComponent implements OnInit {
         return classifiers.join(', ');
     }
   
-    // Exportar .csv
-    saveDataInCSV(sheets: { name: string, data: any[] }[]): void {
-        this._utils.saveDataInCSV(sheets[0].name, sheets[0].data);
-        this._utils.saveDataInCSV(sheets[1].name, sheets[1].data);
-    }
-
     openDialogHistory(deviceId: number) {
         this.dialog.open(DataTimeHComponent, {
             width:'360px',
@@ -388,8 +382,8 @@ export class MapComponent implements OnInit {
         this._map.hiddenIconLHisto(false);
         this._map.hiddenListHisto(true);
         this.currentDvId = -1;
-        this.subscription?.unsubscribe();
         this._map.drawDvsMainLoc(this.devicesFound);
+        this.subscription?.unsubscribe();
         this.details.close();
     }
 

@@ -65,7 +65,7 @@
                                   <td mat-cell *matCellDef="let row">
                                     <mat-checkbox 
                                     (click)="$event.stopPropagation()"
-                                    (change)="$event ? checksDevices.toggle(row) : null"
+                                    (change)="$event ? toggleCurrentRow(row) : null"
                                     [checked]="checksDevices.isSelected(row)"
                                     [aria-label]="checkboxLabel(row)">
                                     </mat-checkbox>
