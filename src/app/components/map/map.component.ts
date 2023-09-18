@@ -58,7 +58,7 @@ export class MapComponent implements OnInit {
     switchOnOff: boolean = true;
     subscription: Subscription | undefined;
     dataSDevices = new MatTableDataSource<Device>([]);
-    checksDevices = new SelectionModel<Device>(true,[]);
+    checksDevices = new SelectionModel<Device>(true, []);
     color: ThemePalette = 'primary';
     hiddenIconLHisto: boolean = false;
     hiddenListHisto: boolean = false;
@@ -159,10 +159,12 @@ export class MapComponent implements OnInit {
             this.dataSDevices.data = this.devicesTable;
             const dataSDevicesLength = this.dataSDevices.data.length;
 
-            if (dataSDevicesLength === this.devicesFound.length) {
-               this.toggleAllRows();
-            } else {
-               this.toggleCurrentRows();
+            if (dataSDevicesLength > 0) {
+                if (dataSDevicesLength === this.devicesFound.length) {
+                    this.toggleAllRows();
+                } else {
+                    this.toggleCurrentRows();
+                }
             }
           }
         });
@@ -285,21 +287,25 @@ export class MapComponent implements OnInit {
           this.checksDevices.clear();
           return;
         }
-    
+        
         this.checksDevices.select(...this.dataSDevices.data);
     }
 
     toggleCurrentRows() {
-        if (this.isAllSelected()) {
-          this.checksDevices.clear();
-          return;
-        }
+        this.devicesTable = this._device.rowsDeviceTable(this.devicesFound);
+        const selectedRows = this.devicesTable.filter(row => this.dataSDevices.data.some(d => d.devinuid === row.devinuid));
         
-        this.checksDevices.select(...this._device.rowsDeviceTable(this.devicesFound));
-    }
+        // Crea una nueva matriz con los datos de la tabla y los registros de this.devicesFound
+        const newRows = [...selectedRows, ...this.dataSDevices.data];
+        
+        // Elimina los duplicados de la nueva matriz
+        const uniqueRows = newRows.filter((row, index, array) => array.indexOf(row) === index);
+        
+        // Actualiza el dataSDevices.data con los datos de la nueva matriz
+        this.dataSDevices.data = uniqueRows;
 
-    toggleCurrentRow(row: Device) {
-        this.checksDevices.toggle(row);
+        // Selecciona las filas filtradas en el SelectionModel
+        this.checksDevices.select(...selectedRows);
     }
 
     clearClassifiers() {
