@@ -11,6 +11,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { ButtonComponent } from '../button/button.component';
 import { ClassifierService } from 'src/app/services/classifiers/classifiers.service';
 import { map } from 'rxjs';
+import { DialogRef } from '@angular/cdk/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-downloads-csv',
@@ -20,7 +22,7 @@ import { map } from 'rxjs';
     MatInputModule, MatSlideToggleModule,
     MatDatepickerModule, MatNativeDateModule,
     DatePipe, MatFormFieldModule, MatSelectModule, NgIf,
-    NgForOf, ButtonComponent
+    NgForOf, ButtonComponent, MatIconModule
   ],
   templateUrl: './downloads-csv.component.html',
   styleUrls: ['./downloads-csv.component.scss']
@@ -60,6 +62,7 @@ export class DownloadsCsvComponent implements OnInit {
   
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: DialogRef<DownloadsCsvComponent>,
     private _classifier: ClassifierService,
   ) {}
 
@@ -97,5 +100,9 @@ export class DownloadsCsvComponent implements OnInit {
             console.log(devices);
         }
     });
-}
+  }
+
+  closeToggle() {
+    this.dialogRef.close();
+  }
 }

@@ -1,6 +1,22 @@
 .formFilter {
+    position: relative;
     display: grid;
     grid-gap: 10px;
+
+    .dt-vh-close {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        background-color:#E5E7E9;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
 
     .title {
         text-align: center;

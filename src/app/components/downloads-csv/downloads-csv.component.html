@@ -1,4 +1,8 @@
 <div *ngIf="formFilter" [formGroup]="formFilter" class="formFilter">
+    <div class="dt-vh-close" (click)="closeToggle()">
+        <mat-icon>close</mat-icon>
+    </div>
+    
     <div class="title">
         <h2>Descarga de reportes</h2>
     </div>
