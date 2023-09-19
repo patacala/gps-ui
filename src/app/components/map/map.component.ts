@@ -25,6 +25,7 @@ import { DeviceService } from '@services';
 import { NgForOf } from '@angular/common';
 import { ConfigDeviceCommandsComponent } from '../config-device-commands/config-device-commands.component';
 import { DownloadsCsvComponent } from '../downloads-csv/downloads-csv.component';
+import { UtilsService } from 'src/app/services/utils/utils.service';
 
 @Component({
     selector: 'app-map',
@@ -75,6 +76,7 @@ export class MapComponent implements OnInit {
         private _map: MapService, 
         private _classifier: ClassifierService,
         private _device: DeviceService, 
+        private _utils: UtilsService,
         public dialog: MatDialog,
         private datePipe: DatePipe
     ) {}
@@ -101,13 +103,11 @@ export class MapComponent implements OnInit {
                 this.deviceSelected$.next(this.devicesFound[indexDv]);
                 this._map.drawDvsMainLoc([this.devicesFound[indexDv]]);
                 this.suscriptRealTime(10000);
-                console.log('Entro en 1');
                 this.details.open();
             } else {
                 this.currentDvId = -1;
                 this.suscriptRealTime(60000);
                 this.closeToggle(selectedDeviceId.toString());
-                console.log('Entro en 2');
             }
 
             this._map.clearMapHistory(selectedDeviceId.toString());
@@ -170,8 +170,8 @@ export class MapComponent implements OnInit {
             this.drawerLeft.close();
             this.suscriptRealTime(60000);
         } else {
-            this.subscription?.unsubscribe();
             this.drawerLeft.open();
+            this.subscription?.unsubscribe();
         }
     }
       
@@ -181,6 +181,7 @@ export class MapComponent implements OnInit {
         const filteredDevices = this.rowsDevice.filter((device: { devinuid: number; }) => selectedDeviceIds.includes(device.devinuid));
         this.devicesFound = filteredDevices;
         this._map.drawDvsMainLoc(this.devicesFound);
+        this._utils.matSnackBar('Filtro aplicado', 'ok');
     }
 
     processFilterId(datas: any) {

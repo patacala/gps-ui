@@ -34,7 +34,6 @@ import { UtilsService } from 'src/app/services/utils/utils.service';
 export class DownloadsCsvComponent implements OnInit {
   maxDate: string = '';
   formFilter = new FormGroup({
-    /*  plate: new FormControl<String | null>(null), */
      startDateOnly: new FormControl<Date | null>(new Date(), Validators.required),
      endDateOnly: new FormControl<Date | null>(new Date(), Validators.required),
      isLocation: new FormControl<Boolean | true>(true),
@@ -77,6 +76,7 @@ export class DownloadsCsvComponent implements OnInit {
 
   ngOnInit(): void {
     this.devicesFound = this.data?.devicesFound;
+    console.log(this.devicesFound);
     this.classifiers = this.data?.classifiers;
     this.resetFormFilter();
     this.maxDate = this._utils.getCurrentDateTime();
@@ -104,7 +104,7 @@ export class DownloadsCsvComponent implements OnInit {
   filterDevsCsv() {
     const filterDataReport = {
         classifiers: this.classifiers, 
-        deviceIds: this.devicesFound.map(device => device.devinuid),
+        deviceIds: this.devicesFound,
         isLocation: this.formFilter.value.isLocation,
         isEvent: this.formFilter.value.isEvent,
         isAlarm: this.formFilter.value.isEvent,
