@@ -33,4 +33,18 @@ export interface KmTraveled {
     "KM GENERADO": number;
 }
 
+export interface TimesData {
+    IMEI: string;
+    MARCA: string;
+    MODELO: string;
+    CELULAR: string;
+    PLACA: string;
+    "TIPO VEHICULO": string;
+    "TIPO DE TIEMPO": string;
+    FECHA: string;
+    HORA: string;
+    MINUTO: string;
+    SEGUNDO: string;
+}
+
   

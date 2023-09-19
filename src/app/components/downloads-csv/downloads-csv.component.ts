@@ -13,7 +13,7 @@ import { ClassifierService } from 'src/app/services/classifiers/classifiers.serv
 import { map } from 'rxjs';
 import { DialogRef } from '@angular/cdk/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { KmTraveled, LocationData } from '../map/map.model';
+import { KmTraveled, LocationData, TimesData } from '../map/map.model';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 
 @Component({
@@ -62,6 +62,7 @@ export class DownloadsCsvComponent implements OnInit {
     }
   ];
   hiddenSlideToggle: boolean = true;
+  devicesRTimes: TimesData[]=[];
   devicesRPross: [LocationData[], KmTraveled[]]=[[],[]];
   devicesFilter: LocationData[]=[];
   kmTraveled: KmTraveled[]=[];
@@ -76,7 +77,6 @@ export class DownloadsCsvComponent implements OnInit {
 
   ngOnInit(): void {
     this.devicesFound = this.data?.devicesFound;
-    console.log(this.devicesFound);
     this.classifiers = this.data?.classifiers;
     this.resetFormFilter();
     this.maxDate = this._utils.getCurrentDateTime();
@@ -120,14 +120,29 @@ export class DownloadsCsvComponent implements OnInit {
     ).subscribe((devices: any) => {
         if (devices) {
             const typeReport = this.formFilter.value.typeReport;
-            this.devicesRPross = this.processFilterData(devices); 
-
-            if (typeReport === 3) {
+            
+            if (typeReport === 1) {
+              this.devicesRTimes = this.processFilterDataTimes(devices);
               this.saveDataInCSV([
-                {name:'dispositivos', data: this.devicesRPross[0]},
-                {name:'kilometros recorridos', data: this.devicesRPross[1]}
+                {name:'estado actual', data: this.devicesRTimes},
               ]);
             }
+
+            if (typeReport === 2 || typeReport === 3) {
+              this.devicesRPross = this.processFilterData(devices); 
+              if (typeReport === 2) {
+                this.saveDataInCSV([
+                  {name:'ultima posicion', data: this.devicesRPross[0]},
+                ]);
+              }
+  
+              if (typeReport === 3) {
+                this.saveDataInCSV([
+                  {name:'dispositivos', data: this.devicesRPross[0]},
+                  {name:'kilometros recorridos', data: this.devicesRPross[1]}
+                ]);
+              }
+          }
         }
     });
   }
@@ -221,6 +236,74 @@ export class DownloadsCsvComponent implements OnInit {
     });
 
     return [newLocData, newKmTraveled];  
+  }
+
+  processFilterDataTimes(datas: any): TimesData[] {
+    const newTimes: TimesData[] = [];
+
+    datas?.forEach((data: any) => {
+      const imei = data.deviimei;
+      const marca = data.devimark;
+      const modelo = data.devimode;
+      const celular = data.deviphon;
+      const placa = data.carrdevi?.carrier?.carrlice;
+      const tipoVehiculo = data.carrdevi?.carrier?.carrtype;
+      const regTime = {date: '', hours: '', minutes: '', seconds: ''};
+
+      const timeOperation = data.times.timeOperation[0] || regTime;
+      const timeRalenti = data.times.timeRalenti[0] || regTime;
+      const timeMovement = data.times.timeMovement[0] || regTime;
+
+      if (timeOperation) {
+          newTimes.push({
+              IMEI: imei,
+              MARCA: marca,
+              MODELO: modelo,
+              CELULAR: celular,
+              PLACA: placa,
+              "TIPO VEHICULO": tipoVehiculo,
+              "TIPO DE TIEMPO": 'Tiempo de operación',
+              FECHA: timeOperation.date || '',
+              HORA: timeOperation.hours || '',
+              MINUTO: timeOperation.minutes || '',
+              SEGUNDO: timeOperation.seconds || ''
+          });
+      }
+
+      if (timeRalenti) {
+          newTimes.push({
+              IMEI: imei,
+              MARCA: marca,
+              MODELO: modelo,
+              CELULAR: celular,
+              PLACA: placa,
+              "TIPO VEHICULO": tipoVehiculo,
+              "TIPO DE TIEMPO": 'Tiempo de relenti',
+              FECHA: timeRalenti.date || '',
+              HORA: timeRalenti.hours || '',
+              MINUTO: timeRalenti.minutes || '',
+              SEGUNDO: timeRalenti.seconds || ''
+          });
+      }
+
+      if (timeMovement) {
+          newTimes.push({
+              IMEI: imei,
+              MARCA: marca,
+              MODELO: modelo,
+              CELULAR: celular,
+              PLACA: placa,
+              "TIPO VEHICULO": tipoVehiculo,
+              "TIPO DE TIEMPO": 'Tiempo de movimiento',
+              FECHA: timeMovement.date || '',
+              HORA: timeMovement.hours || '',
+              MINUTO: timeMovement.minutes || '',
+              SEGUNDO: timeMovement.seconds || ''
+          });
+      }
+  });
+
+  return newTimes;
   }
 
   // Exportar .csv
