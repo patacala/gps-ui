@@ -76,6 +76,7 @@ export class DownloadsCsvComponent implements OnInit {
 
   ngOnInit(): void {
     this.devicesFound = this.data?.devicesFound;
+    console.log(this.devicesFound);
     this.classifiers = this.data?.classifiers;
   }
 

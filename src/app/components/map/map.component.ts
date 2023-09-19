@@ -7,7 +7,6 @@ import { filter, pairwise } from 'rxjs/operators';
 import { AsyncPipe, DatePipe, JsonPipe, NgIf } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { SelectionModel } from '@angular/cdk/collections';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { InputComponent } from '../input/input.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -50,15 +49,15 @@ import { DownloadsCsvComponent } from '../downloads-csv/downloads-csv.component'
 export class MapComponent implements OnInit {
     displayedColumns: string[] = ['select', 'imei', 'plate'];
     maxDate: string = '';
+    rowsDevice: any[]=[];
     devicesTable: Device[]=[];
     devicesRPross: [LocationData[], KmTraveled[]]=[[],[]];
-    devicesFilter: LocationData[]=[];
     kmTraveled: KmTraveled[]=[];
     divicesFilterId: any[]=[];
     switchOnOff: boolean = true;
     subscription: Subscription | undefined;
     dataSDevices = new MatTableDataSource<Device>([]);
-    checksDevices = new SelectionModel<Device>(true, []);
+    checksDevices: Device[]=[];
     color: ThemePalette = 'primary';
     hiddenIconLHisto: boolean = false;
     hiddenListHisto: boolean = false;
@@ -137,13 +136,13 @@ export class MapComponent implements OnInit {
     initialMapDevsLoc() {
         this._map.getLocationDevices(null).subscribe((data: any) => {
           if (data && data?.response?.rows) {
-            const rowDevice = data.response.rows;
+            this.rowsDevice = data.response.rows;
       
             if (this.devicesFound.length === 0) {
-              this.devicesFound = rowDevice;
+              this.devicesFound = this.rowsDevice;
             } else {
                 // Filtrar los registros de rowDevice que también están en devicesFound
-                this.devicesFound = rowDevice.filter((rdv: { devinuid: any }) =>
+                this.devicesFound = this.rowsDevice.filter((rdv: { devinuid: any }) =>
                     this.devicesFound.some((df: { devinuid: any }) => df.devinuid === rdv.devinuid)
                 );
             }
@@ -155,13 +154,13 @@ export class MapComponent implements OnInit {
               this.deviceSelected$.next(this.devicesFound[indexDv]);
             }
       
-            this.devicesTable = this._device.rowsDeviceTable(rowDevice);
+            this.devicesTable = this._device.rowsDeviceTable(this.rowsDevice);
             this.dataSDevices.data = this.devicesTable;
             const dataSDevicesLength = this.dataSDevices.data.length;
 
             if (dataSDevicesLength > 0) {
                 if (dataSDevicesLength === this.devicesFound.length) {
-                    this.toggleAllRows();
+                    this.toggleAllRows(true);
                 } else {
                     this.toggleCurrentRows();
                 }
@@ -172,20 +171,10 @@ export class MapComponent implements OnInit {
       
     filterDevices() {
         // Obtener los IDs de los dispositivos seleccionados
-        const selectedDeviceIds = this.checksDevices.selected.map(device => device.devinuid);
-      
-        // Realizar la filtración de dispositivos
-        this._map.getLocationDevices(null).subscribe((data: any) => {
-          if (data && data.response && data.response.rows) {
-            const allDevices = data.response.rows;
-      
-            // Filtrar los dispositivos basados en los IDs seleccionados
-            const filteredDevices = allDevices.filter((device: { devinuid: number; }) => selectedDeviceIds.includes(device.devinuid));
-    
-            this.devicesFound = filteredDevices;
-            this._map.drawDvsMainLoc(this.devicesFound);
-          }
-        });
+        const selectedDeviceIds = this.checksDevices.map(device => device.devinuid);
+        const filteredDevices = this.rowsDevice.filter((device: { devinuid: number; }) => selectedDeviceIds.includes(device.devinuid));
+        this.devicesFound = filteredDevices;
+        this._map.drawDvsMainLoc(this.devicesFound);
     }
 
     processFilterId(datas: any) {
@@ -194,127 +183,52 @@ export class MapComponent implements OnInit {
         });
     }
 
-    processFilterData(datas: any): [LocationData[], KmTraveled[]] {
-        const newLocData: LocationData[] = [];
-        const newKmTraveled: KmTraveled[] = [];
-
-        const mappedLocData = datas?.map((data:any) => ({
-            deviimei: data.deviimei,
-            devimark: data.devimark,
-            devimode: data.devimode,
-            deviphon: data.deviphon,
-            carrlice: data.carrdevi?.carrier?.carrlice,
-            carrtype: data.carrdevi?.carrier?.carrtype,
-            locations: {
-                delolati: data.locations.map((loc: any) => loc.delolati),
-                delolong: data.locations.map((loc: any) => loc.delolong),
-                delodire: data.locations.map((loc: any) => loc.delodire),
-                delobarri: data.locations.map((loc: any) => loc.delobarri),
-                delofesi: data.locations.map((loc: any) => loc.delofesi),
-                delotime: data.locations.map((loc: any) => loc.delotime),
-                delospee: data.locations.map((loc: any) => loc.delospee),
-                keywfunc: data.locations.map((loc: any) => loc.keywords.keywfunc),
-            }
-        }));
-        
-        const mappedKmTraveled = datas?.map((data:any) => ({
-            deviimei: data.deviimei,
-            devimark: data.devimark,
-            devimode: data.devimode,
-            deviphon: data.deviphon,
-            carrlice: data.carrdevi?.carrier?.carrlice,
-            carrtype: data.carrdevi?.carrier?.carrtype,
-            kmTraveled: {
-                kmdiacapt: data.kmdevi.map((km: any) => km.kmdiacapt),
-                kmcapt: data.kmdevi.map((km: any) => km.kmcapt)
-            }
-        }));
-
-        mappedLocData?.forEach((row: any) => {
-            const locations = row.locations;
-            locations.delolati.forEach((lat: any, index: number) => {
-                newLocData.push({
-                    IMEI: row.deviimei,
-                    MARCA: row.devimark,
-                    MODELO: row.devimode,
-                    CELULAR: row.deviphon,
-                    PLACA: row.carrlice,
-                    "TIPO VEHICULO": row.carrtype,
-                    LATITUD: lat,
-                    LONGITUD: locations.delolong[index],
-                    DIRECCION: locations.delodire[index],
-                    BARRIO: locations.delobarri[index],
-                    EVENTO: locations.keywfunc[index],
-                    "FECHA SISTEMA": locations.delofesi[index],
-                    "FECHA REGISTRO": this.formatTimestamp(locations.delotime[index]),
-                    VELOCIDAD: locations.delospee[index],
-                });
-            });
-        });
-
-        mappedKmTraveled?.forEach((row: any) => {
-            const kmTraveled = row.kmTraveled;
-            kmTraveled.kmdiacapt.forEach((kmDayCapt: any, index: number) => {
-                newKmTraveled.push({
-                    IMEI: row.deviimei,
-                    MARCA: row.devimark,
-                    MODELO: row.devimode,
-                    CELULAR: row.deviphon,
-                    PLACA: row.carrlice,
-                    "TIPO VEHICULO": row.carrtype,
-                    "KM DÍA": kmDayCapt,
-                    "KM GENERADO": kmTraveled.kmcapt[index]
-                });
-            });
-        });
-
-        return [newLocData, newKmTraveled];  
-    }
-
     saveClassifiers(event: any) {
         this.classifiers = event;
     }
 
     // Método para verificar si todas las filas están seleccionadas
     isAllSelected(): boolean {
-        const numSelected = this.checksDevices.selected.length;
-        const numRows = this.dataSDevices.data.length;
+        const dataSDevices = this.dataSDevices.data;
+        const numSelected = dataSDevices.filter(row => row.check).length;
+        const numRows = dataSDevices.length;
         return numSelected === numRows;
     }
 
-    toggleAllRows() {
-        if (this.isAllSelected()) {
-          this.checksDevices.clear();
-          return;
+    toggleAllRows(event: boolean) {
+        const dataSDevices = this.dataSDevices.data;
+        if (event) {
+            dataSDevices.forEach(row => {
+                row.check = true;
+            });
+        } else {
+            dataSDevices.forEach(row => {
+                row.check = false;
+            });
         }
+
+        this.checksDevices = [];
+        this.checksDevices = dataSDevices.filter(dataDv => dataDv.check);
+    }
+
+    toggleCurrentRow(row: any) {
+        this.checksDevices = [];
         
-        this.checksDevices.select(...this.dataSDevices.data);
+        row.check = !row.check;
+        const dataSDevices = this.dataSDevices.data;
+        this.checksDevices = dataSDevices.filter(dataDv => dataDv.check);
     }
 
     toggleCurrentRows() {
         this.devicesTable = this._device.rowsDeviceTable(this.devicesFound);
-        const selectedRows = this.devicesTable.filter(row => this.dataSDevices.data.some(d => d.devinuid === row.devinuid));
+        const selectedRows = this.devicesTable.filter(row => this.dataSDevices.data.some(d => d.check === row.check));
         
-        // Crear un conjunto (Set) para garantizar la unicidad de las filas basadas en devinuid
-        const uniqueRowsSet = new Set<number>();
-        
-        // Array para almacenar filas únicas
-        const uniqueRows: Device[] = [];
-        
-        this.dataSDevices.data.forEach(row => {
-            if (!uniqueRowsSet.has(row.devinuid)) {
-                uniqueRowsSet.add(row.devinuid);
-                uniqueRows.push(row);
-            }
+        this.dataSDevices.data.forEach(row1 => {
+            const isSelected = selectedRows.some((row2: { devinuid: number; }) => row1.devinuid === row2.devinuid);
+            row1.check = isSelected;
         });
-        
-        // Actualizar el dataSDevices.data con las filas únicas
-        this.dataSDevices.data = uniqueRows;
-    
-        // Seleccionar las filas filtradas en el SelectionModel
-        this.checksDevices.select(...selectedRows);  // Usamos spread operator (...) aquí
     }
-    
+
     clearClassifiers() {
         this.classifiers = [];
         this._classifier.clearCheckboxes.emit();
@@ -324,7 +238,7 @@ export class MapComponent implements OnInit {
         if (!row) {
           return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
         }
-        return `${this.checksDevices.isSelected(row) ? 'deselect' : 'select'} row ${row.devinuid + 1}`;
+        return `${row.check ? 'deselect' : 'select'} row ${row.devinuid + 1}`;
     }
 
     validDisabledArray(...arrays: Array<any>[]): boolean {
@@ -441,9 +355,7 @@ export class MapComponent implements OnInit {
 
     clearFilter() {
         this.clearClassifiers();
-        this.resetFormFilter();         
-        this.checksDevices.clear();
-        this.devicesFilter = [];
+        this.resetFormFilter();
         this.initialMapDevsLoc();
     }
 
@@ -468,7 +380,7 @@ export class MapComponent implements OnInit {
         this.dialog.open(DownloadsCsvComponent, {
             width:'360px',
             data: {
-                devicesFound: this.checksDevices.selected,
+                devicesFound: this.checksDevices.map(devF => devF.devinuid),
                 classifiers: this.classifiers?.flat().filter((item: any) => item != null) ?? []
             },
         });
