@@ -295,19 +295,26 @@ export class MapComponent implements OnInit {
         this.devicesTable = this._device.rowsDeviceTable(this.devicesFound);
         const selectedRows = this.devicesTable.filter(row => this.dataSDevices.data.some(d => d.devinuid === row.devinuid));
         
-        // Crea una nueva matriz con los datos de la tabla y los registros de this.devicesFound
-        const newRows = [...selectedRows, ...this.dataSDevices.data];
+        // Crear un conjunto (Set) para garantizar la unicidad de las filas basadas en devinuid
+        const uniqueRowsSet = new Set<number>();
         
-        // Elimina los duplicados de la nueva matriz
-        const uniqueRows = newRows.filter((row, index, array) => array.indexOf(row) === index);
+        // Array para almacenar filas únicas
+        const uniqueRows: Device[] = [];
         
-        // Actualiza el dataSDevices.data con los datos de la nueva matriz
+        this.dataSDevices.data.forEach(row => {
+            if (!uniqueRowsSet.has(row.devinuid)) {
+                uniqueRowsSet.add(row.devinuid);
+                uniqueRows.push(row);
+            }
+        });
+        
+        // Actualizar el dataSDevices.data con las filas únicas
         this.dataSDevices.data = uniqueRows;
-
-        // Selecciona las filas filtradas en el SelectionModel
-        this.checksDevices.select(...selectedRows);
+    
+        // Seleccionar las filas filtradas en el SelectionModel
+        this.checksDevices.select(...selectedRows);  // Usamos spread operator (...) aquí
     }
-
+    
     clearClassifiers() {
         this.classifiers = [];
         this._classifier.clearCheckboxes.emit();
