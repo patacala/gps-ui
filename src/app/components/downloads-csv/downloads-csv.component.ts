@@ -30,6 +30,7 @@ import { UtilsService } from 'src/app/services/utils/utils.service';
   templateUrl: './downloads-csv.component.html',
   styleUrls: ['./downloads-csv.component.scss']
 })
+
 export class DownloadsCsvComponent implements OnInit {
   maxDate: string = '';
   formFilter = new FormGroup({

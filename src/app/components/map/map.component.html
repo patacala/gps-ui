@@ -1,6 +1,6 @@
 <section class="shadow-md main-map">
-    <mat-drawer-container class="mat-drw-content">
-        <mat-drawer #drawer mode="push">
+    <mat-drawer-container class="mat-drw-content" autosize>
+        <mat-drawer #drawerLeft mode="side">
             <aside class="aside-map-left">
                 <div class="map-left-division">
                     <section class="classifirs-content pb-2">
@@ -13,36 +13,12 @@
                         </div>
                     </section>
                     
-                    <section class="table-devices" [formGroup]="formFilter">
+                    <section class="table-devices">
                         <header class="flex justify-center items-center p-2">
                             <b>Dispositivos</b>
                         </header>
                         <div>
                             <hr>
-                              <!-- <div class="p-3">
-                                <mat-form-field appearance="fill" class="w-full">
-                                    <mat-label>Rango de fecha</mat-label>
-                                    <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
-                                      <input matStartDate formControlName="startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
-                                      <input matEndDate formControlName="endDateOnly" placeholder="Fecha final" (click)="picker.open()" autocomplete="off">
-                                    </mat-date-range-input>
-                                    <mat-hint>{{formFilter.value.startDateOnly | date}} - {{formFilter.value.endDateOnly | date}}</mat-hint>
-                                    <mat-datepicker-toggle matSuffix #dpClick1 [for]="picker"></mat-datepicker-toggle>
-                                    <mat-date-range-picker #picker></mat-date-range-picker>
-                                </mat-form-field>
-                                <mat-slide-toggle
-                                    class="mr-2"
-                                    formControlName="isLocation"
-                                    [color]="color">
-                                    POSICIONES
-                                </mat-slide-toggle>
-                                <mat-slide-toggle
-                                    formControlName="isEvent"
-                                    [color]="color">
-                                    EVENTOS
-                                </mat-slide-toggle>
-                            </div> -->
-
                             <div class="flex justify-center w-full p-2">
                                 <input type="text" placeholder="Buscar por imei, placa"
                                 (keyup)="applyFilter($event)"
@@ -99,16 +75,6 @@
                         width="160px" icon="filter_list" 
                         [disabled]="validDisabledArray(checksDevices)">
                     </app-button>
-                    <!--<app-button 
-                        (click)="saveDataInCSV(
-                            [
-                                {name:'dispositivos', data: devicesFilter},
-                                {name:'kilometros recorridos', data: kmTraveled}
-                            ]
-                        )" text="Csv" type="green" 
-                        width="110px" icon="cloud_download" 
-                        [disabled]="validDisabledArray(devicesFilter)">
-                    </app-button>-->
                     <app-button 
                         (click)="openDialogCsv()" text="Csv" type="green" 
                         [disabled]="validDisabledArray(checksDevices)"
@@ -121,8 +87,11 @@
         <mat-drawer-content>
             <div class="view-map">
                 <app-button *ngIf="devicesFound?.length && currentDvId == -1" 
-                id="filters" (click)="drawer.toggle()" text="Filtros" type="blue" width="100px" icon="filter_list"></app-button>
+                id="filters" (click)="openFilterDevice()" text="Filtros" type="blue" width="100px" icon="filter_list"></app-button>
+
+                <div class="aside-mark-left" (click)="openFilterDevice()" [style.visibility]="drawerLeft.opened ? 'visible':'hidden'"></div>
                 <div id="map" class="h-full w-full"></div>
+
                 <div class="op-cls-vlist" *ngIf="hiddenIconLHisto" (click)="setHiddenListHisto()">
                     <mat-icon>view_list</mat-icon>
                 </div>

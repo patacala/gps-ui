@@ -13,9 +13,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
-import { UtilsService } from 'src/app/services/utils/utils.service';
 import { Device, KmTraveled, LocationData } from './map.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -46,7 +45,11 @@ import { DownloadsCsvComponent } from '../downloads-csv/downloads-csv.component'
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss']
 })
+
 export class MapComponent implements OnInit {
+    @ViewChild('drawerLeft') drawerLeft!: MatDrawer;
+    @ViewChild('detailsVehicule') details!: MatDrawer;
+
     displayedColumns: string[] = ['select', 'imei', 'plate'];
     maxDate: string = '';
     rowsDevice: any[]=[];
@@ -61,29 +64,17 @@ export class MapComponent implements OnInit {
     color: ThemePalette = 'primary';
     hiddenIconLHisto: boolean = false;
     hiddenListHisto: boolean = false;
-    
-    @ViewChild('detailsVehicule') details!: MatDrawer;
     showFiller = false;
     devices!: Array<any>;
     devicesFound: Array<any> = [];
     deviceSelected$: Subject<any> = new Subject();
     currentDvId: number = -1;
     classifiers!: any;
-    subscriptions: Subscription[] = [];
-    formFilter = new FormGroup({
-       /*  plate: new FormControl<String | null>(null), */
-        startDateOnly: new FormControl<Date | null>(new Date(), Validators.required),
-        endDateOnly: new FormControl<Date | null>(new Date(), Validators.required),
-        isLocation: new FormControl<Boolean | true>(true),
-        isEvent: new FormControl<Boolean | false>(false),
-        withAlert: new FormControl<Boolean | false>(false)
-    });
     
     constructor(
         private _map: MapService, 
         private _classifier: ClassifierService,
         private _device: DeviceService, 
-        private _utils: UtilsService,
         public dialog: MatDialog,
         private datePipe: DatePipe
     ) {}
@@ -93,6 +84,11 @@ export class MapComponent implements OnInit {
         this.getHiddenIconLHisto();
         this.getHiddenListHisto();
         this.suscriptRealTime(60000);
+
+        /* this.drawerLeft.backdropClick.subscribe(() => {
+            console.log('El cajón se cerró haciendo clic en la sombra exterior.');
+            // Aquí puedes realizar cualquier acción que desees cuando se cierra el cajón de esta manera.
+        }); */
         
         setTimeout(() => {
             this.initialMapDevsLoc();
@@ -105,10 +101,13 @@ export class MapComponent implements OnInit {
                 this.deviceSelected$.next(this.devicesFound[indexDv]);
                 this._map.drawDvsMainLoc([this.devicesFound[indexDv]]);
                 this.suscriptRealTime(10000);
+                console.log('Entro en 1');
                 this.details.open();
             } else {
                 this.currentDvId = -1;
+                this.suscriptRealTime(60000);
                 this.closeToggle(selectedDeviceId.toString());
+                console.log('Entro en 2');
             }
 
             this._map.clearMapHistory(selectedDeviceId.toString());
@@ -123,6 +122,7 @@ export class MapComponent implements OnInit {
     }
 
     suscriptRealTime(intervalTime: number) {
+        this.subscription?.unsubscribe();
         this.subscription = interval(intervalTime).subscribe(() => {
             this.initialMapDevsLoc();
         });
@@ -162,6 +162,17 @@ export class MapComponent implements OnInit {
             }
           }
         });
+    }
+
+    openFilterDevice() {
+        const isOpen = this.drawerLeft.opened;
+        if (isOpen) {
+            this.drawerLeft.close();
+            this.suscriptRealTime(60000);
+        } else {
+            this.subscription?.unsubscribe();
+            this.drawerLeft.open();
+        }
     }
       
     filterDevices() {
@@ -305,6 +316,7 @@ export class MapComponent implements OnInit {
         this._map.hiddenListHisto(true);
         this.currentDvId = -1;
         this._map.drawDvsMainLoc(this.devicesFound);
+        this.suscriptRealTime(60000);
         this.details.close();
     }
 
