@@ -92,7 +92,7 @@ export class MapComponent implements OnInit {
         this._map.drawMap('map');
         this.getHiddenIconLHisto();
         this.getHiddenListHisto();
-        this.resetFormFilter();
+        this.suscriptRealTime(60000);
         
         setTimeout(() => {
             this.initialMapDevsLoc();
@@ -104,12 +104,9 @@ export class MapComponent implements OnInit {
                 const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == selectedDeviceId);
                 this.deviceSelected$.next(this.devicesFound[indexDv]);
                 this._map.drawDvsMainLoc([this.devicesFound[indexDv]]);
-                this.suscriptRealTime();
+                this.suscriptRealTime(10000);
                 this.details.open();
             } else {
-                if (this.subscription && !this.subscription.closed) {
-                    this.subscription.unsubscribe(); // Pausar la suscripción
-                }
                 this.currentDvId = -1;
                 this.closeToggle(selectedDeviceId.toString());
             }
@@ -123,12 +120,10 @@ export class MapComponent implements OnInit {
         ).subscribe(([, currentValue]) => {
             this._map.drawDvsMainLoc([currentValue]);
         });
-          
-        this.maxDate = this._utils.getCurrentDateTime();
     }
 
-    suscriptRealTime() {
-        this.subscription = interval(10000).subscribe(() => {
+    suscriptRealTime(intervalTime: number) {
+        this.subscription = interval(intervalTime).subscribe(() => {
             this.initialMapDevsLoc();
         });
     }
@@ -310,7 +305,6 @@ export class MapComponent implements OnInit {
         this._map.hiddenListHisto(true);
         this.currentDvId = -1;
         this._map.drawDvsMainLoc(this.devicesFound);
-        this.subscription?.unsubscribe();
         this.details.close();
     }
 
@@ -341,22 +335,6 @@ export class MapComponent implements OnInit {
         }).subscribe((data: any) => {
             console.log(data);
         });
-    }
-
-    resetFormFilter() {
-        this.formFilter.reset({
-            startDateOnly: this._utils.currentDate(),
-            endDateOnly: this._utils.currentDate(),
-            isLocation: true,
-            isEvent: false,
-            withAlert: false
-        });
-    }
-
-    clearFilter() {
-        this.clearClassifiers();
-        this.resetFormFilter();
-        this.initialMapDevsLoc();
     }
 
     setHiddenListHisto() {

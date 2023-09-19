@@ -77,6 +77,8 @@ export class DownloadsCsvComponent implements OnInit {
   ngOnInit(): void {
     this.devicesFound = this.data?.devicesFound;
     this.classifiers = this.data?.classifiers;
+    this.resetFormFilter();
+    this.maxDate = this._utils.getCurrentDateTime();
   }
 
   selectTypeReport(typeRptIndex: number) {
@@ -85,6 +87,17 @@ export class DownloadsCsvComponent implements OnInit {
     } else {
       this.hiddenSlideToggle = false;
     }
+  }
+
+  resetFormFilter() {
+    this.formFilter.reset({
+        startDateOnly: this._utils.currentDate(),
+        endDateOnly: this._utils.currentDate(),
+        isLocation: true,
+        isEvent: false,
+        withAlert: false,
+        typeReport: 3
+    });
   }
 
   filterDevsCsv() {
