@@ -29,7 +29,6 @@ export class AssignTable implements OnInit, AfterViewInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['resorce']) {
             this.dataSource = new MatTableDataSource(this.resorce?.rows || this.resorce)
-            console.log(this.resorce)
         }
     }
     
@@ -50,6 +49,7 @@ export class AssignTable implements OnInit, AfterViewInit, OnChanges {
     shareElementChecked(event: any, data: any) {
         this.checked.emit(data)
     }
+
     createData(id: number) {
         let name = VEHICULES[Math.round(Math.random() * (VEHICULES.length - 1))];
         let gps = GPS[Math.round(Math.random() * (GPS.length - 1))];
@@ -64,7 +64,6 @@ export class AssignTable implements OnInit, AfterViewInit, OnChanges {
         }
     }
 }
-
 
 const VEHICULES = [
     "Dryvan",

@@ -40,11 +40,10 @@ export interface TimesData {
     CELULAR: string;
     PLACA: string;
     "TIPO VEHICULO": string;
-    "TIPO DE TIEMPO": string;
     FECHA: string;
-    HORA: string;
-    MINUTO: string;
-    SEGUNDO: string;
+    "TIEMPO DE OPERACION": string;
+    "TIEMPO DE RELENTI": string;
+    "TIEMPO DE MOVIMIENTO": string;
 }
 
   

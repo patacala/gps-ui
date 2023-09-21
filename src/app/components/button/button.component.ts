@@ -9,8 +9,9 @@ import { MatIconModule } from '@angular/material/icon';
     imports: [CommonModule, MatIconModule]
 })
 export class ButtonComponent implements OnInit {
-    @Input('type') typeButton: 'white' | 'blue' | 'green' = 'white';
+    @Input('type') typeButton: 'white' | 'blue' | 'green' | 'gray' = 'white';
     @Input() width: string = '50%'
+    @Input() bgColorHex: string = '';
     @Input() text!: string;
     @Input() icon!: string;
     @Input() disabled: boolean = false;
@@ -25,6 +26,7 @@ export class ButtonComponent implements OnInit {
     get assignStyles(): string {
         if (this.typeButton === 'blue') return 'text-white bg-gps-blue';
         if (this.typeButton === 'green') return 'text-white bg-gps-green';
+        if (this.typeButton === 'gray') return 'text-white bg-gps-gray';
         return 'text-black bg-white border-gps-blue border-1';
     }
 }

@@ -1,6 +1,6 @@
 <button 
 class="{{style}} rounded-2xl py-2 {{icon ? 'flex gap-1 justify-center' : ''}} {{ disabled ? 'opacity-75': '' }}" 
-[ngStyle]="{'width': width}"
+[ngStyle]="{'width': width, 'background': bgColorHex}"
 [disabled]="disabled">
  <mat-icon class="text-sm flex items-center justify-center" *ngIf="icon" style="height: 16px;">{{icon}}</mat-icon>
  {{text}}

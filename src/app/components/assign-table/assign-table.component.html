@@ -10,7 +10,7 @@
                             <span *ngIf="column.name">{{column.name}}</span>
                         </th>
                         <td mat-cell *matCellDef="let element">
-                            <mat-radio-button *ngIf="!column.name" color="primary" (change)="shareElementChecked($event, element)" [value]="element.devinuid"></mat-radio-button>
+                            <mat-radio-button *ngIf="!column.name" color="primary" [checked]="element.check" (change)="shareElementChecked($event, element)" [value]="element.devinuid"></mat-radio-button>
                             <span *ngIf="!['Estado'].includes(column.name)">
                                 {{element | tableValue: column.key}}
                             </span>

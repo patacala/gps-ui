@@ -23,7 +23,7 @@ export class TableHistoryComponent implements OnInit {
   dataSrcHistoSta: boolean = false;
   deviceFilter: HistoryData[]=[];
   dataSrcHistory = new MatTableDataSource<HistoryLoc>([]);
-  columnsHistory: string[] = ['dloclati', 'dloclong', 'daddress', 'dneighbh', 'devent', 'dspeed', 'delotime', 'delofesi', 'action'];
+  columnsHistory: string[] = ['delotime', 'devent', 'dspeed', 'daddress', 'delofesi', 'action'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   
@@ -106,4 +106,6 @@ export class TableHistoryComponent implements OnInit {
   saveDataInCSV(name: string, data: Array<any>): void {
     this._utils.saveDataInCSV(name, data);
   }
+
+  
 }

@@ -22,6 +22,7 @@ export class DashboardAdminComponent implements OnInit {
   permissions: any[]=[];
   data$!: Observable<any>
   hiddenListHisto: boolean = true;
+  sizeLevel: number = 0;
 
   constructor(
     private _vehicule: VehiculeService, 
@@ -44,8 +45,20 @@ export class DashboardAdminComponent implements OnInit {
       )
     );
     
-    this._map.getHiddenListHisto().subscribe((val: boolean) => {
-      this.hiddenListHisto = val;
+    this._map.getHiddenListHisto().subscribe((val: any) => {
+      console.log(val);
+      this.hiddenListHisto = val?.hiddenListHisto;
+      this.sizeLevel = val?.sizeControl;
     });
+  }
+
+  sizeControl() {
+    if (!this.hiddenListHisto && this.sizeLevel === 1) {
+      return 'animate-small';
+    } else if (!this.hiddenListHisto && this.sizeLevel === 2) {
+      return 'animate-median';
+    }
+
+    return '';
   }
 }

@@ -3,7 +3,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { InputComponent } from '../../input/input.component';
 import { MatIconModule } from '@angular/material/icon';
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import { DeviceService, IFormCreate, TRoles, UserService, VehiculeService } from '@services';
+import { DeviceService, IFormCreate, MapService, TRoles, UserService, VehiculeService } from '@services';
 import { CommonModule } from '@angular/common';
 import { AssignTable, ButtonComponent, SelectComponent, SnackAlert } from '@components';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -23,12 +23,17 @@ export class VehiculeModal implements OnInit {
     devices$!: Observable<any>
     tableContent = [{ key: 'select', name: '' }, { key: 'deviimei', name: 'ID' }, { key: 'devimark', name: 'Marca' }, { key: 'devimode', name: 'Modelo' }, { key: 'devistat', name: 'Estado' }]
     constructor(
-        private fb: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any,
-        private _vehicule: VehiculeService, private _snack: SnackAlert, private _device: DeviceService
+        private fb: FormBuilder, 
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        private _vehicule: VehiculeService, 
+        private _snack: SnackAlert, 
+        private _device: DeviceService,
+        private _map: MapService
     ) {}
 
     ngOnInit(): void {
         this.vehiculeGroup = this._INIT_FORM
+        console.log(this.data);
         if (this.data) {
             const vehicleId = this.data.carrnuid;
             this.vehiculeGroup.patchValue({
@@ -42,6 +47,8 @@ export class VehiculeModal implements OnInit {
         }
     }
 
+    
+
     get _INIT_FORM(): FormGroup {
         return this.fb.group({
             vehicleId: this.fb.nonNullable.control(null),
@@ -52,8 +59,20 @@ export class VehiculeModal implements OnInit {
         })
     }
 
+    deviceList() {
+        let userNuId = this.data?.usernuid;
+        if (!userNuId) userNuId = null;
+
+        this._map.getLocationDevices(userNuId).subscribe((data: any) => {
+            if (data && data?.response?.rows) {
+                const rowDevice = data.response.rows;
+                const resultRowDevs = this._device.rowsDeviceTable(rowDevice);
+                console.log(rowDevice);
+            }
+        });
+    }
+
     selectID(device: any) {
-        console.log(device);
         this.vehiculeGroup.get('selectedDeviceId')?.setValue(device.devinuid)
     }
 

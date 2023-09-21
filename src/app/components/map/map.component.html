@@ -76,9 +76,9 @@
                         [disabled]="validDisabledArray(checksDevices)">
                     </app-button>
                     <app-button 
-                        (click)="openDialogCsv()" text="Csv" type="green" 
+                        (click)="openDialogCsv()" text="Reportes" type="gray"
                         [disabled]="validDisabledArray(checksDevices)"
-                        width="110px" icon="cloud_download">
+                        width="110px" bgColorHex="#707B7C" icon="cloud_download">
                     </app-button>
                 </div>
             </aside>
@@ -92,8 +92,14 @@
                 <div class="aside-mark-left" (click)="openFilterDevice()" [style.visibility]="drawerLeft.opened ? 'visible':'hidden'"></div>
                 <div id="map" class="h-full w-full"></div>
 
-                <div class="op-cls-vlist" *ngIf="hiddenIconLHisto" (click)="setHiddenListHisto()">
-                    <mat-icon>view_list</mat-icon>
+                <div class="op-cls-vlist" *ngIf="hiddenIconLHisto">
+                    <div class="circle" (click)="setHiddenListHisto()">
+                        <mat-icon>view_list</mat-icon>
+                    </div>
+                    <div class="circle" (click)="setSizeControl()">
+                        <mat-icon class="icon" *ngIf="sizeLevel === 1">hdr_weak</mat-icon>
+                        <mat-icon class="icon" *ngIf="sizeLevel === 2">hdr_strong</mat-icon>
+                    </div>
                 </div>
             </div>
         </mat-drawer-content>
@@ -183,10 +189,19 @@
                         </div>
                         <div class="dt-vh-citem">
                             <div class="icon p-1">
+                                <mat-icon>show_chart</mat-icon>
+                            </div>
+                            <div class="value p-1 pl-2">
+                                <b class="sup-title">Kilometraje hoy:</b>
+                                <small class="sub-title">{{device?.today}} KM</small>
+                            </div>
+                        </div>
+                        <div class="dt-vh-citem">
+                            <div class="icon p-1">
                                 <mat-icon>swap_calls</mat-icon>
                             </div>
                             <div class="value p-1 pl-2">
-                                <b class="sup-title">Kilometraje:</b>
+                                <b class="sup-title">Kilometraje anterior:</b>
                                 <small class="sub-title">{{device?.kmdevi[0]?.kmcapt}} KM / {{device?.kmdevi[0]?.kmdiacapt}}</small>
                             </div>
                         </div>

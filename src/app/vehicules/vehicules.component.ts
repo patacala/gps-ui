@@ -24,6 +24,7 @@ export class VehiculesComponent implements OnInit {
   }
 
   openCreateVehicule(data?: any): void {
+    console.log(data);
     let modalRef = this.dialog.open(VehiculeModal, { width: '800px', data });
 
     let modalCloseSub = modalRef.componentInstance.close.subscribe(() => {

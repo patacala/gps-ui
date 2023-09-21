@@ -65,6 +65,7 @@ export class MapComponent implements OnInit {
     color: ThemePalette = 'primary';
     hiddenIconLHisto: boolean = false;
     hiddenListHisto: boolean = false;
+    sizeLevel: number = 1;
     showFiller = false;
     devices!: Array<any>;
     devicesFound: Array<any> = [];
@@ -306,7 +307,7 @@ export class MapComponent implements OnInit {
         this._device.clearHistoryLoc();
         this._map.clearMapHistory(key);
         this._map.hiddenIconLHisto(false);
-        this._map.hiddenListHisto(true);
+        this._map.hiddenListHisto({hiddenListHisto: true, sizeControl: this.sizeLevel});
     }
 
     closeToggle(key: string) {
@@ -314,7 +315,8 @@ export class MapComponent implements OnInit {
         this._device.clearHistoryLoc();
         this._map.clearMapHistory(key);
         this._map.hiddenIconLHisto(false);
-        this._map.hiddenListHisto(true);
+        this._map.hiddenListHisto({hiddenListHisto: true, sizeControl: this.sizeLevel});
+        
         this.currentDvId = -1;
         this._map.drawDvsMainLoc(this.devicesFound);
         this.suscriptRealTime(60000);
@@ -352,7 +354,12 @@ export class MapComponent implements OnInit {
 
     setHiddenListHisto() {
         this.hiddenListHisto = !this.hiddenListHisto;
-        this._map.hiddenListHisto(this.hiddenListHisto);
+        this._map.hiddenListHisto({hiddenListHisto: this.hiddenListHisto , sizeControl: this.sizeLevel});
+    }
+
+    setSizeControl() {
+        this.sizeLevel = this.sizeLevel === 1 ? 2:1;
+        this._map.hiddenListHisto({hiddenListHisto: this.hiddenListHisto , sizeControl: this.sizeLevel});
     }
 
     getHiddenIconLHisto() {
@@ -362,8 +369,10 @@ export class MapComponent implements OnInit {
     }
 
     getHiddenListHisto() {
-        this._map.getHiddenListHisto().subscribe((val: boolean) => {
-            this.hiddenListHisto = val;
+        this._map.getHiddenListHisto().subscribe((val: any) => {
+            console.log(val);
+            this.hiddenListHisto = val?.hiddenListHisto;
+            this.sizeLevel = val?.sizeControl;
         });
     }
 

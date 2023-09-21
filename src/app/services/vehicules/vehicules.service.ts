@@ -11,6 +11,7 @@ export class VehiculeService {
     private entityId: string = !!localStorage.getItem('entity') ? JSON.parse(localStorage.getItem('entity') as string).entinuid : null
     constructor(private http: HttpClient) { }
 
+    
     getVehicules() {
         this.http.get(`${this.root}/entity/${this.entityId}`).pipe(
             map(({ response }: any) => response)

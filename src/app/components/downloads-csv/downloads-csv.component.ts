@@ -240,7 +240,6 @@ export class DownloadsCsvComponent implements OnInit {
 
   processFilterDataTimes(datas: any): TimesData[] {
     const newTimes: TimesData[] = [];
-
     datas?.forEach((data: any) => {
       const imei = data.deviimei;
       const marca = data.devimark;
@@ -254,56 +253,43 @@ export class DownloadsCsvComponent implements OnInit {
       const timeRalenti = data.times.timeRalenti[0] || regTime;
       const timeMovement = data.times.timeMovement[0] || regTime;
 
-      if (timeOperation) {
-          newTimes.push({
-              IMEI: imei,
-              MARCA: marca,
-              MODELO: modelo,
-              CELULAR: celular,
-              PLACA: placa,
-              "TIPO VEHICULO": tipoVehiculo,
-              "TIPO DE TIEMPO": 'Tiempo de operación',
-              FECHA: timeOperation.date || '',
-              HORA: timeOperation.hours || '',
-              MINUTO: timeOperation.minutes || '',
-              SEGUNDO: timeOperation.seconds || ''
-          });
-      }
+      newTimes.push({
+        IMEI: imei,
+        MARCA: marca,
+        MODELO: modelo,
+        CELULAR: celular,
+        PLACA: placa,
+        "TIPO VEHICULO": tipoVehiculo,
+        FECHA: timeOperation.date || '',
+        "TIEMPO DE OPERACION": formatTime(timeOperation),
+        "TIEMPO DE RELENTI": formatTime(timeRalenti),
+        "TIEMPO DE MOVIMIENTO": formatTime(timeMovement),
+      });
+    });
 
-      if (timeRalenti) {
-          newTimes.push({
-              IMEI: imei,
-              MARCA: marca,
-              MODELO: modelo,
-              CELULAR: celular,
-              PLACA: placa,
-              "TIPO VEHICULO": tipoVehiculo,
-              "TIPO DE TIEMPO": 'Tiempo de relenti',
-              FECHA: timeRalenti.date || '',
-              HORA: timeRalenti.hours || '',
-              MINUTO: timeRalenti.minutes || '',
-              SEGUNDO: timeRalenti.seconds || ''
-          });
+    function formatTime(time: any) {
+      if (!time.hours && !time.minutes && !time.seconds) {
+        return '';
       }
-
-      if (timeMovement) {
-          newTimes.push({
-              IMEI: imei,
-              MARCA: marca,
-              MODELO: modelo,
-              CELULAR: celular,
-              PLACA: placa,
-              "TIPO VEHICULO": tipoVehiculo,
-              "TIPO DE TIEMPO": 'Tiempo de movimiento',
-              FECHA: timeMovement.date || '',
-              HORA: timeMovement.hours || '',
-              MINUTO: timeMovement.minutes || '',
-              SEGUNDO: timeMovement.seconds || ''
-          });
+    
+      const parts = [];
+    
+      if (time.hours) {
+        parts.push(time.hours + ' Horas');
       }
-  });
+    
+      if (time.minutes) {
+        parts.push(time.minutes + ' Minutos');
+      }
+    
+      if (time.seconds) {
+        parts.push(time.seconds + ' Segundos');
+      }
+    
+      return parts.join(' ');
+    }
 
-  return newTimes;
+    return newTimes;
   }
 
   // Exportar .csv

@@ -1,7 +1,7 @@
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +12,7 @@ export class MapService {
     private openDetailsLoc$: Subject<any> = new Subject<any>();
     private openInfoLoc$: Subject<any> = new Subject<any>();
     private hiddenIconLHisto$: Subject<any> = new Subject<any>();
-    private hiddenListHisto$: Subject<any> = new Subject<any>();
+    private hiddenListHisto$ = new BehaviorSubject<any>({hiddenListHisto: true, sizeControl: 1});
     private openInfoLocIds: any[]=[];
     private root: string = `${environment.apiUrl}`;
     private entityId: string = !!localStorage.getItem('entity') ? JSON.parse(localStorage.getItem('entity') as string).entinuid : null;
@@ -20,13 +20,15 @@ export class MapService {
     private mapDevs: Map<string, google.maps.Marker[]> = new Map();
     private rtOfLineH: Map<string, google.maps.Polyline[]> = new Map(); 
     private rtOfMarkersH: Map<string, google.maps.Marker[]> = new Map(); 
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient
+    ) {}
 
     drawMap(idElement: string) {
         const element = document.getElementById(idElement) as HTMLElement;
         this.map = new google.maps.Map(element, {
             center: { lat: 11.0041, lng: -74.8070 },
-            zoom: 5,
+            zoom: 12,
             disableDefaultUI: true,
             gestureHandling: 'greedy',
         });
@@ -415,8 +417,8 @@ export class MapService {
     gethiddenIconLHisto() {
         return this.hiddenIconLHisto$.asObservable();
     }
-
-    hiddenListHisto(status: boolean) {
+    
+    hiddenListHisto(status: {hiddenListHisto: boolean, sizeControl: number}) {
         this.hiddenListHisto$.next(status);
     }
 

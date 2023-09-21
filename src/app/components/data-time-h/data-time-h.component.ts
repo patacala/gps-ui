@@ -41,6 +41,7 @@ export class DataTimeHComponent implements OnInit {
 
   maxDate: string = '';
   color: ThemePalette = 'primary';
+  sizeLevel: number = 0;
   
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -58,6 +59,14 @@ export class DataTimeHComponent implements OnInit {
     this.formDates.startTime = this._utils.getDelayedShortTmNow(60);
     this.formDates.endTime = this._utils.getCurrentTimeShort();
     this.maxDate = this._utils.getCurrentDateTime();
+
+    this.getHiddenListHisto();
+  }
+
+  getHiddenListHisto() {
+    this._map.getHiddenListHisto().subscribe((val: any) => {
+        this.sizeLevel = val?.sizeControl;
+    });
   }
 
   searchHistoryDv() {
@@ -83,7 +92,7 @@ export class DataTimeHComponent implements OnInit {
             if (resultHistoryDevs?.length > 0) {
               this._device.setHistoryLoc(deviceId, filterDataDv, resultHistoryDevs);
               this._map.hiddenIconLHisto(true);
-              this._map.hiddenListHisto(false);
+              this._map.hiddenListHisto({hiddenListHisto: false, sizeControl: this.sizeLevel});
               this.dialogRef.close();
             } else {
               this._utils.matSnackBar('Sin resultados', 'ok');

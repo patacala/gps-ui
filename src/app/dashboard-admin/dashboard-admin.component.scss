@@ -2,12 +2,16 @@
     position: relative;
     display: grid;
     height: 100%;
-    grid-template-rows: calc(100% - 205px) 150px;
+    grid-template-rows: 101% 0px;
     grid-gap: 10px;
     transition: grid-template-rows 0.3s ease;
 
-    &.animate {
-        grid-template-rows: 101% 0px;
+    &.animate-small {
+        grid-template-rows: calc(100% - 205px) 150px;
+    }
+
+    &.animate-median {
+        grid-template-rows: calc(100% - 555px) 500px;
     }
 
     .btn-hidden {
