@@ -64,7 +64,6 @@ export class ConfigDeviceCommandsComponent implements OnInit {
           execparam: this.propSendCommand.execparam
       }).subscribe((data: any) => {
         this._utils.matSnackBar('Comando enviado.', 'ok');
-        this.dialogRef.close();
       });
     }
   }
