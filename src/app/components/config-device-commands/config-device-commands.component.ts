@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DialogRef } from '@angular/cdk/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
+import { UtilsService } from 'src/app/services/utils/utils.service';
 
 @Component({
   selector: 'app-config-device-commands',
@@ -28,7 +29,8 @@ export class ConfigDeviceCommandsComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: DialogRef<ConfigDeviceCommandsComponent>,
-    private _device: DeviceService
+    private _device: DeviceService,
+    private _utils: UtilsService
   ) {}
 
   ngOnInit(): void {
@@ -55,15 +57,14 @@ export class ConfigDeviceCommandsComponent implements OnInit {
   sendCommandDevice() {
     if (typeof(this.data.deviceId) !== undefined) {
       const deviceId = this.data.deviceId;
-      console.log(deviceId);
-      console.log(this.propSendCommand);
 
       this._device.executeParamDevice({
           stepexec: this.propSendCommand.stepExec,
           deviexec: deviceId,
           execparam: this.propSendCommand.execparam
       }).subscribe((data: any) => {
-          console.log(data);
+        this._utils.matSnackBar('Comando enviado.', 'ok');
+        this.dialogRef.close();
       });
     }
   }

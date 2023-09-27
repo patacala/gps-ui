@@ -51,7 +51,6 @@ export class AddOptionModal implements OnInit {
 
     editOption() {
         this._classifier.updateChild(this.data.clvanuid, { name: this.childForm.get('name')?.value }).subscribe((val: any) => {
-            console.log(val)
             if (val.ok) {
                 this._snack.showSuccess('Option editado correctamente');
                 this.closeModal();

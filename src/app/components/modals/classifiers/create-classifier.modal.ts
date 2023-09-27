@@ -40,7 +40,6 @@ export class CreateClassifiers implements OnInit {
     }
 
     updatedClassifier() {
-        console.log(this.name.value)
         this._classifier.updateClassifier(this.data.clasnuid, { name: this.name.value, status: this.status.value }).subscribe((val: any) => {
             if (val.ok) {
                 this._snack.showSuccess('Clasificador editado correctamente');

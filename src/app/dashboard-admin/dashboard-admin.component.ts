@@ -46,7 +46,6 @@ export class DashboardAdminComponent implements OnInit {
     );
     
     this._map.getHiddenListHisto().subscribe((val: any) => {
-      console.log(val);
       this.hiddenListHisto = val?.hiddenListHisto;
       this.sizeLevel = val?.sizeControl;
     });

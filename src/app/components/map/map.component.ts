@@ -87,11 +87,6 @@ export class MapComponent implements OnInit {
         this.getHiddenIconLHisto();
         this.getHiddenListHisto();
         this.suscriptRealTime(60000);
-
-        /* this.drawerLeft.backdropClick.subscribe(() => {
-            console.log('El cajón se cerró haciendo clic en la sombra exterior.');
-            // Aquí puedes realizar cualquier acción que desees cuando se cierra el cajón de esta manera.
-        }); */
         
         setTimeout(() => {
             this.initialMapDevsLoc();
@@ -370,7 +365,6 @@ export class MapComponent implements OnInit {
 
     getHiddenListHisto() {
         this._map.getHiddenListHisto().subscribe((val: any) => {
-            console.log(val);
             this.hiddenListHisto = val?.hiddenListHisto;
             this.sizeLevel = val?.sizeControl;
         });
