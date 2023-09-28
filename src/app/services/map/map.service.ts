@@ -49,7 +49,8 @@ export class MapService {
             const location = element?.deviloca && element.deviloca.length > 0 ? element?.deviloca[0]:[];
         
             if (location && locId) {
-                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location);
+                location.plate = element?.carrdevi?.carrier?.carrlice ? element?.carrdevi?.carrier?.carrlice: 'Sin placa';
+                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, true);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
@@ -76,7 +77,7 @@ export class MapService {
             const location = element?.locations[0];
             
             if (location && locId) {
-                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location);
+                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, true);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
@@ -121,18 +122,18 @@ export class MapService {
             if (index == 0) {
                 if (keyTypeName === 'position') {
                     point.typeOfTour = 'Ultima ubicación.';
-                    markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-end.png', 375, 469, point);
+                    markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-end.png', 375, 469, point, false);
                 }else if (keyTypeName === 'event' || keyTypeName === 'alarm') {
                     point.typeOfTour = keywFunc;
-                    markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point);
+                    markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point, false);
                 }
             } else if (index == points.length - 1) {
                 if (keyTypeName === 'position') {
                     point.typeOfTour = 'Primera ubicación.';
-                    markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-start.png', 375, 469, point);
+                    markerLoc = this.drawIconTag(locId.toString(), 'assets/', 'location-start.png', 375, 469, point, false);
                 } else if (keyTypeName === 'event' || keyTypeName === 'alarm') {
                     point.typeOfTour = keywFunc;
-                    markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point);
+                    markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point, false);
                 }
             } else {
                 if (keyTypeName === 'position') {
@@ -150,7 +151,7 @@ export class MapService {
                 
                 if (keyTypeName === 'event' || keyTypeName === 'alarm') {
                     point.typeOfTour = keywFunc;
-                    markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point);
+                    markerEvent = this.drawIconTag(locId.toString(), keyIconRoute, keyIconName, 375, 469, point, false);
                 }
             }
             
@@ -243,23 +244,47 @@ export class MapService {
         return marker;
     }
 
-    drawIconTag(id: string, nameRoute: string, nameIcon: string, width: number, height: number, position: any) {
+    drawIconTag(id: string, nameRoute: string, nameIcon: string, width: number, height: number, position: any, labelBoolean: boolean) {
         const wayPoint = new google.maps.LatLng(Number(position.delolati), Number(position.delolong));
         const desiredWidth = 25;
         const aspectRatio = width / height;
         const desiredHeight = desiredWidth / aspectRatio;
-        
-        const marker = new google.maps.Marker({
-            position: wayPoint,
-            map: this.map,
-            icon: {
-                url: `../../${nameRoute}${nameIcon}`,
-                scaledSize: new google.maps.Size(desiredWidth, desiredHeight),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(desiredWidth / 2, desiredHeight)
-            },
-        });
+        let labelText = '';
+        let markerObject = {};
+       
+        if (labelBoolean) {
+            labelText = position.plate || 'Sin placa';
+            markerObject = {
+                position: wayPoint,
+                map: this.map,
+                label: {
+                    text: labelText,
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                },
+                icon: {
+                    url: `../../${nameRoute}${nameIcon}`,
+                    scaledSize: new google.maps.Size(desiredWidth, desiredHeight),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(desiredWidth / 2, desiredHeight),
+                    labelOrigin: new google.maps.Point(12, -7)
+                },
+            };
+        } else {
+            markerObject = {
+                position: wayPoint,
+                map: this.map,
+                icon: {
+                    url: `../../${nameRoute}${nameIcon}`,
+                    scaledSize: new google.maps.Size(desiredWidth, desiredHeight),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(desiredWidth / 2, desiredHeight),
+                    labelOrigin: new google.maps.Point(12, -7)
+                },
+            };
+        }
 
+        const marker = new google.maps.Marker(markerObject);
         marker.set('id', id);
         marker.set('point', position);
         return marker;
