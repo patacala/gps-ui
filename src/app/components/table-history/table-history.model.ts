@@ -8,6 +8,8 @@ export interface HistoryLoc {
     delotime: string;
     delofesi: string;
     keywfunc: string;
+    deloacc: string;
+    delodoor: string;
 }
 
 export interface HistoryData {
@@ -19,4 +21,14 @@ export interface HistoryData {
     "FECHA SISTEMA": string;
     "FECHA REGISTRO": string;
     VELOCIDAD: string
+}
+
+export interface HistoryData2 {
+    'FECHA GPS': string;
+    ACC: string;
+    PUERTA: string;
+    EVENTO: string;
+    VELOCIDAD: string;
+    DIRECCION: string;
+    'FECHA SISTEMA': string;
 }

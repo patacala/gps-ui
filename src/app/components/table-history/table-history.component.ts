@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { HistoryLoc, HistoryData } from './table-history.model';
+import { HistoryLoc, HistoryData2 } from './table-history.model';
 import { DeviceService, MapService } from '@services';
 import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -21,9 +21,9 @@ export class TableHistoryComponent implements OnInit {
   deviceId: number = -1;
   openInfoLoc: []=[];
   dataSrcHistoSta: boolean = false;
-  deviceFilter: HistoryData[]=[];
+  deviceFilter: HistoryData2[]=[];
   dataSrcHistory = new MatTableDataSource<HistoryLoc>([]);
-  columnsHistory: string[] = ['delotime', 'devent', 'dspeed', 'daddress', 'delofesi', 'action'];
+  columnsHistory: string[] = ['delotime', 'deloacc', 'delodoor', 'devent', 'dspeed', 'daddress', 'delofesi', 'action'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   
@@ -85,18 +85,17 @@ export class TableHistoryComponent implements OnInit {
   }
 
   processFilterData(datas: any) {
-    const newArray: HistoryData[]=[];
+    const newArray: HistoryData2[]=[];
 
     datas?.forEach((location: any) => {
-        newArray.push({
-          LATITUD: location.delolati,
-          LONGITUD: location.delolong,
-          DIRECCION: location.delodire,
-          BARRIO: location.delobarri,
-          EVENTO: location.keywfunc,
-          "FECHA SISTEMA": location.delofesi,
-          "FECHA REGISTRO": this.formatTimestamp(location.delotime),
-          VELOCIDAD: location.delospee,
+      newArray.push({
+        'FECHA GPS': this.formatTimestamp(location.delotime),
+        ACC: location.deloacc === '1' ? 'Encendido':'Apagado',
+        PUERTA: location.delodoor === '1' ? 'Abierta':'Cerrada',
+        EVENTO: location.keywfunc,
+        VELOCIDAD: location.delospee,
+        DIRECCION: location.delodire,
+        "FECHA SISTEMA": location.delofesi,
       });
     });
     return newArray;  
@@ -106,6 +105,4 @@ export class TableHistoryComponent implements OnInit {
   saveDataInCSV(name: string, data: Array<any>): void {
     this._utils.saveDataInCSV(name, data);
   }
-
-  
 }

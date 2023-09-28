@@ -46,13 +46,15 @@ export class ConfigDeviceCommandsComponent implements OnInit {
   }
 
   selectCommand(commandId: number) {
-    const paramActive = this.AvaCommands.includes((avaCommand: any) => { avaCommand.stepparam == 1 && avaCommand.stepexec == commandId });
+    // Verificar si existe algún elemento en AvaCommands que cumple con las condiciones dadas
+    const paramActive = this.AvaCommands.some(avaCommand => avaCommand.stepparam === 1 && avaCommand.stepexec === commandId);
     this.paramTextActive = paramActive;
-
-    if (this.paramTextActive) {
+  
+    if (!this.paramTextActive) {
       this.propSendCommand.execparam = null;
     }
   }
+  
   
   sendCommandDevice() {
     if (typeof(this.data.deviceId) !== undefined) {

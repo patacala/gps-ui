@@ -17,16 +17,16 @@
         </ng-container>
         
         <!-- Dloclati Column -->
-        <!-- <ng-container matColumnDef="dloclati">
-            <th mat-header-cell *matHeaderCellDef>LATITUD</th>
-            <td mat-cell *matCellDef="let element">{{element.delolati}}</td>
-        </ng-container> -->
+        <ng-container matColumnDef="deloacc">
+            <th mat-header-cell *matHeaderCellDef>ACC</th>
+            <td mat-cell *matCellDef="let element">{{element.deloacc === '1' ? 'Encendido':'Apagado'}}</td>
+        </ng-container>
     
         <!-- Dloclong Column -->
-        <!-- <ng-container matColumnDef="dloclong">
-            <th mat-header-cell *matHeaderCellDef>LONGITUD</th>
-            <td mat-cell *matCellDef="let element">{{element.delolong}}</td>
-        </ng-container> -->
+        <ng-container matColumnDef="delodoor">
+            <th mat-header-cell *matHeaderCellDef>PUERTA</th>
+            <td mat-cell *matCellDef="let element">{{element.delodoor === '1' ? 'Abierta':'Cerrada'}}</td>
+        </ng-container>
 
         <!-- Dneighbh Column -->
         <!-- <ng-container matColumnDef="dneighbh">

@@ -120,7 +120,9 @@ export class DeviceService {
               keytypenomb: location.keywords.keytypenomb, 
               keywfunc: location.keywords.keywfunc,
               keyiconame: location.keywords.keyiconame,
-              keyicoroute: location.keywords.keyicoroute
+              keyicoroute: location.keywords.keyicoroute,
+              deloacc: location.deloacc,
+              delodoor: location.delodoor
             };
           });
 
