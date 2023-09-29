@@ -77,7 +77,7 @@ export class MapService {
             const location = element?.locations[0];
             
             if (location && locId) {
-                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, true);
+                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, false);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
