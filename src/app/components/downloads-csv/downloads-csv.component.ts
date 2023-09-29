@@ -130,16 +130,27 @@ export class DownloadsCsvComponent implements OnInit {
   }
 
   filterDevsCsv() {
+    const typeReport = this.formFilter.typeReport;
+    let date = {};
+    if (typeReport === 1 || typeReport === 2 || typeReport === 4) {
+      date = {
+        startDate: this.formFilter.startDateOnly,
+        endDate: this.formFilter.endDateOnly
+      }
+    } else {
+      date = {
+        startDate: this.applyTimeDate(this.formFilter.startDateOnly, this.formFilter.startTime),
+        endDate: this.applyTimeDate(this.formFilter.endDateOnly, this.formFilter.endTime)
+      }
+    }
+
     const filterDataReport = {
         classifiers: this.classifiers, 
         deviceIds: this.devicesFound,
         isLocation: this.formFilter.isLocation,
         isEvent: this.formFilter.isEvent,
         isAlarm: this.formFilter.isEvent,
-        date: {
-            startDate: this.applyTimeDate(this.formFilter.startDateOnly, this.formFilter.startTime),
-            endDate: this.applyTimeDate(this.formFilter.endDateOnly, this.formFilter.endTime)
-        },
+        date,
         typeReport: this.formFilter.typeReport
     };
 

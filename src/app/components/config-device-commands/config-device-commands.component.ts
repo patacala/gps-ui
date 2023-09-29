@@ -9,11 +9,18 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { UtilsService } from 'src/app/services/utils/utils.service';
+import { LoadAllComponent } from '../load-all/load-all.component';
+import { LoadService } from 'src/app/services/load/load.service';
 
 @Component({
   selector: 'app-config-device-commands',
   standalone: true,
-  imports: [FormsModule, MatSelectModule, NgForOf, MatInputModule, ButtonComponent, MatIconModule, NgIf],
+  imports: [
+    FormsModule, MatSelectModule, 
+    NgForOf, MatInputModule, 
+    ButtonComponent, MatIconModule, 
+    NgIf, LoadAllComponent
+  ],
   templateUrl: './config-device-commands.component.html',
   styleUrls: ['./config-device-commands.component.scss']
 })
@@ -30,7 +37,8 @@ export class ConfigDeviceCommandsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: DialogRef<ConfigDeviceCommandsComponent>,
     private _device: DeviceService,
-    private _utils: UtilsService
+    private _utils: UtilsService,
+    private _loadService: LoadService
   ) {}
 
   ngOnInit(): void {
@@ -55,16 +63,17 @@ export class ConfigDeviceCommandsComponent implements OnInit {
     }
   }
   
-  
   sendCommandDevice() {
     if (typeof(this.data.deviceId) !== undefined) {
       const deviceId = this.data.deviceId;
-
+      this._loadService.setActiveBtnLoad('sendCommandDevice');
+      
       this._device.executeParamDevice({
           stepexec: this.propSendCommand.stepExec,
           deviexec: deviceId,
           execparam: this.propSendCommand.execparam
       }).subscribe((data: any) => {
+        this._loadService.clearActiveBtnLoad();
         this._utils.matSnackBar('Comando enviado.', 'ok');
       });
     }
@@ -72,5 +81,11 @@ export class ConfigDeviceCommandsComponent implements OnInit {
 
   dialogClose() {
     this.dialogRef.close();
+  }
+
+  getBtnLoadActive(nameBtnLoad: string) {
+    const currentNameBtnLoad = this._loadService.getActiveBtnLoad();
+    if (nameBtnLoad === currentNameBtnLoad) return true;
+    return false;
   }
 }

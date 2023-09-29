@@ -22,8 +22,10 @@
     <div class="commandCenter">
         <app-button 
         (click)="sendCommandDevice()"
+        *ngIf="!getBtnLoadActive('sendCommandDevice')"
         text="Ejecutar" type="blue"
         width="120px" icon="settings_remote">
         </app-button>
+        <app-load-all *ngIf="getBtnLoadActive('sendCommandDevice')"></app-load-all>
     </div>
 </div>
