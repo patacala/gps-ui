@@ -88,12 +88,15 @@ export class MapComponent implements OnInit {
         this.getHiddenIconLHisto();
         this.getHiddenListHisto();
         this.suscriptRealTime(60000);
+        this._map.showPlates = this.showPlates;
         
         setTimeout(() => {
             this.initialMapDevsLoc();
         }, 100);
 
         this._map.getDeviceObs().subscribe((selectedDeviceId: number) => {
+            this._map.showPlates = this.showPlates;
+
             if (this.currentDvId !== selectedDeviceId) {
                 this.currentDvId = selectedDeviceId;
                 const indexDv = this.devicesFound.findIndex(dv => dv.devinuid == selectedDeviceId);
@@ -126,6 +129,7 @@ export class MapComponent implements OnInit {
     }
 
     initialMapDevsLoc() {
+        this._map.showPlates = this.showPlates;
         this._map.getLocationDevices(null).subscribe((data: any) => {
           if (data && data?.response?.rows) {
             this.rowsDevice = data.response.rows;
@@ -173,6 +177,7 @@ export class MapComponent implements OnInit {
     }
       
     filterDevices() {
+        this._map.showPlates = this.showPlates;
         // Obtener los IDs de los dispositivos seleccionados
         const selectedDeviceIds = this.checksDevices.map(device => device.devinuid);
         const filteredDevices = this.rowsDevice.filter((device: { devinuid: number; }) => selectedDeviceIds.includes(device.devinuid));
@@ -307,6 +312,7 @@ export class MapComponent implements OnInit {
     }
 
     closeToggle(key: string) {
+        this._map.showPlates = this.showPlates;
         this._map.clearOpenInfoLoc();
         this._device.clearHistoryLoc();
         this._map.clearMapHistory(key);

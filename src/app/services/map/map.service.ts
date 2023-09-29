@@ -19,7 +19,9 @@ export class MapService {
     private mapDevsFilter: Map<string, google.maps.Marker[]> = new Map();
     private mapDevs: Map<string, google.maps.Marker[]> = new Map();
     private rtOfLineH: Map<string, google.maps.Polyline[]> = new Map(); 
-    private rtOfMarkersH: Map<string, google.maps.Marker[]> = new Map(); 
+    private rtOfMarkersH: Map<string, google.maps.Marker[]> = new Map();
+    showPlates: boolean = false;
+
     constructor(
         private http: HttpClient
     ) {}
@@ -50,7 +52,7 @@ export class MapService {
         
             if (location && locId) {
                 location.plate = element?.carrdevi?.carrier?.carrlice ? element?.carrdevi?.carrier?.carrlice: 'Sin placa';
-                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, false);
+                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, this.showPlates);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
@@ -77,7 +79,7 @@ export class MapService {
             const location = element?.locations[0];
             
             if (location && locId) {
-                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, false);
+                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, this.showPlates);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
@@ -449,5 +451,9 @@ export class MapService {
 
     getHiddenListHisto() {
         return this.hiddenListHisto$.asObservable();
+    }
+
+    setShowPlates(viewPlate: boolean) {
+        this.showPlates = viewPlate;    
     }
 }
