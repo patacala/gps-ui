@@ -69,12 +69,12 @@ export class DownloadsCsvComponent implements OnInit {
     },
     {
       tCsvRrtId: 4,
-      tCsvRrtText: 'Kilometraje por día',
+      tCsvRrtText: 'Kilometros por días',
       tCsvRrtSlide: false
     },
     {
       tCsvRrtId: 5,
-      tCsvRrtText: 'Kilometraje por día y tiempo',
+      tCsvRrtText: 'Kilometros por días y tiempo',
       tCsvRrtSlide: false
     }
   ];
@@ -82,7 +82,7 @@ export class DownloadsCsvComponent implements OnInit {
   hiddenSlideToggle: boolean = true;
   hiddenTimeReg: boolean = true;
   devicesRTimes: TimesData[]=[];
-  devicesRPross: [LocationData[], KmTraveled[]]=[[],[]];
+  devicesRPross: LocationData[]=[];
   devicesFilter: LocationData[]=[];
   kmTraveled: KmTraveled[]=[];
   
@@ -130,17 +130,22 @@ export class DownloadsCsvComponent implements OnInit {
   }
 
   filterDevsCsv() {
-    const typeReport = this.formFilter.typeReport;
+    let typeReport = this.formFilter.typeReport;
     let date = {};
+
     if (typeReport === 1 || typeReport === 2 || typeReport === 4) {
       date = {
-        startDate: this.formFilter.startDateOnly,
-        endDate: this.formFilter.endDateOnly
+        startDate: this.formFilter.startDateOnly?.toISOString().slice(0, 10),
+        endDate: this.formFilter.endDateOnly?.toISOString().slice(0, 10)
       }
     } else {
       date = {
         startDate: this.applyTimeDate(this.formFilter.startDateOnly, this.formFilter.startTime),
         endDate: this.applyTimeDate(this.formFilter.endDateOnly, this.formFilter.endTime)
+      }
+
+      if (typeReport === 5) {
+        typeReport = 4;
       }
     }
 
@@ -151,7 +156,7 @@ export class DownloadsCsvComponent implements OnInit {
         isEvent: this.formFilter.isEvent,
         isAlarm: this.formFilter.isEvent,
         date,
-        typeReport: this.formFilter.typeReport
+        typeReport
     };
 
     this._loadService.setActiveBtnLoad('filterDevsCsv');
@@ -159,6 +164,7 @@ export class DownloadsCsvComponent implements OnInit {
         map((devices: any) => devices.response)
     ).subscribe((devices: any) => {
       this._loadService.clearActiveBtnLoad();
+
       if (devices) {
           const typeReport = this.formFilter.typeReport;
           
@@ -173,17 +179,32 @@ export class DownloadsCsvComponent implements OnInit {
             this.devicesRPross = this.processFilterData(devices); 
             if (typeReport === 2) {
               this.saveDataInCSV([
-                {name:'ultima posicion', data: this.devicesRPross[0]},
+                {name:'ultima posicion', data: this.devicesRPross},
               ]);
             }
 
             if (typeReport === 3) {
               this.saveDataInCSV([
-                {name:'dispositivos', data: this.devicesRPross[0]},
-                {name:'kilometros recorridos', data: this.devicesRPross[1]}
+                {name:'historial', data: this.devicesRPross}
               ]);
             }
-        }
+          }
+
+          if (typeReport === 4 || typeReport === 5) {
+            this.kmTraveled = this.processFilterDtKmTrav(devices);
+
+            if (typeReport === 4) {
+              this.saveDataInCSV([
+                {name:'Kilometros recorridos días', data: this.kmTraveled},
+              ]);
+            }
+
+            if (typeReport === 5) {
+              this.saveDataInCSV([
+                {name:'Kilometros recorridos días y tiempo', data: this.kmTraveled},
+              ]);
+            }
+          }
       }
     });
   }
@@ -208,10 +229,8 @@ export class DownloadsCsvComponent implements OnInit {
     return this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss') || '';  
   }
 
-  processFilterData(datas: any): [LocationData[], KmTraveled[]] {
+  processFilterData(datas: any): LocationData[] {
     const newLocData: LocationData[] = [];
-    const newKmTraveled: KmTraveled[] = [];
-
     const mappedLocData = datas?.map((data:any) => ({
         deviimei: data.deviimei,
         devimark: data.devimark,
@@ -231,19 +250,6 @@ export class DownloadsCsvComponent implements OnInit {
         }
     }));
     
-    const mappedKmTraveled = datas?.map((data:any) => ({
-        deviimei: data.deviimei,
-        devimark: data.devimark,
-        devimode: data.devimode,
-        deviphon: data.deviphon,
-        carrlice: data.carrdevi?.carrier?.carrlice,
-        carrtype: data.carrdevi?.carrier?.carrtype,
-        kmTraveled: {
-            kmdiacapt: data.kmdevi.map((km: any) => km.kmdiacapt),
-            kmcapt: data.kmdevi.map((km: any) => km.kmcapt)
-        }
-    }));
-
     mappedLocData?.forEach((row: any) => {
         const locations = row.locations;
         locations.delolati.forEach((lat: any, index: number) => {
@@ -266,23 +272,43 @@ export class DownloadsCsvComponent implements OnInit {
         });
     });
 
+    return newLocData;  
+  }
+
+  processFilterDtKmTrav(datas: any): KmTraveled[] {
+    const newKmTraveled: KmTraveled[] = [];
+
+    const mappedKmTraveled = datas?.map((data:any) => ({
+      deviimei: data.deviimei,
+      devimark: data.devimark,
+      devimode: data.devimode,
+      deviphon: data.deviphon,
+      carrlice: data.carrdevi?.carrier?.carrlice,
+      carrtype: data.carrdevi?.carrier?.carrtype,
+      kmTraveled: {
+        kmdiacapt: data.kmTotalPerDay.map((km: any) => km.date),
+        kmcapt: data.kmTotalPerDay.map((km: any) => km.value)
+      }
+    }));
+
     mappedKmTraveled?.forEach((row: any) => {
-        const kmTraveled = row.kmTraveled;
-        kmTraveled.kmdiacapt.forEach((kmDayCapt: any, index: number) => {
-            newKmTraveled.push({
-                IMEI: row.deviimei,
-                MARCA: row.devimark,
-                MODELO: row.devimode,
-                CELULAR: row.deviphon,
-                PLACA: row.carrlice,
-                "TIPO VEHICULO": row.carrtype,
-                "KM DÍA": kmDayCapt,
-                "KM GENERADO": kmTraveled.kmcapt[index]
-            });
-        });
+          const kmTraveled = row.kmTraveled;
+
+          kmTraveled.kmdiacapt.forEach((kmDayCapt: any, index: number) => {
+              newKmTraveled.push({
+                  IMEI: row.deviimei,
+                  MARCA: row.devimark,
+                  MODELO: row.devimode,
+                  CELULAR: row.deviphon,
+                  PLACA: row.carrlice,
+                  "TIPO VEHICULO": row.carrtype,
+                  "KM DÍA": kmDayCapt,
+                  "KM GENERADO": kmTraveled.kmcapt[index]
+              });
+          });
     });
 
-    return [newLocData, newKmTraveled];  
+    return newKmTraveled;
   }
 
   processFilterDataTimes(datas: any): TimesData[] {

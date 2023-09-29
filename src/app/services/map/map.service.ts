@@ -50,7 +50,7 @@ export class MapService {
         
             if (location && locId) {
                 location.plate = element?.carrdevi?.carrier?.carrlice ? element?.carrdevi?.carrier?.carrlice: 'Sin placa';
-                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, true);
+                marker = this.drawIconTag(locId.toString(), 'assets/', 'location-current.png', 375, 469, location, false);
                 marker.addListener('click', () => {
                     const markerId = marker.get('id');
                     this.openDetailsLoc$.next(markerId);
