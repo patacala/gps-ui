@@ -24,6 +24,9 @@ export interface HistoryData {
 }
 
 export interface HistoryData2 {
+    IMEI: string;
+    PLACA: string;
+    CELULAR: string;
     'FECHA GPS': string;
     ACC: string;
     PUERTA: string;

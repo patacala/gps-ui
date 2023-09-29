@@ -89,6 +89,9 @@ export class TableHistoryComponent implements OnInit {
 
     datas?.forEach((location: any) => {
       newArray.push({
+        IMEI: location.deviimei,
+        PLACA: location.deviplate,
+        CELULAR: location.deviphone,
         'FECHA GPS': this.formatTimestamp(location.delotime),
         ACC: location.deloacc === '1' ? 'Encendido':'Apagado',
         PUERTA: location.delodoor === '1' ? 'Abierta':'Cerrada',

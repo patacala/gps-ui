@@ -83,7 +83,6 @@ export class DeviceService {
         let list = this.device$.value;
 
         let item = list.rows.findIndex(({ devinuid }: any) => devinuid == value.devinuid);
-        console.log(item)
         list.rows[item] = value;
 
         this.device$.next({ ...list });
@@ -106,9 +105,12 @@ export class DeviceService {
 
     public setHistoryLoc(deviceId: number, filterDataDv: any, locations: any) {
         if (locations && locations.length > 0) {
-            
+          const deviInfoObject = locations.deviInfoObject;
           const historyLocs = locations.map((location: any) => {
             return {
+              deviimei: deviInfoObject.imei,
+              deviplate: deviInfoObject.plate,
+              deviphone: deviInfoObject.phone,
               delonuid: Number(location.delonuid),
               delolati: Number(location.delolati),
               delolong: Number(location.delolong),

@@ -47,9 +47,11 @@
   <div class="flex justify-center">
     <app-button 
       (click)="searchHistoryDv()"
+      *ngIf="!getBtnLoadActive('searchHistoryDv')"
       text="Buscar" type="blue" 
       width="160px" icon="search">
     </app-button>
+    <app-load-all *ngIf="getBtnLoadActive('searchHistoryDv')"></app-load-all>
   </div>
 </div>
 

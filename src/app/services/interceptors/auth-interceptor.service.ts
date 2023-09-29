@@ -1,13 +1,18 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
-import { SnackAlert } from '@components'
+import { catchError, Observable, throwError } from 'rxjs';
+import { SnackAlert } from '@components';
+import { LoadService } from '../load/load.service';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptorService implements HttpInterceptor {
   snackAlert = inject(SnackAlert);
-  constructor() { }
+
+  constructor(
+    private _loadService: LoadService
+  ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
@@ -26,10 +31,10 @@ export class AuthInterceptorService implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError(({ error }) => {
+        this._loadService.clearActiveBtnLoad();
         this.snackAlert.showError(error.message)
         return throwError(() => new Error(error?.message))
       }),
     )
   }
-
 }

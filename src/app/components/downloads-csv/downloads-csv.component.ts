@@ -1,6 +1,6 @@
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
@@ -15,6 +15,9 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { KmTraveled, LocationData, TimesData } from '../map/map.model';
 import { UtilsService } from 'src/app/services/utils/utils.service';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { LoadService } from 'src/app/services/load/load.service';
+import { LoadAllComponent } from '../load-all/load-all.component';
 
 @Component({
   selector: 'app-downloads-csv',
@@ -24,7 +27,8 @@ import { UtilsService } from 'src/app/services/utils/utils.service';
     MatInputModule, MatSlideToggleModule,
     MatDatepickerModule, MatNativeDateModule,
     DatePipe, MatFormFieldModule, MatSelectModule, NgIf,
-    NgForOf, ButtonComponent, MatIconModule
+    NgForOf, ButtonComponent, MatIconModule,
+    NgxMaterialTimepickerModule, LoadAllComponent
   ],
   providers: [DatePipe],
   templateUrl: './downloads-csv.component.html',
@@ -33,14 +37,17 @@ import { UtilsService } from 'src/app/services/utils/utils.service';
 
 export class DownloadsCsvComponent implements OnInit {
   maxDate: string = '';
-  formFilter = new FormGroup({
-     startDateOnly: new FormControl<Date | null>(new Date(), Validators.required),
-     endDateOnly: new FormControl<Date | null>(new Date(), Validators.required),
-     isLocation: new FormControl<Boolean | true>(true),
-     isEvent: new FormControl<Boolean | false>(false),
-     withAlert: new FormControl<Boolean | false>(false),
-     typeReport: new FormControl<Number | -1>(3, Validators.required)
- });
+  formFilter = {
+    startDateOnly: new Date(),
+    endDateOnly: new Date(),
+    startTime: '',
+    endTime: '',
+    isLocation: true,
+    isEvent: false,
+    withAlert: false,
+    typeReport: 3
+  };
+
  color: ThemePalette = 'primary';
  devicesFound!: Array<any>;
  classifiers!: Array<any>;
@@ -59,9 +66,21 @@ export class DownloadsCsvComponent implements OnInit {
       tCsvRrtId: 3,
       tCsvRrtText: 'Historico',
       tCsvRrtSlide: true
+    },
+    {
+      tCsvRrtId: 4,
+      tCsvRrtText: 'Kilometraje por día',
+      tCsvRrtSlide: false
+    },
+    {
+      tCsvRrtId: 5,
+      tCsvRrtText: 'Kilometraje por día y tiempo',
+      tCsvRrtSlide: false
     }
   ];
+
   hiddenSlideToggle: boolean = true;
+  hiddenTimeReg: boolean = true;
   devicesRTimes: TimesData[]=[];
   devicesRPross: [LocationData[], KmTraveled[]]=[[],[]];
   devicesFilter: LocationData[]=[];
@@ -72,6 +91,7 @@ export class DownloadsCsvComponent implements OnInit {
     private dialogRef: DialogRef<DownloadsCsvComponent>,
     private _classifier: ClassifierService,
     private _utils: UtilsService,
+    private _loadService: LoadService,
     private datePipe: DatePipe
   ) {}
 
@@ -88,63 +108,79 @@ export class DownloadsCsvComponent implements OnInit {
     } else {
       this.hiddenSlideToggle = false;
     }
+
+    if (typeRptIndex === 3 || typeRptIndex === 5) {
+      this.hiddenTimeReg = true;
+    } else {
+      this.hiddenTimeReg = false;
+    }
   }
 
   resetFormFilter() {
-    this.formFilter.reset({
-        startDateOnly: this._utils.currentDate(),
-        endDateOnly: this._utils.currentDate(),
-        isLocation: true,
-        isEvent: false,
-        withAlert: false,
-        typeReport: 3
-    });
+    this.formFilter = {
+      startDateOnly: this._utils.currentDate(),
+      endDateOnly: this._utils.currentDate(),
+      startTime: this._utils.getDelayedShortTmNow(60),
+      endTime: this._utils.getCurrentTimeShort(),
+      isLocation: true,
+      isEvent: false,
+      withAlert: false,
+      typeReport: 3
+    };
   }
 
   filterDevsCsv() {
     const filterDataReport = {
         classifiers: this.classifiers, 
         deviceIds: this.devicesFound,
-        isLocation: this.formFilter.value.isLocation,
-        isEvent: this.formFilter.value.isEvent,
-        isAlarm: this.formFilter.value.isEvent,
+        isLocation: this.formFilter.isLocation,
+        isEvent: this.formFilter.isEvent,
+        isAlarm: this.formFilter.isEvent,
         date: {
-            startDate: this.formFilter.value.startDateOnly?.toISOString().slice(0, 10),
-            endDate: this.formFilter.value.endDateOnly?.toISOString().slice(0, 10)
+            startDate: this.applyTimeDate(this.formFilter.startDateOnly, this.formFilter.startTime),
+            endDate: this.applyTimeDate(this.formFilter.endDateOnly, this.formFilter.endTime)
         },
-        typeReport: this.formFilter.value.typeReport
+        typeReport: this.formFilter.typeReport
     };
 
+    this._loadService.setActiveBtnLoad('filterDevsCsv');
     this._classifier.filterByClassifier(filterDataReport).pipe(
         map((devices: any) => devices.response)
     ).subscribe((devices: any) => {
-        if (devices) {
-            const typeReport = this.formFilter.value.typeReport;
-            
-            if (typeReport === 1) {
-              this.devicesRTimes = this.processFilterDataTimes(devices);
+      this._loadService.clearActiveBtnLoad();
+      if (devices) {
+          const typeReport = this.formFilter.typeReport;
+          
+          if (typeReport === 1) {
+            this.devicesRTimes = this.processFilterDataTimes(devices);
+            this.saveDataInCSV([
+              {name:'estado actual', data: this.devicesRTimes},
+            ]);
+          }
+
+          if (typeReport === 2 || typeReport === 3) {
+            this.devicesRPross = this.processFilterData(devices); 
+            if (typeReport === 2) {
               this.saveDataInCSV([
-                {name:'estado actual', data: this.devicesRTimes},
+                {name:'ultima posicion', data: this.devicesRPross[0]},
               ]);
             }
 
-            if (typeReport === 2 || typeReport === 3) {
-              this.devicesRPross = this.processFilterData(devices); 
-              if (typeReport === 2) {
-                this.saveDataInCSV([
-                  {name:'ultima posicion', data: this.devicesRPross[0]},
-                ]);
-              }
-  
-              if (typeReport === 3) {
-                this.saveDataInCSV([
-                  {name:'dispositivos', data: this.devicesRPross[0]},
-                  {name:'kilometros recorridos', data: this.devicesRPross[1]}
-                ]);
-              }
-          }
+            if (typeReport === 3) {
+              this.saveDataInCSV([
+                {name:'dispositivos', data: this.devicesRPross[0]},
+                {name:'kilometros recorridos', data: this.devicesRPross[1]}
+              ]);
+            }
         }
+      }
     });
+  }
+
+  applyTimeDate(date: Date, time: string) {
+    const dateOnly = date.toISOString().slice(0, 10);
+    const timeOnly = this._utils.getTransformTime(time);
+    return dateOnly.concat(' ', timeOnly);
   }
 
   formatTimestamp(timestamp: string): string {
@@ -301,5 +337,11 @@ export class DownloadsCsvComponent implements OnInit {
 
   closeToggle() {
     this.dialogRef.close();
+  }
+
+  getBtnLoadActive(nameBtnLoad: string) {
+    const currentNameBtnLoad = this._loadService.getActiveBtnLoad();
+    if (nameBtnLoad === currentNameBtnLoad) return true;
+    return false;
   }
 }

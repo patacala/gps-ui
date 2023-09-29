@@ -12,6 +12,8 @@ import { DeviceService, MapService } from '@services';
 import { UtilsService } from 'src/app/services/utils/utils.service';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { LoadAllComponent } from '../load-all/load-all.component';
+import { LoadService } from 'src/app/services/load/load.service';
 
 @Component({
   selector: 'app-data-time-h',
@@ -22,7 +24,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     ReactiveFormsModule, DatePipe, 
     MatIconModule, ButtonComponent,
     MatDialogModule, NgIf, NgxMaterialTimepickerModule,
-    MatSlideToggleModule
+    MatSlideToggleModule, LoadAllComponent
   ],
   templateUrl: './data-time-h.component.html',
   styleUrls: ['./data-time-h.component.scss']
@@ -49,7 +51,8 @@ export class DataTimeHComponent implements OnInit {
     private _map: MapService,
     private _device: DeviceService,
     private _classifier: ClassifierService, 
-    private _utils: UtilsService
+    private _utils: UtilsService,
+    private _loadService: LoadService
   ) {}
 
   ngOnInit(): void {
@@ -85,11 +88,20 @@ export class DataTimeHComponent implements OnInit {
         typeReport: 3
       }; 
 
+      this._loadService.setActiveBtnLoad('searchHistoryDv');
       this._classifier.filterByClassifier(filterDataDv).subscribe((histoyDevice: any) => {
           const resultHistoryDevs = histoyDevice?.response[0]?.locations;
+          const plate = histoyDevice?.response[0]?.carrdevi?.carrier?.carrlice;
+          const imei = histoyDevice?.response[0]?.deviimei;
+          const phone = histoyDevice?.response[0].deviphon;
     
-          if (typeof(resultHistoryDevs) !== undefined) {
+          if (typeof(resultHistoryDevs) !== undefined 
+          && typeof(plate) !== undefined && typeof(imei) !== undefined 
+          && typeof(phone) !== undefined) {
+
+            const deviInfoObject = {plate, imei, phone};
             if (resultHistoryDevs?.length > 0) {
+              resultHistoryDevs.deviInfoObject  = deviInfoObject;
               this._device.setHistoryLoc(deviceId, filterDataDv, resultHistoryDevs);
               this._map.hiddenIconLHisto(true);
               this._map.hiddenListHisto({hiddenListHisto: false, sizeControl: this.sizeLevel});
@@ -97,7 +109,12 @@ export class DataTimeHComponent implements OnInit {
             } else {
               this._utils.matSnackBar('Sin resultados', 'ok');
             }
+            
+          } else {
+            this._utils.matSnackBar('Problema para mostrar historial', 'ok');
           }
+
+          this._loadService.clearActiveBtnLoad();
       });
     }
   }
@@ -110,5 +127,11 @@ export class DataTimeHComponent implements OnInit {
 
   dialogClose() {
     this.dialogRef.close();
+  }
+
+  getBtnLoadActive(nameBtnLoad: string) {
+    const currentNameBtnLoad = this._loadService.getActiveBtnLoad();
+    if (nameBtnLoad === currentNameBtnLoad) return true;
+    return false;
   }
 }

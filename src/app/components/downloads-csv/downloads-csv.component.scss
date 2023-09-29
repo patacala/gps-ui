@@ -2,11 +2,13 @@
     position: relative;
     display: grid;
     grid-gap: 10px;
+    max-width: 247px;
+    margin: 0px auto;
 
     .dt-vh-close {
         position: absolute;
         top: -15px;
-        right: -15px;
+        right: -42px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -28,8 +30,25 @@
         }
     }
 
-    .formFRangeDate {
-        height: 80px;
+    .timeFields {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        grid-gap: 20px;
+        padding-bottom: 10px;
+    
+        .timeField {
+            position: relative;
+            padding-top: 12px;
+            padding-bottom: 12px;
+    
+            .timeFTitle {
+                position: absolute;
+                top: -10px;
+                left: -10px;
+                font-size: 0.80rem;
+            }
+        }
     }
 
     .formFTypeReport {

@@ -26,6 +26,7 @@ import { NgForOf } from '@angular/common';
 import { ConfigDeviceCommandsComponent } from '../config-device-commands/config-device-commands.component';
 import { DownloadsCsvComponent } from '../downloads-csv/downloads-csv.component';
 import { UtilsService } from 'src/app/services/utils/utils.service';
+import { LoadService } from 'src/app/services/load/load.service';
 
 @Component({
     selector: 'app-map',
@@ -79,7 +80,8 @@ export class MapComponent implements OnInit {
         private _device: DeviceService, 
         private _utils: UtilsService,
         public dialog: MatDialog,
-        private datePipe: DatePipe
+        private datePipe: DatePipe,
+        private _loadService: LoadService
     ) {}
 
     ngOnInit(): void {
