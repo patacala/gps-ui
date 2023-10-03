@@ -11,7 +11,7 @@ export class SidebarComponent implements OnInit {
     { name: 'Mapa', icon: 'pie_chart', permission: 'locations_read' },
     { name: 'Entidades', icon: 'work', permission: 'entity_get' },
     { name: 'Vehiculos', icon: 'directions_car', permission: 'carrier_get' },
-    { name: 'Users', icon: 'group', permission: 'user_get' },
+    { name: 'Usuarios', icon: 'group', permission: 'user_get' },
     { name: 'GPS', icon: 'share_location', permission: 'device_get' },
     { name: 'Clasificadores', icon: 'share_location', permission: 'clasifiers_get' },
   ];

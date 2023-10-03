@@ -1,5 +1,5 @@
 <input matInput class="w-full p-1 border-1 placeholder-pl-4 border-gps-blue rounded-lg my-4" 
-    placeholder="Buscar por Vehiculo, Placa o Empresa" (keyup)="applyFilter($event)" #input>
+    placeholder="Buscar en la tabla" (keyup)="applyFilter($event)" #input>
     <div>
         <mat-radio-group>
             <table mat-table [dataSource]="dataSource" class="w-full" matSort *ngIf="dataSource?.filteredData?.length">

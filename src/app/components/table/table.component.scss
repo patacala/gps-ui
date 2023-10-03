@@ -1,0 +1,11 @@
+.content-main {
+    height: calc(100vh - 250px);
+    min-width: 300px;
+    background-color:#FFF;
+    overflow: auto;
+
+    .table-all {
+        width: 100%;
+        min-width: 300px;
+    }
+}

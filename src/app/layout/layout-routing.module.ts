@@ -10,7 +10,7 @@ const routes: Routes = [
             { path: 'mapa', canActivate: [], loadComponent: () => import('../dashboard-admin/dashboard-admin.component').then(m => m.DashboardAdminComponent) },
             { path: 'entidades', canActivate: [], loadComponent: () => import('../entitys/entitys.component').then(m => m.EntitysComponent) },
             { path: 'vehiculos', canActivate: [], loadComponent: () => import('../vehicules/vehicules.component').then(m => m.VehiculesComponent) },
-            { path: 'users', canActivate: [], loadComponent: () => import('../users/users.component').then(m => m.UsersComponent) },
+            { path: 'usuarios', canActivate: [], loadComponent: () => import('../users/users.component').then(m => m.UsersComponent) },
             { path: 'gps', canActivate: [], loadComponent: () => import('../gps/gps.component').then(m => m.GpsComponent) },
             { path: 'clasificadores', loadComponent: () => import('../classifiers/classifiers.component').then(m => m.ClassifiersComponent) },
             { path: 'clasificadores/:id', loadComponent: () => import('../details/details.component').then(m => m.DetailsComponent) }

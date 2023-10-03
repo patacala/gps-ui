@@ -14,9 +14,12 @@ import { ObjectValues } from 'src/app/pipes/object-values.pipe';
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
+  styleUrls: ['./table.component.scss'],
   standalone: true,
-  imports: [MatTableModule, MatPaginatorModule, MatCheckboxModule, CommonModule, MatTooltipModule, ObjectValues,
-    MatSortModule, MatIconModule, ButtonComponent, ChipsComponent, MatSlideToggleModule, PermissionDirective],
+  imports: [
+    MatTableModule, MatPaginatorModule, MatCheckboxModule, CommonModule, MatTooltipModule, ObjectValues,
+    MatSortModule, MatIconModule, ButtonComponent, ChipsComponent, MatSlideToggleModule, PermissionDirective,
+  ],
 })
 export class TableComponent implements OnInit, OnChanges {
   @Output('actions') actions: EventEmitter<{ type: string, data: any }> = new EventEmitter()
@@ -33,13 +36,16 @@ export class TableComponent implements OnInit, OnChanges {
   headers!: string[]
   dataSource!: MatTableDataSource<any>
   canCreate: boolean = false;
+
   constructor() { }
 
   ngOnInit(): void {
     this.headers = this.displayedColumns.map((k: any) => k.key);
   }
 
-  ngAfterViewInit(): void { }
+  ngAfterViewInit(): void {
+    this.tableConfig()
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['resorce']) {
@@ -53,20 +59,8 @@ export class TableComponent implements OnInit, OnChanges {
     this.dataSource.sort = this.matSort;
   }
 
-  applyFilter(event: Event): void {
+  applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-
-
     this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    this.dataSource.filterPredicate = (data:any, filter:string) => {
-      if(data.carrdevi.device.deviimei) {
-        return data.carrdevi.device.deviimei.includes(filter)
-      }
-    }
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
   }
 }
