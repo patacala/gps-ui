@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { TreeComponent } from '../tree-classifiers/tree.component';
 import { ClassifierService, MapService } from '@services';
@@ -47,7 +47,7 @@ import { UtilsService } from 'src/app/services/utils/utils.service';
     styleUrls: ['./map.component.scss']
 })
 
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
     @ViewChild('drawerLeft') drawerLeft!: MatDrawer;
     @ViewChild('detailsVehicule') details!: MatDrawer;
 
@@ -128,6 +128,11 @@ export class MapComponent implements OnInit {
         });
     }
 
+    ngOnDestroy() {
+        // Cancela la suscripción cuando el componente se destruye.
+        this.subscription?.unsubscribe();
+    }
+
     initialMapDevsLoc() {
         this._map.showPlates = this.showPlates;
         this._map.getLocationDevices(null).subscribe((data: any) => {
@@ -166,16 +171,17 @@ export class MapComponent implements OnInit {
     }
 
     openFilterDevice() {
+        this.subscription?.unsubscribe();
         const isOpen = this.drawerLeft.opened;
+
         if (isOpen) {
             this.drawerLeft.close();
             this.suscriptRealTime(60000);
         } else {
             this.drawerLeft.open();
-            this.subscription?.unsubscribe();
         }
     }
-      
+
     filterDevices() {
         this._map.showPlates = this.showPlates;
         // Obtener los IDs de los dispositivos seleccionados
