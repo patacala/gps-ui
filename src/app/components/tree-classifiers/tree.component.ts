@@ -179,10 +179,12 @@ export class TreeComponent {
                 const nodeId = node.item.clvanuid;
                 
                 if (this.activeClassifier[0].includes(nodeId)) {
-                    const descendants = this.treeControl.getDescendants(node);
-                    if (descendants.length > 0) {
-                        this.checkAllDecendants(descendants);
-                    }
+                    /*
+                        const descendants = this.treeControl.getDescendants(node);
+                        if (descendants.length > 0) {
+                            this.checkAllDecendants(descendants);
+                        } 
+                    */
                     this.checklistSelection.select(node);
                     this.checkAllParentsSelection(node);
                 }
