@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { JsonPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Injectable, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Injectable, Input, Output } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular/material/tree';
@@ -135,10 +135,11 @@ export class TreeComponent {
         this.treeControl = new FlatTreeControl<TodoItemFlatNode>(this.getLevel, this.isExpandable);
         this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-        _database.dataChange.subscribe(data => {
-            if (data) this.dataSource.data = data;
-
-            if (this.treeControl.dataNodes && this.activeClassifier) this.checkNodesSelected();
+        this._database.dataChange.subscribe(data => {
+            if (data) { 
+                this.dataSource.data = data; 
+                if (this.treeControl.dataNodes && this.activeClassifier) this.checkNodesSelected();
+            }
         });
     }
     
@@ -172,20 +173,23 @@ export class TreeComponent {
         return flatNode;
     };
 
-
     checkNodesSelected() {
-        this.treeControl.dataNodes.map((node: any) => {
-            if (this.activeClassifier.includes(node.item.clvanuid)) {
-                let descendants = this.treeControl.getDescendants(node);
-
-                if (descendants.length > 0) this.checkAllDecendants(descendants);
-
-                this.checklistSelection.select(node);
-                this.checkAllParentsSelection(node);
-            }
-        })
+        if (this.activeClassifier && this.activeClassifier[0]) {
+            this.treeControl.dataNodes.forEach((node: any) => {
+                const nodeId = node.item.clvanuid;
+                
+                if (this.activeClassifier[0].includes(nodeId)) {
+                    const descendants = this.treeControl.getDescendants(node);
+                    if (descendants.length > 0) {
+                        this.checkAllDecendants(descendants);
+                    }
+                    this.checklistSelection.select(node);
+                    this.checkAllParentsSelection(node);
+                }
+            });
+        }
     }
-
+    
     checkAllDecendants(descendants: Array<TodoItemFlatNode>) {
         descendants.map(child => this.checklistSelection.select(child))
     }

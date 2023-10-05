@@ -3,15 +3,14 @@ import { MatDividerModule } from '@angular/material/divider';
 import { InputComponent } from '../../input/input.component';
 import { MatIconModule } from '@angular/material/icon';
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import { ClassifierService, DeviceService, TRoles } from '@services';
+import { ClassifierService, DeviceService } from '@services';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent, SelectComponent, SnackAlert, TreeComponent } from '@components';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { from, map, Observable, tap, toArray } from 'rxjs';
+import { from, Observable, toArray } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatGridListModule } from '@angular/material/grid-list'
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
     selector: 'app-gps-modal',
@@ -28,28 +27,39 @@ export class GpsModal implements OnInit {
     @Output('close') close: EventEmitter<void> = new EventEmitter();
     gpsGroup!: FormGroup;
     classifiers$!: Observable<any>
-    constructor(private fb: FormBuilder, private _device: DeviceService, private _classifiers: ClassifierService,
-        private _snack: SnackAlert, @Inject(MAT_DIALOG_DATA) public data: any) { }
+    constructor(
+        private fb: FormBuilder, private _device: DeviceService, 
+        private _snack: SnackAlert, @Inject(MAT_DIALOG_DATA) public data: any
+    ) { }
 
     ngOnInit(): void {
-        this.gpsGroup = this._INIT_FORM
+        this.gpsGroup = this._INIT_FORM;
+        
         if (this.data) {
+            const { devimark, deviimei, devimode, deviphon, clasdevi, classifiers } = this.data;
+            
             this.gpsGroup.patchValue({
-                brand: this.data.devimark,
-                imei: this.data.deviimei,
-                model: this.data.devimode,
-                phoneNumber: this.data.deviphon
-            })
-            if (this.data.clasdevi.length > 0) {
-                this.classifiers$ = from(this.data.clasdevi)
-                    .pipe(
-                        map((classifier: any) => classifier.clvaclde),
-                        toArray()
-                    );
+                brand: devimark,
+                imei: deviimei,
+                model: devimode,
+                phoneNumber: deviphon
+            });
+    
+            let classifiersData = [];
+    
+            if (clasdevi && clasdevi.length > 0) {
+                classifiersData = clasdevi.map((classifier: any) => classifier.clvaclde);
+            } else if (classifiers && classifiers.length > 0) {
+                // Si clasdevi está vacío pero classifiers contiene datos, usamos classifiers
+                classifiersData = classifiers.map((classifier: any) => classifier.clvaclde);
             }
+    
+            this.classifiers$ = from(classifiersData).pipe(
+                toArray()
+            );
         }
     }
-
+        
     get _INIT_FORM(): FormGroup {
         return this.fb.group({
             brand: this.fb.nonNullable.control(''),
@@ -75,7 +85,6 @@ export class GpsModal implements OnInit {
 
         this._device.updateDevice(deviceUpdate, this.data.devinuid).subscribe(() => {
             this._snack.showSuccess('Dispositivo editado correctamente');
-
             this.closeModal();
         })
     }

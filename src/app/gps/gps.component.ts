@@ -29,6 +29,7 @@ export class GpsComponent implements OnInit {
       modalCloseSub.unsubscribe();
     });
   }
+  
   actionsButton(event: any) {
     if (event.type === 'Edit') {
       this.openCreateUser(event.data)
