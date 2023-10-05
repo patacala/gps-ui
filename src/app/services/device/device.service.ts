@@ -34,19 +34,26 @@ export class DeviceService {
     }
 
     // Metodo utilizado para obtener los datos de lista devices
-    rowsDeviceTable(devices: Array<any>): { devinuid: number; deviimei: string; carrlice: string; check: boolean; }[] {
-        const devicesTable: { devinuid: number; deviimei: string; carrlice: string; check: boolean; }[] = [];
+    rowsDeviceTable(devices: Array<any>): { devinuid: number; deviimei: string; carrlice: string; classdevi: any; check: boolean; }[] {
+        const devicesTable: { devinuid: number; deviimei: string; carrlice: string; classdevi: any; check: boolean; }[] = [];
       
         devices.forEach(device => {
           let carrdevi = 'Sin Asignar';
+          let classdevi: any[] = [];
+
           if (device.carrdevi && device.carrdevi.carrier.carrlice) {
             carrdevi = device.carrdevi.carrier.carrlice;
+          }
+
+          if (device.clasdevi) {
+            classdevi = device.clasdevi;
           }
       
           devicesTable.push({
             devinuid: device.devinuid,
             deviimei: device.deviimei,
             carrlice: carrdevi,
+            classdevi: classdevi,
             check: device.check,
           });
         });

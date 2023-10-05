@@ -2,6 +2,7 @@ export interface Device {
     devinuid: number,
     deviimei: string;
     carrlice: string;
+    classdevi: any;
     check: boolean;
 }
 

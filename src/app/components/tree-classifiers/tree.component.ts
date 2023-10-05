@@ -116,11 +116,8 @@ export class TreeComponent {
     /** The selection for checklist */
     checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
 
-    classifiers: Map<string, number[]> = new Map();
-    classifiers2: Map<string, Set<number>> = new Map();
-
+    classifiers: Map<string, Set<number>> = new Map();
     @Output() sendClassifiers: EventEmitter<any> = new EventEmitter();
-    @Output() clear: EventEmitter<any> = new EventEmitter();
 
     constructor(
         private _database: ChecklistDatabase,
@@ -265,11 +262,11 @@ export class TreeComponent {
         if (!parent) {
             let name = (node.item as any).clasdesc;
             // @ts-ignore
-            this.classifiers2.set(name, new Set([node.item.clasnuid]));
+            this.classifiers.set(name, new Set([node.item.clasnuid]));
 
             let descendants = this.treeControl.getDescendants(node);
 
-            descendants.length > 0 && descendants.map(child => this.classifiers2.get(name)?.add(
+            descendants.length > 0 && descendants.map(child => this.classifiers.get(name)?.add(
                 (child.item as any).clvanuid
             ))
         } else {
@@ -285,7 +282,7 @@ export class TreeComponent {
         }
         // Create a Set or push into existing Set
         // @ts-ignore
-        this.classifiers2.set(parentName, this.classifiers2.has(parentName) ? this.classifiers2.get(parentName).add(...Array.from(ids)) : ids);
+        this.classifiers.set(parentName, this.classifiers.has(parentName) ? this.classifiers.get(parentName).add(...Array.from(ids)) : ids);
     }
 
     deleteClassifiers(node: TodoItemFlatNode) {
@@ -293,13 +290,13 @@ export class TreeComponent {
 
         // Delete whole Set
         if ((node.item as any).clasdesc === name) {
-            this.classifiers2.delete(name);
+            this.classifiers.delete(name);
 
             return;
         }
 
         // Delete an ID
-        this.classifiers2.has(name) ? this.classifiers2.get(name)?.delete((node.item as any).clvanuid) : null;
+        this.classifiers.has(name) ? this.classifiers.get(name)?.delete((node.item as any).clvanuid) : null;
     }
 
     /* Checks all the parents when a leaf node is selected/unselected */
@@ -312,7 +309,7 @@ export class TreeComponent {
             // End while
             parent = this.getParentNode(parent);
         }
-
+        
         !this.checklistSelection.isSelected(node) ? this.deleteClassifiers(node) : this.addClassifiers(node);
         this.saveClassifiers();
     }
@@ -354,17 +351,23 @@ export class TreeComponent {
     }
 
     saveClassifiers() {
-        let sets = Object.fromEntries(this.classifiers2);
-        console.log(sets);
-    
-        let arrIds = Object.keys(sets).map(key => {
-            if (sets[key]) {
-                return Array.from(sets[key]).filter(value => value !== null && value !== undefined);
-            } else {
-                return [];
-            }
-        });
-    
+        // Verificar si hay al menos un elemento seleccionado
+        let arrIds: number[][] = [];
+        if (this.checklistSelection.selected.length > 0) {
+            let sets = Object.fromEntries(this.classifiers);
+            arrIds = Object.keys(sets)
+                .map(key => {
+                    if (sets[key]) {
+                        return Array.from(sets[key]).filter(value => value !== null && value !== undefined);
+                    } else {
+                        return []; // Devuelve un arreglo vacío si sets[key] es falso
+                    }
+                })
+                .filter(arr => arr.length > 0); // Filtra los arreglos vacíos
+        } else {
+            arrIds = [];
+        }
+
         this.sendClassifiers.emit(arrIds);
-    }
+    }       
 }
