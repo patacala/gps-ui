@@ -200,6 +200,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     saveClassifiers(event: any) {
         this.classifiers = event;
+        console.log(this.classifiers);
     }
 
     // Método para verificar si todas las filas están seleccionadas

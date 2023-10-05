@@ -354,8 +354,17 @@ export class TreeComponent {
     }
 
     saveClassifiers() {
-        let sets = Object.fromEntries(this.classifiers2)
-        let arrIds = Object.keys(sets).map(key => Array.from(sets[key]));
-        this.sendClassifiers.emit(arrIds)
+        let sets = Object.fromEntries(this.classifiers2);
+        console.log(sets);
+    
+        let arrIds = Object.keys(sets).map(key => {
+            if (sets[key]) {
+                return Array.from(sets[key]).filter(value => value !== null && value !== undefined);
+            } else {
+                return [];
+            }
+        });
+    
+        this.sendClassifiers.emit(arrIds);
     }
 }
