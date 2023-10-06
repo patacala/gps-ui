@@ -235,7 +235,6 @@ export class TreeComponent {
         this.checkAllParentsSelection(node);
     }
 
-
     getParentName(node: TodoItemFlatNode) {
         let parent: TodoItemFlatNode | null = this.getParentNode(node);
         let name = '';
@@ -302,7 +301,6 @@ export class TreeComponent {
     /* Checks all the parents when a leaf node is selected/unselected */
     checkAllParentsSelection(node: TodoItemFlatNode): void {
         let parent: TodoItemFlatNode | null = this.getParentNode(node);
-
         while (parent) {
             this.checkRootNodeSelection(parent);
 
@@ -351,23 +349,74 @@ export class TreeComponent {
     }
 
     saveClassifiers() {
-        // Verificar si hay al menos un elemento seleccionado
-        let arrIds: number[][] = [];
-        if (this.checklistSelection.selected.length > 0) {
-            let sets = Object.fromEntries(this.classifiers);
-            arrIds = Object.keys(sets)
-                .map(key => {
-                    if (sets[key]) {
-                        return Array.from(sets[key]).filter(value => value !== null && value !== undefined);
-                    } else {
-                        return []; // Devuelve un arreglo vacío si sets[key] es falso
-                    }
-                })
-                .filter(arr => arr.length > 0); // Filtra los arreglos vacíos
-        } else {
-            arrIds = [];
-        }
+        const selectedNodes = this.checklistSelection.selected;
+        const parentNodes: TodoItemFlatNode[] = [];
+        const childNodes: TodoItemFlatNode[] = [];
+        const parentMainNode: number[] = [];
+        const parentChildNode: number[] = [];
+        const childsNode: number[] = [];
+        const subArrChildren: number[][] = []; // Usamos number[][] en lugar de TodoItemFlatNode[]
+      
+        selectedNodes.forEach(node => {
+          if (node.expandable) {
+            parentNodes.push(node);
+          }
+          if (!node.expandable) {
+            childNodes.push(node);
+          }
+        });
+      
+        parentNodes.forEach(parentNode => {
+          let foundNodes: number[]=[];
+          let parentNdId = 0;
 
-        this.sendClassifiers.emit(arrIds);
-    }       
+          if (parentNode.level === 0) {
+            parentNdId = (parentNode.item as any).clasnuid; // Ajustamos el acceso a la propiedad
+            foundNodes = childNodes.filter(childNode => (childNode.item as any).clasclva === parentNdId) // Ajustamos el acceso a la propiedad
+            .map(childNode => (childNode.item as any).clvanuid); // Ajustamos el acceso a la propiedad
+          }
+          
+          if (foundNodes.length > 0) {
+            parentMainNode.push(parentNdId);
+            subArrChildren.push(foundNodes);
+          }
+
+          foundNodes = [];
+        });
+
+        parentNodes.forEach(parentNode => {
+            const clasvaId = (parentNode.item as any).clasclva;
+
+            if (!parentMainNode.includes(clasvaId) && parentNode.level > 0 && parentNode.expandable) {
+                let foundNodes: number[]=[];
+
+                const parentNdId = (parentNode.item as any).clvanuid; // Ajustamos el acceso a la propiedad
+                foundNodes = childNodes.filter(childNode => (childNode.item as any).clvaunde === parentNdId) // Ajustamos el acceso a la propiedad
+                    .map(childNode => (childNode.item as any).clvanuid); // Ajustamos el acceso a la propiedad
+                
+                if (foundNodes.length > 0) {
+                  foundNodes.forEach(fChlNodeId => {
+                    childsNode.push(fChlNodeId);
+                    parentChildNode.push(fChlNodeId);
+                  });
+                }
+      
+                foundNodes = [];
+            }
+        });
+        if (parentChildNode.length > 0) {
+            subArrChildren.push(parentChildNode);
+        }
+        
+        childNodes.forEach(childNode => {
+            const clasvaId = (childNode.item as any).clasclva;
+            const clvanuId = (childNode.item as any).clvanuid;
+
+            if (!parentMainNode.includes(clasvaId) && !childsNode.includes(clvanuId)) {
+                subArrChildren.push([clvanuId]);
+            }
+        });
+
+        this.sendClassifiers.emit(subArrChildren);
+    }                                  
 }

@@ -200,35 +200,31 @@ export class MapComponent implements OnInit, OnDestroy {
 
     saveClassifiers(event: any) {
         this.classifiers = event;
-        console.log(this.classifiers);
         this.filterClassifierDevices();
     }
 
     filterClassifierDevices() {
         // Crear un arreglo plano de todos los IDs únicos de los subarrays en this.classifiers
         const allIds = [...new Set(this.classifiers.flat())];
-        console.log(allIds);
-    
+
         if (allIds.length > 0) {
-            // Si hay IDs en allIds, filtrar los dispositivos que aparecen en todos los subarrays
-            const devicesFilter = this.devicesTable.filter((device: any) => {
-                return this.classifiers.every((subArray: number[]) => {
-                    return subArray.some((id: number) => {
-                        return device.classdevi.some((clase: any) => clase.clvaclde === id);
-                    });
-                });
-            });
-    
-            this.checksDevices = devicesFilter;
-            this.dataSDevices.data = devicesFilter;
+          // Si hay IDs en allIds, filtrar los dispositivos que cumplan con al menos un ID de cada subarray
+          const devicesFilter = this.devicesTable.filter((device: any) => {
+            const deviceIds = device.classdevi.map((clase: any) => clase.clvaclde);
+            return this.classifiers.every((subArrayIds: number[]) =>
+              subArrayIds.some((id: number) => deviceIds.includes(id))
+            );
+          });
+
+          this.checksDevices = devicesFilter;
+          this.dataSDevices.data = devicesFilter;
         } else {
-            // Si allIds está vacío, mostrar todos los dispositivos sin filtrar
-            this.checksDevices = this.devicesTable;
-            this.dataSDevices.data = this.devicesTable;
+          // Si allIds está vacío, mostrar todos los dispositivos sin filtrar
+          this.checksDevices = this.devicesTable;
+          this.dataSDevices.data = this.devicesTable;
         }
     }
-    
-    
+      
     // Método para verificar si todas las filas están seleccionadas
     isAllSelected(): boolean {
         const dataSDevices = this.dataSDevices.data;
