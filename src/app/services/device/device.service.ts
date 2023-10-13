@@ -114,6 +114,7 @@ export class DeviceService {
         if (locations && locations.length > 0) {
           const deviInfoObject = locations.deviInfoObject;
           const historyLocs = locations.map((location: any) => {
+       
             return {
               deviimei: deviInfoObject.imei,
               deviplate: deviInfoObject.plate,
@@ -130,8 +131,8 @@ export class DeviceService {
               keywfunc: location.keywords.keywfunc,
               keyiconame: location.keywords.keyiconame,
               keyicoroute: location.keywords.keyicoroute,
-              deloacc: location.deloacc,
-              delodoor: location.delodoor
+              deloacc: location.dealacc,
+              delodoor: location.dealdoor
             };
           });
 
