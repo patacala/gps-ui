@@ -114,7 +114,6 @@ export class DeviceService {
         if (locations && locations.length > 0) {
           const deviInfoObject = locations.deviInfoObject;
 
-          console.log(locations);
           const historyLocs = locations.map((location: any) => {
             return {
               deviimei: deviInfoObject.imei,
@@ -137,7 +136,6 @@ export class DeviceService {
             };
           });
 
-          console.log(historyLocs);
           const dvStringId = deviceId.toString();
           this._map.drawRoute(dvStringId, filterDataDv, historyLocs);
 
