@@ -113,8 +113,9 @@ export class DeviceService {
     public setHistoryLoc(deviceId: number, filterDataDv: any, locations: any) {
         if (locations && locations.length > 0) {
           const deviInfoObject = locations.deviInfoObject;
+
+          console.log(locations);
           const historyLocs = locations.map((location: any) => {
-       
             return {
               deviimei: deviInfoObject.imei,
               deviplate: deviInfoObject.plate,
@@ -131,11 +132,12 @@ export class DeviceService {
               keywfunc: location.keywords.keywfunc,
               keyiconame: location.keywords.keyiconame,
               keyicoroute: location.keywords.keyicoroute,
-              deloacc: location.dealacc,
-              delodoor: location.dealdoor
+              deloacc: location.deloacc ? location.deloacc:location.dealacc,
+              delodoor: location.delodoor ? location.delodoor:location.dealdoor,
             };
           });
 
+          console.log(historyLocs);
           const dvStringId = deviceId.toString();
           this._map.drawRoute(dvStringId, filterDataDv, historyLocs);
 
