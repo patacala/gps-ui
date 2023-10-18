@@ -40,7 +40,7 @@ export class DeviceService {
         devices.forEach(device => {
           let carrdevi = 'Sin Asignar';
           let classdevi: any[] = [];
-
+     
           if (device.carrdevi && device.carrdevi.carrier.carrlice) {
             carrdevi = device.carrdevi.carrier.carrlice;
           }

@@ -138,7 +138,7 @@ export class MapComponent implements OnInit, OnDestroy {
         this._map.getLocationDevices(null).subscribe((data: any) => {
           if (data && data?.response?.rows) {
             this.rowsDevice = data.response.rows;
-      
+        
             if (this.devicesFound.length === 0) {
               this.devicesFound = this.rowsDevice;
             } else {
@@ -154,11 +154,12 @@ export class MapComponent implements OnInit, OnDestroy {
             } else if (indexDv !== -1) {
               this.deviceSelected$.next(this.devicesFound[indexDv]);
             }
-      
+
+            // Actualizar this.devicesFound primero
             this.devicesTable = this._device.rowsDeviceTable(this.rowsDevice);
             this.dataSDevices.data = this.devicesTable;
             const dataSDevicesLength = this.dataSDevices.data.length;
-
+            
             if (dataSDevicesLength > 0) {
                 if (dataSDevicesLength === this.devicesFound.length) {
                     this.toggleAllRows(true);
@@ -206,6 +207,7 @@ export class MapComponent implements OnInit, OnDestroy {
     filterClassifierDevices() {
         // Crear un arreglo plano de todos los IDs únicos de los subarrays en this.classifiers
         const allIds = [...new Set(this.classifiers.flat())];
+        console.log(this.devicesTable);
 
         if (allIds.length > 0) {
           // Si hay IDs en allIds, filtrar los dispositivos que cumplan con al menos un ID de cada subarray
@@ -258,15 +260,14 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     toggleCurrentRows() {
-        this.devicesTable = this._device.rowsDeviceTable(this.devicesFound);
-        const selectedRows = this.devicesTable.filter(row => this.dataSDevices.data.some(d => d.check === row.check));
-        
         this.dataSDevices.data.forEach(row1 => {
-            const isSelected = selectedRows.some((row2: { devinuid: number; }) => row1.devinuid === row2.devinuid);
+            const isSelected = this.devicesFound.some((row2: { devinuid: number; }) => row1.devinuid === row2.devinuid);
             row1.check = isSelected;
         });
+    
+        this.checksDevices = this.dataSDevices.data.filter(dataDv => dataDv.check);
     }
-
+    
     clearClassifiers() {
         this.classifiers = [];
         this._classifier.clearCheckboxes.emit();
@@ -378,9 +379,7 @@ export class MapComponent implements OnInit, OnDestroy {
             stepexec,
             deviexec: parseInt(this.currentDvId.toString()),
             execparam: null
-        }).subscribe((data: any) => {
-            console.log(data);
-        });
+        }).subscribe((data: any) => {});
     }
 
     setHiddenListHisto() {
