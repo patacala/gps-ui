@@ -13,7 +13,7 @@ export class SidebarComponent implements OnInit {
     { name: 'Vehiculos', icon: 'directions_car', permission: 'carrier_get' },
     { name: 'Usuarios', icon: 'group', permission: 'user_get' },
     { name: 'GPS', icon: 'share_location', permission: 'device_get' },
-    { name: 'Clasificadores', icon: 'share_location', permission: 'clasifiers_get' },
+    { name: 'Clasificadores', icon: 'fingerprint', permission: 'clasifiers_get' },
   ];
 
   shortcut: IOptions[] = [{ name: 'Informes', icon: 'feed', permission: 'a' }, { name: 'Ajustes', icon: 'settings', permission: 'c' }];
