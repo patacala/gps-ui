@@ -131,7 +131,7 @@ export class DownloadsCsvComponent implements OnInit {
 
   filterDevsCsv() {
     let typeReport = this.formFilter.typeReport;
-    let date = {};
+    let date = {startDate: '', endDate: ''};
 
     if (typeReport === 1 || typeReport === 2 || typeReport === 4) {
       date = {
@@ -169,9 +169,9 @@ export class DownloadsCsvComponent implements OnInit {
           const typeReport = this.formFilter.typeReport;
           
           if (typeReport === 1) {
-            this.devicesRTimes = this.processFilterDataTimes(devices);
+            this.devicesRTimes = this.processFilterDataTimes(devices, date?.startDate, date?.endDate);
             this.saveDataInCSV([
-              {name:'estado actual', data: this.devicesRTimes},
+              {name:`estado actual ${date?.startDate} - ${date?.endDate}`, data: this.devicesRTimes},
             ]);
           }
 
@@ -185,23 +185,23 @@ export class DownloadsCsvComponent implements OnInit {
 
             if (typeReport === 3) {
               this.saveDataInCSV([
-                {name:'historial', data: this.devicesRPross}
+                {name:`historial ${date?.startDate} - ${date?.endDate}`, data: this.devicesRPross}
               ]);
             }
           }
 
           if (typeReport === 4 || typeReport === 5) {
-            this.kmTraveled = this.processFilterDtKmTrav(devices);
+            this.kmTraveled = this.processFilterDtKmTrav(devices, date?.startDate, date?.endDate);
 
             if (typeReport === 4) {
               this.saveDataInCSV([
-                {name:'Kilometros recorridos días', data: this.kmTraveled},
+                {name:`Kilometros recorridos días ${date?.startDate} - ${date?.endDate}`, data: this.kmTraveled},
               ]);
             }
 
             if (typeReport === 5) {
               this.saveDataInCSV([
-                {name:'Kilometros recorridos días y tiempo', data: this.kmTraveled},
+                {name: `Kilometros recorridos días y tiempo ${date?.startDate} - ${date?.endDate}`, data: this.kmTraveled},
               ]);
             }
           }
@@ -275,94 +275,102 @@ export class DownloadsCsvComponent implements OnInit {
     return newLocData;  
   }
 
-  processFilterDtKmTrav(datas: any): KmTraveled[] {
+  processFilterDtKmTrav(datas: any, startDate: string, endDate: string): KmTraveled[] {
     const newKmTraveled: KmTraveled[] = [];
-
-    const mappedKmTraveled = datas?.map((data:any) => ({
-      deviimei: data.deviimei,
-      devimark: data.devimark,
-      devimode: data.devimode,
-      deviphon: data.deviphon,
-      carrlice: data.carrdevi?.carrier?.carrlice,
-      carrtype: data.carrdevi?.carrier?.carrtype,
-      kmTraveled: {
-        kmdiacapt: data.kmTotalPerDay.map((km: any) => km.date),
-        kmcapt: data.kmTotalPerDay.map((km: any) => km.value)
-      }
-    }));
-
-    mappedKmTraveled?.forEach((row: any) => {
-          const kmTraveled = row.kmTraveled;
-
-          kmTraveled.kmdiacapt.forEach((kmDayCapt: any, index: number) => {
-              newKmTraveled.push({
-                  IMEI: row.deviimei,
-                  MARCA: row.devimark,
-                  MODELO: row.devimode,
-                  CELULAR: row.deviphon,
-                  PLACA: row.carrlice,
-                  "TIPO VEHICULO": row.carrtype,
-                  "KM DÍA": kmDayCapt,
-                  "KM GENERADO": kmTraveled.kmcapt[index]
-              });
-          });
+    const rangeDate = this.generateDateRange(startDate, endDate);
+  
+    datas?.forEach((data: any) => {
+      const regTime = { date: '', hours: '', minutes: '', seconds: '' };
+      rangeDate.forEach((day: any, index: number) => {
+        console.log(day);
+        const timeOperation = data?.times?.timeOperation.find((time: any) => time.date === day);
+        const timeRalenti = data?.times?.timeRalenti.find((time: any) => time.date === day);
+        const timeMovement = data?.times?.timeMovement.find((time: any) => time.date === day);
+  
+        newKmTraveled.push({
+          IMEI: data.deviimei,
+          MARCA: data.devimark,
+          MODELO: data.devimode,
+          CELULAR: data.deviphon,
+          PLACA: data.carrdevi?.carrier?.carrlice || '',
+          "TIPO VEHICULO": data.carrdevi?.carrier?.carrtype || '',
+          "KM FECHA": day,
+          "KM GENERADO": data.kmTotalPerDay[index]?.value || 0,
+          "TIEMPO DE OPERACION": timeOperation ? this.formatTime(timeOperation) : this.formatTime(regTime),
+          "TIEMPO DE RELENTI": timeRalenti ? this.formatTime(timeRalenti) : this.formatTime(regTime),
+          "TIEMPO DE MOVIMIENTO": timeMovement ? this.formatTime(timeMovement) : this.formatTime(regTime),
+        });
+      });
     });
-
+  
     return newKmTraveled;
   }
-
-  processFilterDataTimes(datas: any): TimesData[] {
+  
+  processFilterDataTimes(datas: any, startDate: string, endDate: string): TimesData[] {
     const newTimes: TimesData[] = [];
+    const rangeDate = this.generateDateRange(startDate, endDate);
+  
     datas?.forEach((data: any) => {
-      const imei = data.deviimei;
-      const marca = data.devimark;
-      const modelo = data.devimode;
-      const celular = data.deviphon;
-      const placa = data.carrdevi?.carrier?.carrlice;
-      const tipoVehiculo = data.carrdevi?.carrier?.carrtype;
-      const regTime = {date: '', hours: '', minutes: '', seconds: ''};
-
-      const timeOperation = data.times.timeOperation[0] || regTime;
-      const timeRalenti = data.times.timeRalenti[0] || regTime;
-      const timeMovement = data.times.timeMovement[0] || regTime;
-
-      newTimes.push({
-        IMEI: imei,
-        MARCA: marca,
-        MODELO: modelo,
-        CELULAR: celular,
-        PLACA: placa,
-        "TIPO VEHICULO": tipoVehiculo,
-        FECHA: timeOperation.date || '',
-        "TIEMPO DE OPERACION": formatTime(timeOperation),
-        "TIEMPO DE RELENTI": formatTime(timeRalenti),
-        "TIEMPO DE MOVIMIENTO": formatTime(timeMovement),
+      const regTime = { date: '', hours: '', minutes: '', seconds: '' };
+      rangeDate.forEach((day: any) => {
+        console.log(day);
+        const timeOperation = data?.times?.timeOperation.find((time: any) => time.date === day);
+        const timeRalenti = data?.times?.timeRalenti.find((time: any) => time.date === day);
+        const timeMovement = data?.times?.timeMovement.find((time: any) => time.date === day);
+  
+        newTimes.push({
+          IMEI: data.deviimei,
+          MARCA: data.devimark,
+          MODELO: data.devimode,
+          CELULAR: data.deviphon,
+          PLACA: data.carrdevi?.carrier?.carrlice || '',
+          "TIPO VEHICULO": data.carrdevi?.carrier?.carrtype || '',
+          "FECHA": day,
+          "TIEMPO DE OPERACION": timeOperation ? this.formatTime(timeOperation) : this.formatTime(regTime),
+          "TIEMPO DE RELENTI": timeRalenti ? this.formatTime(timeRalenti) : this.formatTime(regTime),
+          "TIEMPO DE MOVIMIENTO": timeMovement ? this.formatTime(timeMovement) : this.formatTime(regTime),
+        });
       });
     });
 
-    function formatTime(time: any) {
-      if (!time.hours && !time.minutes && !time.seconds) {
-        return '';
-      }
-    
-      const parts = [];
-    
-      if (time.hours) {
-        parts.push(time.hours + ' Horas');
-      }
-    
-      if (time.minutes) {
-        parts.push(time.minutes + ' Minutos');
-      }
-    
-      if (time.seconds) {
-        parts.push(time.seconds + ' Segundos');
-      }
-    
-      return parts.join(' ');
-    }
-
     return newTimes;
+  }
+
+  generateDateRange(start: string, end: string) {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+  
+    const dates = [];
+  
+    let currentDate = startDate;
+    while (currentDate <= endDate) {
+      dates.push(currentDate.toISOString().slice(0, 10));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  
+    return dates;
+  }
+
+  formatTime(time: any) {
+    if (!time.hours && !time.minutes && !time.seconds) {
+      return '';
+    }
+  
+    const parts = [];
+  
+    if (time.hours) {
+      parts.push(time.hours + ' Horas');
+    }
+  
+    if (time.minutes) {
+      parts.push(time.minutes + ' Minutos');
+    }
+  
+    if (time.seconds) {
+      parts.push(time.seconds + ' Segundos');
+    }
+  
+    return parts.join(' ');
   }
 
   // Exportar .csv

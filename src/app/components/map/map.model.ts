@@ -30,8 +30,11 @@ export interface KmTraveled {
     CELULAR: string;
     PLACA: string;
     "TIPO VEHICULO": string;
-    "KM DÍA": string;
+    "KM FECHA": string;
     "KM GENERADO": number;
+    "TIEMPO DE OPERACION": any;
+    "TIEMPO DE RELENTI": any;
+    "TIEMPO DE MOVIMIENTO": any;
 }
 
 export interface TimesData {
