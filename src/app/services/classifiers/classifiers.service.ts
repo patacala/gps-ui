@@ -65,6 +65,10 @@ export class ClassifierService {
         return this.http.post(`${environment.apiUrl}/location/getDevicePositions/entity/${this.entityId}`, filterDataReport)
     }
 
+    devicesLastPosition() {
+        return this.http.get(`${environment.apiUrl}/location/devicesLastPosition/entity/${this.entityId}`);
+    }
+
     private updatedItem(value: any, which: 'principal' | 'child') {
         let obs = which == 'principal' ? this.classifier$ : this.childs$
         let list = obs.value;

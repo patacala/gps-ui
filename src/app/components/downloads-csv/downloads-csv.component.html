@@ -7,7 +7,7 @@
         <h2>Descarga de reportes</h2>
     </div>
     <div class="timeFields">
-        <mat-form-field appearance="fill" class="w-full">
+        <mat-form-field appearance="fill" class="w-full" *ngIf="noHiddenDates">
             <mat-label>Rango de fecha</mat-label>
             <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
               <input matStartDate [(ngModel)]="formFilter.startDateOnly" placeholder="Fecha inicial" (click)="picker.open()" autocomplete="off">
@@ -18,7 +18,7 @@
             <mat-date-range-picker #picker></mat-date-range-picker>
         </mat-form-field>
 
-        <div *ngIf="hiddenTimeReg">
+        <div *ngIf="noHiddenTimeReg">
             <div class="timeField">
                 <label class="timeFTitle">Tiempo inicial</label>
                 <ngx-timepicker-field [(ngModel)]="formFilter.startTime" [controlOnly]="true"></ngx-timepicker-field>
@@ -39,7 +39,7 @@
             </mat-select>
         </mat-form-field>
     </div>
-    <div class="formFToggles" *ngIf="hiddenSlideToggle">
+    <div class="formFToggles" *ngIf="noHiddenSlideToggle">
         <mat-slide-toggle
             class="mr-2"
             [(ngModel)]="formFilter.isLocation"

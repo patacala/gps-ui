@@ -52,11 +52,11 @@ export class DownloadsCsvComponent implements OnInit {
  devicesFound!: Array<any>;
  classifiers!: Array<any>;
  typeCsvReports: any[] = [
-    {
+    /* {
       tCsvRrtId: 1,
       tCsvRrtText: 'Estado actual',
       tCsvRrtSlide: false
-    },
+    }, */
     {
       tCsvRrtId: 2,
       tCsvRrtText: 'Ultima posición',
@@ -67,20 +67,21 @@ export class DownloadsCsvComponent implements OnInit {
       tCsvRrtText: 'Historico',
       tCsvRrtSlide: true
     },
-    {
+    /* {
       tCsvRrtId: 4,
       tCsvRrtText: 'Kilometros por días',
       tCsvRrtSlide: false
-    },
+    }, */
     {
       tCsvRrtId: 5,
-      tCsvRrtText: 'Kilometros por días y tiempo',
+      tCsvRrtText: 'Kilometraje',
       tCsvRrtSlide: false
     }
   ];
 
-  hiddenSlideToggle: boolean = true;
-  hiddenTimeReg: boolean = true;
+  noHiddenSlideToggle: boolean = true;
+  noHiddenDates: boolean = true;
+  noHiddenTimeReg: boolean = true;
   devicesRTimes: TimesData[]=[];
   devicesRPross: LocationData[]=[];
   devicesFilter: LocationData[]=[];
@@ -104,15 +105,21 @@ export class DownloadsCsvComponent implements OnInit {
 
   selectTypeReport(typeRptIndex: number) {
     if (typeRptIndex === 3) {
-      this.hiddenSlideToggle = true;
+      this.noHiddenSlideToggle = true;
     } else {
-      this.hiddenSlideToggle = false;
+      this.noHiddenSlideToggle = false;
     }
 
     if (typeRptIndex === 3 || typeRptIndex === 5) {
-      this.hiddenTimeReg = true;
+      this.noHiddenTimeReg = true;
     } else {
-      this.hiddenTimeReg = false;
+      this.noHiddenTimeReg = false;
+    }
+
+    if (typeRptIndex === 2) {
+      this.noHiddenDates = false;
+    } else {
+      this.noHiddenDates = true;
     }
   }
 
