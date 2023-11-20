@@ -67,14 +67,14 @@ export class DownloadsCsvComponent implements OnInit {
       tCsvRrtText: 'Historico',
       tCsvRrtSlide: true
     },
-    /* {
+    {
       tCsvRrtId: 4,
       tCsvRrtText: 'Kilometros por días',
       tCsvRrtSlide: false
-    }, */
+    },
     {
       tCsvRrtId: 5,
-      tCsvRrtText: 'Kilometraje',
+      tCsvRrtText: 'Kilometraje por días y tiempo',
       tCsvRrtSlide: false
     }
   ];
