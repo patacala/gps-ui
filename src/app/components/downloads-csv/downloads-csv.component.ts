@@ -288,12 +288,11 @@ export class DownloadsCsvComponent implements OnInit {
   
     datas?.forEach((data: any) => {
       const regTime = { date: '', hours: '', minutes: '', seconds: '' };
-      rangeDate.forEach((day: any, index: number) => {
-        console.log(day);
-        const timeOperation = data?.times?.timeOperation.find((time: any) => time.date === day);
-        const timeRalenti = data?.times?.timeRalenti.find((time: any) => time.date === day);
-        const timeMovement = data?.times?.timeMovement.find((time: any) => time.date === day);
-  
+      rangeDate.forEach((day: any) => {
+        const timeOperation = data?.times?.timeOperation.find((time: any) => time.date == day);
+        const timeRalenti = data?.times?.timeRalenti.find((time: any) => time.date == day);
+        const timeMovement = data?.times?.timeMovement.find((time: any) => time.date == day);
+
         newKmTraveled.push({
           IMEI: data.deviimei,
           MARCA: data.devimark,
@@ -302,7 +301,7 @@ export class DownloadsCsvComponent implements OnInit {
           PLACA: data.carrdevi?.carrier?.carrlice || '',
           "TIPO VEHICULO": data.carrdevi?.carrier?.carrtype || '',
           "KM FECHA": day,
-          "KM GENERADO": data.kmTotalPerDay[index]?.value || 0,
+          "KM GENERADO": data.kmTotalPerDay[data.kmTotalPerDay.findIndex((km: any) => km?.date == day)]?.value || 0,
           "TIEMPO DE OPERACION": timeOperation ? this.formatTime(timeOperation) : this.formatTime(regTime),
           "TIEMPO DE RELENTI": timeRalenti ? this.formatTime(timeRalenti) : this.formatTime(regTime),
           "TIEMPO DE MOVIMIENTO": timeMovement ? this.formatTime(timeMovement) : this.formatTime(regTime),
